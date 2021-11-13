@@ -6,31 +6,29 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
-	// "github.com/joho/godotenv"
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+	"ucalgary.ca/cpsc441/eventmanagment/src/models"
 )
 
-const (
-	DB_USER     = "postgres"
-	DB_PASSWORD = "F0rdEdge!"
-	DB_NAME     = "postgres"
+var (
+	DB_USER     string
+	DB_PASSWORD string
+	DB_NAME     string
+	DB_HOST     string
 )
-
-type Movie struct {
-	MovieID   string `json:"movieid"`
-	MovieName string `json:"moviename"`
-}
 
 type JsonResponse struct {
-	Type    string  `json:"type"`
-	Data    []Movie `json:"data"`
-	Message string  `json:"message"`
+	Type    string         `json:"type"`
+	Data    []models.Movie `json:"data"`
+	Message string         `json:"message"`
 }
 
 func setupDB() *sql.DB {
-	dbinfo := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable", DB_USER, DB_PASSWORD, DB_NAME)
+	dbinfo := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable", DB_HOST, DB_USER, DB_PASSWORD, DB_NAME)
 	db, err := sql.Open("postgres", dbinfo)
 
 	checkErr(err)
@@ -39,6 +37,16 @@ func setupDB() *sql.DB {
 }
 
 func main() {
+	err := godotenv.Load("../../.env")
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	DB_NAME = os.Getenv("DB_NAME")
+	DB_PASSWORD = os.Getenv("DB_PASS")
+	DB_USER = os.Getenv("DB_USER")
+	DB_HOST = os.Getenv("DB_HOST")
+
 	router := mux.NewRouter()
 
 	router.HandleFunc("/movies/", GetMovies).Methods("GET")
@@ -78,7 +86,7 @@ func GetMovies(w http.ResponseWriter, r *http.Request) {
 
 	checkErr(err)
 
-	var movies []Movie
+	var movies []models.Movie
 	for rows.Next() {
 		var id int
 		var movieID string
@@ -88,7 +96,7 @@ func GetMovies(w http.ResponseWriter, r *http.Request) {
 
 		checkErr(err)
 
-		movies = append(movies, Movie{MovieID: movieID, MovieName: movieName})
+		movies = append(movies, models.Movie{MovieID: movieID, MovieName: movieName})
 	}
 	var response = JsonResponse{Type: "success", Data: movies}
 
