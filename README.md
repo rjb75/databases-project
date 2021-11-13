@@ -1,6 +1,6 @@
 # databases
 
-Authors: Risat Haque
+Authors: Risat Haque, Robert Brown
 
 ## Environment Configuration
 
@@ -17,12 +17,14 @@ FRONT_PORT=
 DB_USER=
 DB_PASS=
 DB_NAME=
-DB_IP=
+DB_HOST=
 ```
 
 ## Backend
 
 The backend is currently a Golang application.
+
+To run the backend `cd` into the `backend/src/` folder and run `go run index.go`
 
 ## Frontend
 
