@@ -14,10 +14,12 @@ BACK_PORT=
 FRONT_PORT=
 
 # credentials
-DB_USER=
-DB_PASS=
-DB_NAME=
+DB_DRIVER=
 DB_HOST=
+DB_NAME=
+DB_PASS=
+DB_USER=
+DB_PORT=
 ```
 
 ## Backend
