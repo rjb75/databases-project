@@ -1,10 +1,11 @@
-package db
+package database
 
 import (
 	"database/sql"
 	"fmt"
 	"io/ioutil"
 	"os"
+
 	_ "github.com/lib/pq"
 )
 
@@ -19,8 +20,7 @@ func DBConnect() {
 
 	dbinfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=require", DB_HOST, DB_PORT, DB_USER, DB_PASS, DB_NAME)
 	db, err := sql.Open("postgres", dbinfo)
-	
-	
+
 	if err != nil {
 		fmt.Println("Failed to connect to database.")
 		panic(err)

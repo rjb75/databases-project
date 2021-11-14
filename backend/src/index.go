@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
-	"ucalgary.ca/cpsc441/eventmanagment/database_utils"
+	"ucalgary.ca/cpsc441/eventmanagment/database"
 )
-
 
 func main() {
 	err := godotenv.Load("../../.env")
@@ -17,8 +17,9 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	db.DBConnect()
-	db.ExecuteSQLFile("./database_utils/tables.sql")
+	database.DBConnect()
+	database.ExecuteSQLFile("./database/tables.sql")
+
 	router := mux.NewRouter()
 
 	buildHandler := http.FileServer((http.Dir("../../frontend/build")))
