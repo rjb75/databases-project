@@ -30,4 +30,8 @@ To run the backend `cd` into the `backend/src/` folder and run `go run index.go`
 
 ## Frontend
 
-The frontend is currently a typescript React app.
+The frontend is currently a typescript React app. The bundle is currently packaged using webpack.
+
+Yarn is recommended for package management. To install dependencies `cd` into the `frontend` folder and run `yarn install`
+
+To run the backend, first make sure the `ENV` is set in the `.env` file. Set to `production` to enable single optimized builds or set to `development` to enable live development builds. Compile the frontend using `yarn start` and then run the backend to serve the application.
