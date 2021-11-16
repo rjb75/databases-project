@@ -1,6 +1,6 @@
 # databases
 
-Authors: Risat Haque, Robert Brown
+Authors: Risat Haque, Robert Brown, Ahmed Abdullah
 
 ## Environment Configuration
 
@@ -20,6 +20,11 @@ DB_NAME=
 DB_PASS=
 DB_USER=
 DB_PORT=
+
+
+# secret signing keys
+ACCESS_SIGNING_KEY=
+REFRESH_SIGNING_KEY=
 ```
 
 ## Backend
