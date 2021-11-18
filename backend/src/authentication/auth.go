@@ -1,6 +1,7 @@
 package authentication
 
 import (
+	"time"
 	"github.com/gofiber/fiber"
 	"ucalgary.ca/cpsc441/eventmanagment/database"
 	"ucalgary.ca/cpsc441/eventmanagment/models"
@@ -28,7 +29,14 @@ func Login(c *fiber.Ctx) {
 		return
 	 }
 
-	 accessToken, refreshToken, err := CreateTokens(loginLoad.Email)
+	 accessToken, err := CreateAccessToken(loginLoad.Email)
+
+	 if err != nil {
+		c.Status(500).JSON(fiber.Map{"error": "sever error", "data": err})
+		return
+	 }
+
+	 refreshToken, err := CreateRefreshToken(loginLoad.Email)
 
 	 if err != nil {
 		c.Status(500).JSON(fiber.Map{"error": "sever error", "data": err})
@@ -37,6 +45,23 @@ func Login(c *fiber.Ctx) {
 
 
 	 c.Status(200).JSON(fiber.Map{"status": "success", "access": accessToken, "refresh": refreshToken})
+
+	 c.Cookie(&fiber.Cookie{
+        Name:     "access",
+        Value:    accessToken,
+        Expires:  time.Now().Add(time.Minute * ACCESS_EXPIRY_MINUTES),
+        HTTPOnly: true,
+        SameSite: "lax",
+    })
+
+
+	c.Cookie(&fiber.Cookie{
+        Name:     "refresh",
+        Value:    refreshToken,
+        Expires:  time.Now().Add(time.Hour * 24 * REFRESH_EXPIRY_DAYS),
+        HTTPOnly: true,
+        SameSite: "lax",
+    })
 }
 
 
@@ -64,7 +89,31 @@ func Register(c *fiber.Ctx) {
 	}
 	
 	c.Status(200).JSON(fiber.Map{"status": "success", "data": c.Body()})
-	
-		
-
 }
+
+
+func Refresh(c *fiber.Ctx) {
+	userRefreshToken :=c.Cookies("refresh")
+	userId, expiry, err := ParseToken(userRefreshToken, false)
+
+	if err != nil || userId == "" {
+		c.Status(500).JSON(fiber.Map{"error": "sever error", "data": err})
+		return
+	}
+
+	if expiry.Sub(time.Now()) > 0 {
+		accessToken, err := CreateAccessToken(userId)
+		if err != nil {
+			c.Status(500).JSON(fiber.Map{"error": "sever error", "data": err})
+			return
+		}
+		c.Cookie(&fiber.Cookie{
+			Name:     "access",
+			Value:    accessToken,
+			Expires:  time.Now().Add(time.Minute * ACCESS_EXPIRY_MINUTES),
+			HTTPOnly: true,
+			SameSite: "lax",
+		})
+	}
+}
+

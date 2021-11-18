@@ -14,6 +14,7 @@ import (
 func setUpRouteHandlers(app *fiber.App) {
 	app.Post("/api/v1/login", authentication.Login)
 	app.Post("/api/v1/register", authentication.Register)
+	app.Post("/api/v1/refresh", authentication.Refresh)
 }
 
 func main() {
