@@ -13,7 +13,6 @@ func Login(c *fiber.Ctx) error {
 	err := c.BodyParser(loginLoad)
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": "failed to process inputs", "data": err})
-
 	}
 
 	userHashedPassword, err := database.GetPassowrd(loginLoad.Email)
@@ -41,8 +40,6 @@ func Login(c *fiber.Ctx) error {
 
 	c.Status(200).JSON(fiber.Map{"status": "success", "access": accessToken, "refresh": refreshToken})
 
-	c.Status(200).JSON(fiber.Map{"status": "success", "access": accessToken, "refresh": refreshToken})
-
 	c.Cookie(&fiber.Cookie{
 		Name:     "access",
 		Value:    accessToken,
@@ -58,6 +55,8 @@ func Login(c *fiber.Ctx) error {
 		HTTPOnly: true,
 		SameSite: "lax",
 	})
+
+	return nil
 }
 
 func Register(c *fiber.Ctx) error {
@@ -70,33 +69,31 @@ func Register(c *fiber.Ctx) error {
 	hashedPassword, err := HashAndSaltPassword(signupLoad.Password)
 
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{"error": "sever error", "data": err})
+		return c.Status(500).JSON(fiber.Map{"error": "server error", "data": err})
 	}
 
 	insertErr := database.RegisterUser(signupLoad.Email, hashedPassword, signupLoad.F_name, signupLoad.M_name,
 		signupLoad.L_name, signupLoad.Pronouns, signupLoad.Dietary_restriction, signupLoad.Preferred_language, signupLoad.Role)
 
 	if insertErr != nil {
-		return c.Status(500).JSON(fiber.Map{"error": "sever error", "data": insertErr})
+		return c.Status(500).JSON(fiber.Map{"error": "server error", "data": insertErr})
 	}
 
-	c.Status(200).JSON(fiber.Map{"status": "success", "data": c.Body()})
+	return c.Status(200).JSON(fiber.Map{"status": "success", "data": c.Body()})
 }
 
-func Refresh(c *fiber.Ctx) {
+func Refresh(c *fiber.Ctx) error {
 	userRefreshToken := c.Cookies("refresh")
 	userId, expiry, err := ParseToken(userRefreshToken, false)
 
 	if err != nil || userId == "" {
-		c.Status(500).JSON(fiber.Map{"error": "sever error", "data": err})
-		return
+		return c.Status(500).JSON(fiber.Map{"error": "server error", "data": err})
 	}
 
 	if expiry.Sub(time.Now()) > 0 {
 		accessToken, err := CreateAccessToken(userId)
 		if err != nil {
-			c.Status(500).JSON(fiber.Map{"error": "sever error", "data": err})
-			return
+			return c.Status(500).JSON(fiber.Map{"error": "server error", "data": err})
 		}
 		c.Cookie(&fiber.Cookie{
 			Name:     "access",
@@ -106,4 +103,6 @@ func Refresh(c *fiber.Ctx) {
 			SameSite: "lax",
 		})
 	}
+
+	return nil
 }
