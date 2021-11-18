@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"ucalgary.ca/cpsc441/eventmanagment/authentication"
@@ -14,6 +14,7 @@ import (
 func setUpRouteHandlers(app *fiber.App) {
 	app.Post("/api/v1/login", authentication.Login)
 	app.Post("/api/v1/register", authentication.Register)
+	app.Get("/api/v1/persons", database.GetPersons)
 }
 
 func main() {
@@ -29,7 +30,7 @@ func main() {
 
 	setUpRouteHandlers(app)
 	app.Static("/", "../../frontend/build")
-	
+
 	fmt.Println("Server at 8000")
-	app.Listen(8000)
+	app.Listen(":8000")
 }

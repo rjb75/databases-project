@@ -11,8 +11,7 @@ function App() {
     <Provider store={store}>
       <Router>
         <Routes>
-          {/* <Route path="/" element={<LogIn />} /> */}
-          <Route path="/" element={<TestComponent />} />
+          <Route path="/" element={<LogIn />} />
         </Routes>
       </Router>
     </Provider>
