@@ -6,6 +6,7 @@ interface TextFieldInputProps {
   input: string;
   setInput: React.Dispatch<React.SetStateAction<string>>;
   isPassword: boolean;
+  error?: string;
 }
 
 const TextFieldInput: React.FC<TextFieldInputProps> = props => {
@@ -22,6 +23,7 @@ const TextFieldInput: React.FC<TextFieldInputProps> = props => {
           onChange={handleValueChange}
           placeholder={props.placeHolder}
         />
+        <div className="errors">{props.error}</div>
       </div>
     </div>
   );
