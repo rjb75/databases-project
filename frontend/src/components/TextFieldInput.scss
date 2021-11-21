@@ -18,7 +18,7 @@
   }
 
   .form-control > input:focus {
-    border-color: $color-purple;
+    background-color: #f39fa5;
   }
 
   ::placeholder {
@@ -28,7 +28,7 @@
   .errors {
     height: 10px;
     width: 100%;
-    color: #FF0000;
+    color: #ff0000;
     margin-left: 5px;
     font-size: 0.8rem;
   }
