@@ -7,7 +7,7 @@ const HtmlWebPackPlugin = require("html-webpack-plugin");
 module.exports = {
   mode: process.env.ENV,
   entry: {
-    app: ["./src/App.ts"],
+    app: ["./src/Index.tsx"],
     vendor: ["react", "react-dom"],
   },
   watch: process.env.ENV == "development",
