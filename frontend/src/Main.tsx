@@ -1,6 +1,8 @@
 import * as React from 'react';
 import {App} from './App';
 import './styles/Main.scss';
+import LogIn from './pages/Login/Login';
+import {Routes, Route, BrowserRouter as Router} from 'react-router-dom';
 
 export interface IMainProps {
   app: App; // Reference to our App.ts class
@@ -13,10 +15,13 @@ export class Main extends React.Component<IMainProps> {
 
   public render(): JSX.Element {
     return (
-      <>
-        <h1>Databases Project</h1>
-        <p>Welcome to our codebase</p>
-      </>
+      <div>
+        <Router>
+          <Routes>
+            <Route path="/" element={<LogIn />} />
+          </Routes>
+        </Router>
+      </div>
     );
   }
 }
