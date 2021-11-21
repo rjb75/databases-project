@@ -24,4 +24,12 @@
   ::placeholder {
     color: $color-white;
   }
+
+  .errors {
+    height: 10px;
+    width: 100%;
+    color: #FF0000;
+    margin-left: 5px;
+    font-size: 0.8rem;
+  }
 }
