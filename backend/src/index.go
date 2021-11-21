@@ -28,14 +28,8 @@ func main() {
 	database.ExecuteSQLFile("./database/tables.sql")
 
 	setUpRouteHandlers(app)
-
-	// router := mux.NewRouter()
-
-	// buildHandler := http.FileServer((http.Dir("../../frontend/build")))
-
-	// router.PathPrefix("/").Handler(buildHandler)
-
+	app.Static("/", "../../frontend/build")
+	
 	fmt.Println("Server at 8000")
-	// log.Fatal(http.ListenAndServe(":8000", router))
 	app.Listen(8000)
 }
