@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+
 	_ "github.com/lib/pq"
 )
 
