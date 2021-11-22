@@ -1,5 +1,5 @@
 const webpack = require('webpack');
-require('dotenv').config({ path: '../.env' });
+require('dotenv').config({path: '../.env'});
 
 const path = require('path');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
@@ -7,8 +7,8 @@ const HtmlWebPackPlugin = require('html-webpack-plugin');
 module.exports = {
   mode: process.env.ENV,
   entry: {
-    app: ["./src/Index.tsx"],
-    vendor: ["react", "react-dom"],
+    app: ['./src/Index.tsx'],
+    vendor: ['react', 'react-dom'],
   },
   watch: process.env.ENV === 'development',
   output: {
@@ -23,22 +23,15 @@ module.exports = {
     rules: [
       {
         test: /\.s[ac]ss$/i,
-        use: [
-          'style-loader',
-          'css-loader',
-          'sass-loader',
-        ],
-      }, {
+        use: ['style-loader', 'css-loader', 'sass-loader'],
+      },
+      {
         test: /\.(ts|js)x?$/i,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
           options: {
-            presets: [
-              '@babel/preset-env',
-              '@babel/preset-react',
-              '@babel/preset-typescript',
-            ],
+            presets: ['@babel/preset-env', '@babel/preset-react', '@babel/preset-typescript'],
           },
         },
       },
@@ -46,7 +39,7 @@ module.exports = {
         test: /\.(png|jpe?g|gif|svg|woff|woff2|ttf|eot|ico)$/,
         loader: 'file-loader',
         options: {
-          name: '[path][name].[ext]',
+          name: process.env.ENV === 'development' ? 'assets/[folder]/[name].[ext]' : 'assets/[sha512:hash:base64:7].[ext]',
           esModule: false,
         },
       },

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
@@ -31,6 +32,7 @@ func main() {
 	setUpRouteHandlers(app)
 	app.Static("/", "../../frontend/build")
 
-	fmt.Println("Server at 8000")
-	app.Listen(":8000")
+	SERVER_PORT := os.Getenv("PORT")
+	port := fmt.Sprintf(":%s", SERVER_PORT)
+	app.Listen(port)
 }
