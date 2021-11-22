@@ -1,4 +1,8 @@
+@import './colors.scss';
+
 body {
     font-family: sans-serif;
     color: #020202;
+    background-color: $color-white;
+    background-image: url('../assets/background.svg');
 }

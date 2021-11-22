@@ -1,0 +1,35 @@
+@import '../styles/colors.scss';
+
+.text-field-container {
+  width: 100%;
+  .form-control {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .form-control > input {
+    background-color: $color-red;
+    border: 1.9px solid $color-black;
+    margin-top: 5px;
+    height: 30px;
+    border-radius: 10px;
+    padding: 5px 2%;
+  }
+
+  .form-control > input:focus {
+    background-color: #f39fa5;
+  }
+
+  ::placeholder {
+    color: $color-white;
+  }
+
+  .errors {
+    height: 10px;
+    width: 100%;
+    color: #ff0000;
+    margin-left: 5px;
+    font-size: 0.8rem;
+  }
+}
