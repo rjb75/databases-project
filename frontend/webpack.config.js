@@ -1,5 +1,5 @@
 const webpack = require('webpack');
-require('dotenv').config({path: '../.env'});
+require('dotenv').config({ path: '../.env' });
 
 const path = require('path');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
@@ -23,7 +23,16 @@ module.exports = {
     rules: [
       {
         test: /\.s[ac]ss$/i,
-        use: ['style-loader', 'css-loader', 'sass-loader'],
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              esModule: false,
+            },
+          },
+          'sass-loader',
+        ],
       },
       {
         test: /\.(ts|js)x?$/i,
@@ -39,7 +48,10 @@ module.exports = {
         test: /\.(png|jpe?g|gif|svg|woff|woff2|ttf|eot|ico)$/,
         loader: 'file-loader',
         options: {
-          name: process.env.ENV === 'development' ? 'assets/[folder]/[name].[ext]' : 'assets/[sha512:hash:base64:7].[ext]',
+          name:
+            process.env.ENV === 'development'
+              ? 'assets/[folder]/[name].[ext]'
+              : 'assets/[sha512:hash:base64:7].[ext]',
           esModule: false,
         },
       },
