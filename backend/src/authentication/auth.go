@@ -30,15 +30,16 @@ func Login(c *fiber.Ctx) error {
 	accessToken, err := CreateAccessToken(loginLoad.Email)
 
 	if err != nil {
-		c.Status(500).JSON(fiber.Map{"error": "sever error", "data": err})
-		return
+		return c.Status(500).JSON(fiber.Map{"error": "server error", "data": err})
 	}
 
 	refreshToken, err := CreateRefreshToken(loginLoad.Email)
 
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{"error": "sever error", "data": err})
+		return c.Status(500).JSON(fiber.Map{"error": "server error", "data": err})
 	}
+
+	c.Status(200).JSON(fiber.Map{"status": "success", "access": accessToken, "refresh": refreshToken})
 
 	c.Status(200).JSON(fiber.Map{"status": "success", "access": accessToken, "refresh": refreshToken})
 
