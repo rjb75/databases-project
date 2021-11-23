@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"log"
-
-	"github.com/gofiber/fiber"
+	"os"
+	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"ucalgary.ca/cpsc441/eventmanagment/authentication"
@@ -15,6 +15,7 @@ func setUpRouteHandlers(app *fiber.App) {
 	app.Post("/api/v1/login", authentication.Login)
 	app.Post("/api/v1/register", authentication.Register)
 	app.Post("/api/v1/refresh", authentication.Refresh)
+	app.Get("/api/v1/persons", database.GetPersons)
 }
 
 func main() {
@@ -30,13 +31,9 @@ func main() {
 
 	setUpRouteHandlers(app)
 
-	// router := mux.NewRouter()
+	app.Static("/", "../../frontend/build")
 
-	// buildHandler := http.FileServer((http.Dir("../../frontend/build")))
-
-	// router.PathPrefix("/").Handler(buildHandler)
-
-	fmt.Println("Server at 8000")
-	// log.Fatal(http.ListenAndServe(":8000", router))
-	app.Listen(8000)
+	SERVER_PORT := os.Getenv("PORT")
+	port := fmt.Sprintf(":%s", SERVER_PORT)
+	app.Listen(port)
 }

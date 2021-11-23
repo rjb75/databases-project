@@ -10,8 +10,6 @@ To configure the environment the program should be ran in create a `.env` file i
 # environment config
 ENV=
 PORT=
-BACK_PORT=
-FRONT_PORT=
 
 # credentials
 DB_DRIVER=

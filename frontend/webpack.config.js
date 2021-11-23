@@ -7,7 +7,7 @@ const HtmlWebPackPlugin = require('html-webpack-plugin');
 module.exports = {
   mode: process.env.ENV,
   entry: {
-    app: ['./src/App.ts'],
+    app: ['./src/Index.tsx'],
     vendor: ['react', 'react-dom'],
   },
   watch: process.env.ENV === 'development',
@@ -25,21 +25,34 @@ module.exports = {
         test: /\.s[ac]ss$/i,
         use: [
           'style-loader',
-          'css-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              esModule: false,
+            },
+          },
           'sass-loader',
         ],
-      }, {
+      },
+      {
         test: /\.(ts|js)x?$/i,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
           options: {
-            presets: [
-              '@babel/preset-env',
-              '@babel/preset-react',
-              '@babel/preset-typescript',
-            ],
+            presets: ['@babel/preset-env', '@babel/preset-react', '@babel/preset-typescript'],
           },
+        },
+      },
+      {
+        test: /\.(png|jpe?g|gif|svg|woff|woff2|ttf|eot|ico)$/,
+        loader: 'file-loader',
+        options: {
+          name:
+            process.env.ENV === 'development'
+              ? 'assets/[folder]/[name].[ext]'
+              : 'assets/[sha512:hash:base64:7].[ext]',
+          esModule: false,
         },
       },
     ],

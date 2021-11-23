@@ -10,7 +10,7 @@ func GetPassowrd(userEmail string) (string, error) {
 
 	err := result.Scan(&passwd)
 
-	if(err != nil) {
+	if err != nil {
 		return "", err
 	}
 
