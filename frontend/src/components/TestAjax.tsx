@@ -1,3 +1,4 @@
+import {request} from 'http';
 import React, {useEffect, useState} from 'react';
 import Table from './Table';
 import {Header} from './TableUtils';
@@ -5,13 +6,34 @@ import {Header} from './TableUtils';
 function TextAjax() {
   const [result, setResult] = useState([]);
 
+  //Testing POST
   useEffect(() => {
-    console.log('5000asdadad ');
+    fetch('/api/v1/persons', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        Email: 'tesasd@notrisat.com',
+        F_name: 'Test',
+        M_name: 'T',
+        L_name: 'Testy',
+        Pronouns: 'He/Him',
+        Dietary_restriction: 'Vegan',
+        Preferred_language: 'FN',
+      }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+      });
+  }, []);
 
+  //Testing GET
+  useEffect(() => {
     fetch('/api/v1/persons')
       .then(response => response.json())
-      .then(data => {console.log(data)
-      setResult(data.data)
+      .then(data => {
+        console.log(data);
+        setResult(data.data);
       });
   }, []);
 
