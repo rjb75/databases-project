@@ -63,6 +63,7 @@ module.exports = {
     }),
     new HtmlWebPackPlugin({
       template: './src/index.html',
+      favicon: './src/assets/icon.ico',
     }),
   ],
 };
