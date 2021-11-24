@@ -3,6 +3,8 @@ import LoginBackground from '../../assets/loginFormBackground.svg';
 import Logo from '../../assets/logo.svg';
 import TextFieldInput from '../../components/TextFieldInput';
 import './Login.scss';
+import axiosInstance from '../../axios';
+import {useNavigate} from 'react-router-dom';
 
 interface LogInErrors {
   email: string;
@@ -10,6 +12,7 @@ interface LogInErrors {
 }
 
 const LogIn: React.FC = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<LogInErrors>({
@@ -37,7 +40,16 @@ const LogIn: React.FC = () => {
 
   const sumbitLogin = () => {
     validateData();
-    // handle api calls
+    axiosInstance
+      .post('api/v1/login', {
+        Email: email,
+        Password: password,
+      })
+      .then(res => {
+        navigate('/main');
+        console.log('login response: ', res);
+      })
+      .catch(err => console.log('login error: ', err));
   };
   return (
     <div className="login-page-container">

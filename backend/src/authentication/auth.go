@@ -38,8 +38,6 @@ func Login(c *fiber.Ctx) error {
 		return c.Status(500).JSON(fiber.Map{"error": "server error", "data": err})
 	}
 
-	c.Status(200).JSON(fiber.Map{"status": "success", "access": accessToken, "refresh": refreshToken})
-
 	c.Cookie(&fiber.Cookie{
 		Name:     "access",
 		Value:    accessToken,
@@ -56,7 +54,7 @@ func Login(c *fiber.Ctx) error {
 		SameSite: "lax",
 	})
 
-	return nil
+	return c.Status(200).JSON(fiber.Map{"status": "success", "access": accessToken, "refresh": refreshToken})
 }
 
 func Register(c *fiber.Ctx) error {
@@ -105,4 +103,30 @@ func Refresh(c *fiber.Ctx) error {
 	}
 
 	return nil
+}
+
+
+func SignOut(c *fiber.Ctx) error {
+	c.Cookie(&fiber.Cookie{
+        Name:     "access",
+        Expires:  time.Now().Add(-(time.Hour * 2)),
+        HTTPOnly: true,
+        SameSite: "lax",
+    })
+	c.Cookie(&fiber.Cookie{
+        Name:     "refresh",
+        Expires:  time.Now().Add(-(time.Hour * 2)),
+        HTTPOnly: true,
+        SameSite: "lax",
+    })
+	return c.Status(200).JSON(fiber.Map{"status": "success"})
+}
+
+func TestAuth(c *fiber.Ctx) error {
+	userAccessToken := c.Cookies("access")
+	tokerErr := CheckAccess(userAccessToken)
+	if tokerErr != nil {
+		return c.Status(401).JSON(fiber.Map{"data": "Unauthorized"})
+	}
+	return database.GetPersons(c);
 }
