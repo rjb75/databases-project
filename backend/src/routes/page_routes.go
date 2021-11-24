@@ -9,7 +9,9 @@ import (
 
 
 func PageRoutes(app *fiber.App){
+	const frontendBuildPath =  "../../frontend/build"
 	app.Use(cors.New())
-	app.Static("/", "../../frontend/build")
-	app.Static("/main", "../../frontend/build")
+
+	app.Static("/",frontendBuildPath)
+	app.Static("/main", frontendBuildPath)
 }

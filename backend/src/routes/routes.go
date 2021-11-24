@@ -34,7 +34,6 @@ func authRoutes(v fiber.Router){
 func personRoutes(v fiber.Router){
 	v.Get("/persons", database.GetPersons)
 	v.Post("/persons", database.PostPersons)
-
 }
 
 func notFoundPage(c *fiber.Ctx) error {
