@@ -27,7 +27,7 @@ func PostPersons(c *fiber.Ctx) error{
 
 	//SQL Error Check
 	if row.Err() != nil {
-		return c.Status(200).JSON(fiber.Map{"status": "fail", "type": "SQL: Creating Person failed"}) //Returning success
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Creating Person failed"}) //Returning success
 	}
 
 	//Success
@@ -40,7 +40,7 @@ func GetPersons(c *fiber.Ctx) error{
 	rows, err := DATABASE.Query("SELECT * FROM person;")
 
 	if err != nil {
-		return c.Status(200).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
 	}
 
 	var personsTable []models.Person
