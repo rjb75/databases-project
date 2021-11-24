@@ -8,17 +8,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
-	"ucalgary.ca/cpsc441/eventmanagment/authentication"
 	"ucalgary.ca/cpsc441/eventmanagment/database"
+	"ucalgary.ca/cpsc441/eventmanagment/routes"
 )
 
-func setUpRouteHandlers(app *fiber.App) {
-	app.Post("/api/v1/login", authentication.Login)
-	app.Post("/api/v1/register", authentication.Register)
-	app.Get("/api/v1/persons", authentication.TestAuth)
-	app.Post("/api/v1/refresh", authentication.Refresh)
-	app.Post("/api/v1/signout", authentication.SignOut)
-}
 
 func main() {
 	app := fiber.New()
@@ -30,9 +23,8 @@ func main() {
 
 	database.DBConnect()
 	database.ExecuteSQLFile("./database/tables.sql")
-
-	setUpRouteHandlers(app)
-	app.Static("/", "../../frontend/build")
+	
+	routes.RegisterRoutes(app);
 
 	SERVER_PORT := os.Getenv("PORT")
 	port := fmt.Sprintf(":%s", SERVER_PORT)
