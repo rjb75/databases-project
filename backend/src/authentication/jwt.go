@@ -80,3 +80,12 @@ func ParseToken(inputToken string, tokenType bool) (string, time.Time, error){ /
 
 	return userId, time.Unix(int64(expiry), 0), nil
 }
+
+// ----------------Important--------------------
+func CheckAccess(inputToken string) error {   // Please call this function before issuing any authorized request
+	outputClaims := jwt.MapClaims{}
+	_, err := jwt.ParseWithClaims(inputToken, outputClaims , func(token *jwt.Token) (interface{}, error) {
+		return []byte(ACCESS_SIGNING_KEY), nil
+	})
+	return err
+}
