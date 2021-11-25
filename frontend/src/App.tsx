@@ -4,6 +4,8 @@ import {Routes, Route, BrowserRouter as Router} from 'react-router-dom';
 import {store} from './store';
 import LogIn from './pages/Login/Login';
 import SampleSignout from './pages/SampleSignout/SampleSignout';
+import RoleSelection from './pages/RoleSelection/RoleSelection';
+import SignUp from './pages/SignUp/SignUp';
 
 import './styles/Main.scss';
 
@@ -12,7 +14,7 @@ function App() {
     <Provider store={store}>
       <Router>
         <Routes>
-          <Route path="/" element={<LogIn />} />
+          <Route path="/" element={<RoleSelection />} />
           <Route path="/main" element={<SampleSignout />} />
         </Routes>
       </Router>
