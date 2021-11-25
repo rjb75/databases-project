@@ -1,0 +1,116 @@
+@import '../../styles/colors.scss';
+
+.role-selection-container {
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  align-items: center;
+
+  .role-form-container {
+    width: 90%;
+    min-height: 80vh;
+    border-radius: 20px;
+    margin: 20px 20px;
+    background-color: $color-black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+  }
+
+  .role-form-container > h1 {
+      color: $color-white;
+  }
+
+  .role-options-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .columns-container {
+    width: 80%;
+    display: grid;
+    grid-auto-rows: 160px;
+    grid-gap: 2em;
+  }
+
+  .role-column {
+    border-radius: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+
+    &-one {
+      background-color: $color-orange;
+    }
+
+    &-two {
+      background-color: $color-red;
+    }
+
+    &-three {
+      background-color: $color-dark-purple;
+    }
+  }
+
+  .role-column:hover {
+    filter: brightness(125%);
+    color: $color-black;
+  }
+
+  .role-active {
+      border: 4px solid $color-white;
+      filter: brightness(125%);
+      color: $color-black;
+  }
+
+  .role-active > h3 {
+    color: #000 !important;
+}
+
+  .role-column > h3 {
+    color: $color-white;
+  }
+
+  .role-next-button {
+      height: 40px;
+      border-radius: 30px;
+      background-color: $color-gray;
+      color: $color-white;
+      width: 20%;
+      min-width: 100px;
+      text-align: center;
+      line-height: 40px;
+      margin-bottom: 20px;
+      cursor: pointer;
+  }
+
+  .role-next-button:hover {
+    transition: all 0.5s;
+    transform: scale(1.07);
+  }
+}
+
+
+@media (min-width: 750px) {
+    .columns-container {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+}
+
+@media (max-width: 750px) {
+    .columns-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 380px) {
+    .role-form-container > h1 {
+        font-size: 1.5rem;
+    }
+}

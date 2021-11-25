@@ -53,45 +53,47 @@ const LogIn: React.FC = () => {
   };
   return (
     <div className="login-page-container">
-      <div className="inner-login-page-container">
-        <div className="login-left-logo-container">
-          <img className="login-logo-image" src={Logo} />
-        </div>
-        <div className="login-form-container" style={{margin: 'auto'}}>
-          <div className="login-header">
-            <h3>{new Date().toLocaleString('default', {month: 'long'})}</h3>
+      <div style={{margin: '30px 0px'}}> {/* not sure why it does not work in scss?? */}
+        <div className="inner-login-page-container">
+          <div className="login-left-logo-container">
+            <img className="login-logo-image" src={Logo} />
           </div>
-          <div>
-            <img className="login-image" src={LoginBackground} />
-          </div>
-          <div className="login-inputs-container">
-            <h2>sign in</h2>
-            <TextFieldInput
-              placeHolder="Enter Your Email"
-              input={email}
-              setInput={setEmail}
-              isPassword={false}
-              error={errors.email}
-            />
-            <TextFieldInput
-              placeHolder="Enter Your Password"
-              input={password}
-              setInput={setPassword}
-              isPassword={true}
-              error={errors.password}
-            />
-
-            <div className="login-redirect-container">
-              <a className="login-redirect-link" href="#">
-                Need an Account?
-              </a>
-              <a className="login-redirect-link" href="#">
-                Forgot Your Password?
-              </a>
+          <div className="login-form-container" style={{margin: 'auto'}}>
+            <div className="login-header">
+              <h3>{new Date().toLocaleString('default', {month: 'long'})}</h3>
             </div>
-            <button className="login-submit-button" onClick={sumbitLogin}>
-              login
-            </button>
+            <div>
+              <img className="login-image" src={LoginBackground} />
+            </div>
+            <div className="login-inputs-container">
+              <h2>sign in</h2>
+              <TextFieldInput
+                placeHolder="Enter Your Email"
+                input={email}
+                setInput={setEmail}
+                isPassword={false}
+                error={errors.email}
+              />
+              <TextFieldInput
+                placeHolder="Enter Your Password"
+                input={password}
+                setInput={setPassword}
+                isPassword={true}
+                error={errors.password}
+              />
+
+              <div className="login-redirect-container">
+                <a className="login-redirect-link" href="#">
+                  Need an Account?
+                </a>
+                <a className="login-redirect-link" href="#">
+                  Forgot Your Password?
+                </a>
+              </div>
+              <button className="login-submit-button" onClick={sumbitLogin}>
+                login
+              </button>
+            </div>
           </div>
         </div>
       </div>
