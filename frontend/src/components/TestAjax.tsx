@@ -7,29 +7,50 @@ function TextAjax() {
   const [result, setResult] = useState([]);
 
   //Testing POST
-  useEffect(() => {
-    fetch('/api/v1/persons', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        Email: 'ROBERT@ROBERT.com',
-        F_name: 'ROBERT',
-        M_name: 'R',
-        L_name: 'WHAT',
-        Pronouns: 'He/Him',
-        Dietary_restriction: 'Vegan',
-        Preferred_language: 'FN',
-      }),
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log(data);
-      });
-  }, []);
+  // useEffect(() => {
+  //   fetch('/api/v1/persons', {
+  //     method: 'POST',
+  //     headers: {'Content-Type': 'application/json'},
+  //     body: JSON.stringify({
+  //       Email: 'ROBERT@ROBERT.com',
+  //       F_name: 'ROBERT',
+  //       M_name: 'R',
+  //       L_name: 'WHAT',
+  //       Pronouns: 'He/Him',
+  //       Dietary_restriction: 'Vegan',
+  //       Preferred_language: 'FN',
+  //     }),
+  //   })
+  //     .then(response => response.json())
+  //     .then(data => {
+  //       console.log(data);
+  //     });
+  // }, []);
 
-  //Testing GET
+  //Testing Delete
+  // useEffect(() => {
+  //   fetch('/api/v1/person/' + 'ROBERT@ROBERT.com', {
+  //     method: 'DELETE',
+  //   })
+  //     .then(response => response.json())
+  //     .then(data => {
+  //       console.log(data);
+  //       setResult(data.data);
+  //     });
+  // }, []);
+
+  //Testing Get
+  // useEffect(() => {
+  //   fetch('/api/v1/person/' + 'ROBERT@ROBERT.com')
+  //     .then(response => response.json())
+  //     .then(data => {
+  //       console.log(data);
+  //       setResult(data.data);
+  //     });
+  // }, []);
+
   useEffect(() => {
-    fetch('/api/v1/persons')
+    fetch('/api/v1/person/risat@gmail.com')
       .then(response => response.json())
       .then(data => {
         console.log(data);

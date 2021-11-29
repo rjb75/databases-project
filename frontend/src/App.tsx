@@ -10,6 +10,7 @@ import FormBuilder from './components/FormBuilder';
 import FormGenerator from './components/FormGenerator';
 
 import './styles/Main.scss';
+import TextAjax from './components/TestAjax';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/form" element={<FormGenerator formContent=''/>} />
           <Route path="/form-builder" element={<FormBuilder />} />
           <Route path="/main" element={<SampleSignout />} />
+          <Route path="/test" element={<TextAjax />} />
         </Routes>
       </Router>
     </Provider>

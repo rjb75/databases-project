@@ -1,10 +1,9 @@
-package authentication
+package database
 
 import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"ucalgary.ca/cpsc441/eventmanagment/database"
 	"ucalgary.ca/cpsc441/eventmanagment/models"
 )
 
@@ -15,7 +14,7 @@ func Login(c *fiber.Ctx) error {
 		return c.Status(400).JSON(fiber.Map{"error": "failed to process inputs", "data": err})
 	}
 
-	userHashedPassword, err := database.GetPassowrd(loginLoad.Email)
+	userHashedPassword, err := GetPassowrd(loginLoad.Email)
 
 	if userHashedPassword == "" {
 		return c.Status(404).JSON(fiber.Map{"error": "user not found", "data": err})
@@ -70,7 +69,7 @@ func Register(c *fiber.Ctx) error {
 		return c.Status(500).JSON(fiber.Map{"error": "server error", "data": err})
 	}
 
-	insertErr := database.RegisterUser(signupLoad.Email, hashedPassword, signupLoad.F_name, signupLoad.M_name,
+	insertErr := RegisterUser(signupLoad.Email, hashedPassword, signupLoad.F_name, signupLoad.M_name,
 		signupLoad.L_name, signupLoad.Pronouns, signupLoad.Dietary_restriction, signupLoad.Preferred_language, signupLoad.Role)
 
 	if insertErr != nil {
@@ -128,5 +127,12 @@ func TestAuth(c *fiber.Ctx) error {
 	if tokerErr != nil {
 		return c.Status(401).JSON(fiber.Map{"data": "Unauthorized"})
 	}
-	return database.GetPersons(c);
+	return GetPersons(c);
+}
+
+func CheckAuth(c *fiber.Ctx) bool {
+	userAccessToken := c.Cookies("access")
+	err := CheckAccess(userAccessToken)
+	c.Status(401).JSON(fiber.Map{"data": "Unauthorized"})
+	return err == nil
 }

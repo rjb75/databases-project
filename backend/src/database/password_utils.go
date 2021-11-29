@@ -1,7 +1,7 @@
-package authentication
+package database
 
 import (
-    "golang.org/x/crypto/bcrypt"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func HashAndSaltPassword(password string) (string, error) {
