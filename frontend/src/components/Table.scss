@@ -1,0 +1,41 @@
+@import "../styles/colors";
+
+.primary-table {
+    border-radius: 0px 0px 0px 40px;
+    width: 80%;
+    height: 60vh;
+    background-color: white;
+    overflow-y: scroll;
+    margin: 10px;
+    box-shadow: 0px 100px 80px rgb(0 0 0 / 7%), 0px 41.7776px 33.4221px rgb(0 0 0 / 5%), 0px 22.3363px 17.869px rgb(0 0 0 / 4%), 0px 12.5216px 10.0172px rgb(0 0 0 / 4%), 0px 6.6501px 5.32008px rgb(0 0 0 / 3%), 0px 2.76726px 2.21381px rgb(0 0 0 / 2%);
+    table {
+        border-collapse: separate;
+        border-spacing: 0;
+        width: 100%;
+        thead {
+            background-color: $color-gray-light;
+            border: none;
+            font-weight: bold;
+            padding: 10px;
+            
+            th {
+                font-weight: bold;
+                padding: 20px;
+                border: none;
+            }
+        }
+    
+        tbody {
+            background-color: $color-white;
+            tr {
+                border-bottom: 1px solid $color-gray-light;
+                td {
+                    border: none;
+                    padding: 10px;
+                    color: $color-black;
+                    border: none;
+                }
+            }
+        }
+    }
+}
