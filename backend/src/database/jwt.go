@@ -1,9 +1,10 @@
-package authentication
+package database
 
 import (
-	"github.com/dgrijalva/jwt-go"
-	"time"
 	"os"
+	"time"
+
+	"github.com/dgrijalva/jwt-go"
 )
 
 var

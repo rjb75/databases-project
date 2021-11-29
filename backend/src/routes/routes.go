@@ -1,10 +1,9 @@
 package routes
 
 import (
-//	"fmt"
+	//	"fmt"
 
 	"github.com/gofiber/fiber/v2"
-	"ucalgary.ca/cpsc441/eventmanagment/authentication"
 	"ucalgary.ca/cpsc441/eventmanagment/database"
 )
 
@@ -19,21 +18,33 @@ func RegisterRoutes(app *fiber.App) {
 	//Api Routes
 	authRoutes(v1)
 	personRoutes(v1)
+	userRoutes(v1)
 
 	//Final MiddleWare
 	app.Use(notFoundPage)
 }
 
 func authRoutes(v fiber.Router){
-	v.Post("/login", authentication.Login)
-	v.Post("/register", authentication.Register)
-	v.Post("/refresh", authentication.Refresh)
-	v.Post("/signout", authentication.SignOut)
+	v.Post("/login", database.Login)
+	v.Post("/register", database.Register)
+	v.Post("/refresh", database.Refresh)
+	v.Post("/signout", database.SignOut)
 }
 
 func personRoutes(v fiber.Router){
 	v.Get("/persons", database.GetPersons)
-	v.Post("/persons", database.PostPersons)
+
+	v.Get("/person/:email", database.GetPerson)
+	v.Post("/person/", database.CreatePerson)
+	v.Delete("/person/:email", database.DeletePerson)
+}
+
+func userRoutes(v fiber.Router){
+	v.Get("/reguser/:email", database.GetRegUser)
+	v.Post("/reguser", database.CreateRegUser)
+
+	v.Get("/unreguser/:email", database.GetUnRegUser)
+	v.Post("/reguser", database.CreateUnRegUser)
 }
 
 func notFoundPage(c *fiber.Ctx) error {

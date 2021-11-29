@@ -1,4 +1,4 @@
-package routes
+spackage routes
 
 import (
 	//	"fmt"
@@ -15,4 +15,5 @@ func PageRoutes(app *fiber.App) {
 	app.Static("/main", frontendBuildPath)
 	app.Static("/form", frontendBuildPath)
 	app.Static("/form-builder", frontendBuildPath)
+	app.Static("/test", frontendBuildPath)
 }
