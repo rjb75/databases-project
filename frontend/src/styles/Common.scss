@@ -1,0 +1,44 @@
+@import './colors.scss';
+
+.btn {
+    border-radius: 30px;
+    padding: 15px;
+    width: fit-content;
+    text-decoration: none;
+
+}
+
+.btn-primary {
+    @each $key, $val in $colors {
+        &--#{$key} {
+            background-color: $val;
+            color: $color-white;
+        }
+    }
+}
+
+.btn-secondary {
+    @each $key, $val in $colors {
+        &--#{$key} {
+            color: $val;
+            background-color: $color-white;
+            border: 1px solid $val;
+        }
+    }
+}
+
+.border {
+    @each $key, $val in $colors {
+        &--#{$key} {
+            border: 3px solid $val;
+        }
+    }
+}
+
+.text {
+    @each $key, $val in $colors {
+        &--#{$key} {
+            color: $val;
+        }
+    }
+}
