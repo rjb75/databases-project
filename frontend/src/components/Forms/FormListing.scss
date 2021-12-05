@@ -1,0 +1,21 @@
+@import "../../styles/colors";
+
+.form-listing-container {
+    display: flex;
+    flex-direction: column;
+    .listing-title {
+        font-size: 1.75em;
+        color: $color-purple-dark;
+        margin: 0 0 0 50%;
+    }
+    .listing-questions {
+        margin-left: 50%;
+    }
+    .view-responses {
+        margin-left: 50%;
+    }
+    .edit-form-link {
+        font-style: oblique;
+        margin-left: auto;
+    }
+}
