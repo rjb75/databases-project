@@ -17,14 +17,24 @@ const Navbar: React.FC<NavbarProps> = props => {
   const defaultRoutes: Array<NavbarLink> = [
     {
       link: '/',
-      text: 'Home',
+      text: 'Dashboard',
       enabled: true,
     },
     {
-      link: '/login',
-      text: 'Login',
+      link: '/form',
+      text: 'Forms',
       enabled: true,
     },
+    {
+      link: '/sessions',
+      text: 'Sessions',
+      enabled: true,
+    },
+    {
+      link: '/accommodations',
+      text: 'Accommodations',
+      enabled: true,
+    }
   ];
   const { links = defaultRoutes } = props;
   const confName = 'Technology Conference';
