@@ -18,6 +18,7 @@ function App() {
         <Routes>
           <Route path="/" element={<FormBuilder />} />
           <Route path="/form" element={<FormGenerator formContent=''/>} />
+          <Route path="/form-builder" element={<FormBuilder />} />
           <Route path="/main" element={<SampleSignout />} />
         </Routes>
       </Router>

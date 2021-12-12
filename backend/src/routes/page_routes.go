@@ -1,17 +1,18 @@
 package routes
 
 import (
-//	"fmt"
+	//	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
-
-func PageRoutes(app *fiber.App){
-	const frontendBuildPath =  "../../frontend/build"
+func PageRoutes(app *fiber.App) {
+	const frontendBuildPath = "../../frontend/build"
 	app.Use(cors.New())
 
-	app.Static("/",frontendBuildPath)
+	app.Static("/", frontendBuildPath)
 	app.Static("/main", frontendBuildPath)
+	app.Static("/form", frontendBuildPath)
+	app.Static("/form-builder", frontendBuildPath)
 }
