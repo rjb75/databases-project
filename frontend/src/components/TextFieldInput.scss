@@ -2,22 +2,22 @@
 
 .text-field-container {
   width: 100%;
-  .form-control {
+  .text-field-form-control {
     display: flex;
     flex-direction: column;
     width: 100%;
   }
 
-  .form-control > input {
+  .text-field-form-control > input {
     background-color: $color-red;
     border: 1.9px solid $color-black;
     margin-top: 5px;
-    height: 30px;
+    height: 35px;
     border-radius: 10px;
     padding: 5px 2%;
   }
 
-  .form-control > input:focus {
+  .text-field-form-control > input:focus {
     background-color: #f39fa5;
   }
 

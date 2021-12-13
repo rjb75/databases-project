@@ -21,6 +21,7 @@
   }
 
   .login-header {
+    padding-top: 15px;
     background-color: $color-red;
     height: 40px;
     display: flex;
@@ -47,6 +48,7 @@
   }
 
   .login-inputs-container > h2 {
+    margin-top: 15px;
     color: $color-black;
     font-family: Poppins;
   }
@@ -62,6 +64,11 @@
     font-size: 0.7rem;
     color: $color-gray;
     font-style: italic;
+    cursor: pointer;
+  }
+
+  .login-redirect-link:hover {
+    text-decoration: underline;
   }
 
   .login-submit-button {

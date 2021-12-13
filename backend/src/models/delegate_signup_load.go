@@ -1,6 +1,6 @@
 package models
 
-type Signup_load struct {
+type Delegate_signup_load struct {
 	Email               string `json:"Email"`
 	Password			string `json:"Password"`
 	F_name              string `json:"F_name"`

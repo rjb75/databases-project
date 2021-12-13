@@ -16,7 +16,7 @@ const TextFieldInput: React.FC<TextFieldInputProps> = props => {
 
   return (
     <div className="text-field-container">
-      <div className="form-control">
+      <div className="text-field-form-control">
         <input
           type={props.isPassword ? 'password' : 'text'}
           value={props.input}

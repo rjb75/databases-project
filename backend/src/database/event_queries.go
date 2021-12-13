@@ -515,7 +515,7 @@ func GetSchool(c *fiber.Ctx) error{
 	result := DATABASE.QueryRow("SELECT * FROM School Where id::text='" + c.Params("id")  +"';")
 
 	var school models.School
-	err := result.Scan(&school.Id, &school.Name, &school.Delegates, &school.Country, &school.Province, &school.Street_address, &school.Postal_code)
+	err := result.Scan(&school.Id, &school.Name, &school.Country, &school.Province, &school.Street_address, &school.Postal_code)
 
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
@@ -524,12 +524,31 @@ func GetSchool(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success", "data": school})
 }
 
+func GetSchools(c *fiber.Ctx) error{
+	rows, err := DATABASE.Query("SELECT * FROM school;")
 
-func CreateSchool(c *fiber.Ctx) error{
-	if(CheckAuth(c) == true){ //Error Check
-		return nil
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
 	}
-	
+
+	var schoolsTable []models.School
+	for rows.Next() {
+		var school models.School
+
+		err = rows.Scan(&school.Id, &school.Name, &school.Capacity, &school.Country, &school.Province, &school.Street_address, &school.Postal_code)
+		if err != nil {
+		//	return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
+		}
+		
+		schoolsTable = append(schoolsTable, models.School{Id: school.Id, Name: school.Name, Capacity: school.Capacity, Country: school.Country, 
+		Province: school.Province, Street_address: school.Street_address, Postal_code: school.Postal_code})
+	}
+
+	return c.Status(200).JSON(fiber.Map{"status": "success", "data": schoolsTable})
+}
+
+
+func CreateSchool(c *fiber.Ctx) error{	
 	//Load Model
 	school := new(models.School)
 	err := c.BodyParser(school)
@@ -542,8 +561,8 @@ func CreateSchool(c *fiber.Ctx) error{
 
 	//Add to Database
 	row := DATABASE.QueryRow(
-		`INSERT INTO School(Id, Name, Delegates, Country, Province, Street_address, Postal_code) VALUES ($1, $2, $3, $4, $5, $6, $7);`,
-		school.Id, school.Name, school.Delegates, school.Country, school.Province, school.Street_address, school.Postal_code)
+		`INSERT INTO School(Id, Name, Capacity, Country, Province, Street_address, Postal_code) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6);`,
+		school.Name, school.Capacity, school.Country, school.Province, school.Street_address, school.Postal_code)
 
 	//SQL Error Check
 	if row.Err() != nil {

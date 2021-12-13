@@ -1,9 +1,9 @@
 package models
 
 type School struct {
-	Id             int    `json:"Id"`
+	Id             string `json:"Id"`
 	Name           string `json:"Name"`
-	Delegates      int    `json:"Delegates"`
+	Capacity		int   `json:"Capacity"`
 	Country        string `json:"Country"`
 	Province       string `json:"Province"`
 	Street_address string `json:"Street_address"`
