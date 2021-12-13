@@ -87,3 +87,12 @@ export enum Languages {
   Welsh = 'WELSH',
   Xhosa = 'XHOSA',
 }
+
+export enum PRONOUNS {
+  hehim = 'he/him',
+  sheher = 'she/her',
+  theythem = 'they/them',
+  zezir = 'ze/sir',
+  name = 'name',
+  other = 'other'
+}
