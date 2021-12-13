@@ -75,6 +75,7 @@ CREATE TABLE IF NOT EXISTS FORM
   Created_by VARCHAR(64) NOT NULL,
   PRIMARY KEY (ID),
   FOREIGN KEY (Created_by) REFERENCES ORGANIZER(Email)
+  FOREIGN KEY (Event_id) REFERENCES EVENT(ID)
 );
 
 
@@ -90,7 +91,7 @@ CREATE TABLE IF NOT EXISTS IS_ORGANIZING
 CREATE TABLE IF NOT EXISTS SCHOOL
 (
   ID UUID NOT NULL DEFAULT uuid_generate_v1(),
-  Name VARCHAR(30) NOT NULL,
+  Name VARCHAR(60) NOT NULL,
   Capacity INT,
   Country VARCHAR(30) NOT NULL,
   Province VARCHAR(30),
@@ -125,8 +126,10 @@ CREATE TABLE IF NOT EXISTS SESSION
 (
   Session_number UUID NOT NULL DEFAULT uuid_generate_v1(),
   Location VARCHAR(30) NOT NULL,
-  Start_time TIME (0) NOT NULL,
+  Start_time timestamp (0) NOT NULL,
   Duration_minutes INT NOT NULL,
+  Title VARCHAR(60) NOT NULL,
+  Description VARCHAR(250) NOT NULL,
   PRIMARY KEY (Session_number)
 );
 
