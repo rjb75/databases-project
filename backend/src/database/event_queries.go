@@ -7,6 +7,7 @@ import (
 	_ "github.com/lib/pq"
 	"ucalgary.ca/cpsc441/eventmanagment/models"
 )
+
 func GetTicket(c *fiber.Ctx) error{
 	//Call SQL
 	if(CheckAuth(c) == true){ //Error Check
