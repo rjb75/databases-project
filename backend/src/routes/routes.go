@@ -12,20 +12,22 @@ func RegisterRoutes(app *fiber.App) {
 	PageRoutes(app)
 
 	//Api Version Configuration
-	api := app.Group("/api") 	// /api
-	v1 := api.Group("/v1") 		// /api/v1
+	api := app.Group("/api") // /api
+	v1 := api.Group("/v1")   // /api/v1
+	v2 := api.Group("/v2")   // /api/v2
 
 	//Api Routes
 	authRoutes(v1)
 	personRoutes(v1)
 	userRoutes(v1)
-	eventRoutes(v1);
+	eventRoutes(v1)
+	customRoutes(v2)
 
 	//Final MiddleWare
 	app.Use(notFoundPage)
 }
 
-func authRoutes(v fiber.Router){
+func authRoutes(v fiber.Router) {
 	v.Post("/login", database.Login)
 	v.Post("/register", database.Register)
 	v.Post("/register/organizer", database.RegisterOrganizer)
@@ -33,7 +35,7 @@ func authRoutes(v fiber.Router){
 	v.Post("/signout", database.SignOut)
 }
 
-func personRoutes(v fiber.Router){
+func personRoutes(v fiber.Router) {
 	v.Get("/persons", database.GetPersons)
 
 	v.Get("/person/:email", database.GetPerson)
@@ -41,7 +43,7 @@ func personRoutes(v fiber.Router){
 	v.Delete("/person/:email", database.DeletePerson)
 }
 
-func userRoutes(v fiber.Router){
+func userRoutes(v fiber.Router) {
 	v.Get("/reguser/:email", database.GetRegUser)
 	v.Post("/reguser", database.CreateRegUser)
 
@@ -49,8 +51,14 @@ func userRoutes(v fiber.Router){
 	v.Post("/reguser", database.CreateUnRegUser)
 }
 
+func customRoutes(v fiber.Router) {
+	v.Post("/event", database.CreateEvent_CC)
+	v.Post("/attendee", database.GenerateAttendeeId_CC)
+	v.Get("/attendee/:event_id", database.GetAttendeesByEventId_CC)
 
-func eventRoutes(v fiber.Router){
+}
+
+func eventRoutes(v fiber.Router) {
 	v.Get("/ticket/:attendee_id", database.GetTicket)
 	v.Post("/ticket", database.CreateTicket)
 	v.Delete("/ticket/:attendee_id", database.DeleteTicket)
@@ -65,7 +73,7 @@ func eventRoutes(v fiber.Router){
 	v.Post("/form/complete", database.CreateCompleteForm)
 	v.Delete("/form/:id", database.DeleteForm)
 
-    v.Get("/event/:id", database.GetEvent)
+	v.Get("/event/:id", database.GetEvent)
 	v.Post("/event", database.CreateEvent)
 	v.Delete("/event/:id", database.DeleteEvent)
 
@@ -92,7 +100,6 @@ func eventRoutes(v fiber.Router){
 	v.Post("/school", database.CreateSchool)
 	v.Delete("/school/:id", database.DeleteSchool)
 }
-
 
 func notFoundPage(c *fiber.Ctx) error {
 	return c.SendStatus(404) // 404 "Not Found"

@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS PERSON
   Dietary_restriction VARCHAR(30),
   PRIMARY KEY(Email)
 );
-
+  
 CREATE TABLE IF NOT EXISTS ATTENDEE
 (
   Attendee_id UUID NOT NULL DEFAULT uuid_generate_v1(),
