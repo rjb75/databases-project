@@ -19,6 +19,7 @@ func RegisterRoutes(app *fiber.App) {
 	authRoutes(v1)
 	personRoutes(v1)
 	userRoutes(v1)
+	eventRoutes(v1);
 
 	//Final MiddleWare
 	app.Use(notFoundPage)
@@ -26,7 +27,7 @@ func RegisterRoutes(app *fiber.App) {
 
 func authRoutes(v fiber.Router){
 	v.Post("/login", database.Login)
-	v.Post("/register", database.Register)
+	v.Post("/register", database.RegisterDelegate)
 	v.Post("/refresh", database.Refresh)
 	v.Post("/signout", database.SignOut)
 }
@@ -80,6 +81,7 @@ func eventRoutes(v fiber.Router){
 	//v.Get("/accommodation/attendees/:room_number&:attendee_id&:email", database.GetAccommodation)
 
 	v.Get("/school/:id", database.GetSchool)
+	v.Get("/schools", database.GetSchools)
 	v.Post("/school", database.CreateSchool)
 	v.Delete("/school/:id", database.DeleteSchool)
 }

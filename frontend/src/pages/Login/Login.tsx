@@ -84,9 +84,9 @@ const LogIn: React.FC = () => {
               />
 
               <div className="login-redirect-container">
-                <a className="login-redirect-link" href="#">
+                <span className="login-redirect-link" onClick={() => navigate('/signup')}>
                   Need an Account?
-                </a>
+                </span>
                 <a className="login-redirect-link" href="#">
                   Forgot Your Password?
                 </a>

@@ -12,6 +12,7 @@
   }
 
   .signup-form-container {
+    padding-top: 15px;
     width: 100%;
     box-shadow: 0px 100px 80px rgba(0, 0, 0, 0.07), 0px 41.7776px 33.4221px rgba(0, 0, 0, 0.0503198),
       0px 22.3363px 17.869px rgba(0, 0, 0, 0.0417275), 0px 12.5216px 10.0172px rgba(0, 0, 0, 0.035),
@@ -49,6 +50,57 @@
     transition: all 0.5s;
     transform: scale(1.07);
   }
+
+  .signup-add-school-button {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 20px;
+    margin-top: -15px;
+    color: $color-dark-blue;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+
+  .signup-add-school-button:hover {
+    text-decoration: underline;
+  }
+}
+
+.add-school-container {
+  .add-school-inner-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .add-school-inner-container > .text-field-container {
+    margin-bottom: 10px;
+  }
+
+  .signup-dialog-title {
+    color: $color-black;
+    font-family: Poppins;
+  }
+
+  .add-school-submit-button {
+    margin: auto;
+    background-color: $color-yellow;
+    color: $color-white;
+    height: 30px;
+    border-radius: 30px;
+    width: 30%;
+    text-transform: uppercase;
+    margin: 25px 0px;
+    cursor: pointer;
+  }
+
+  .add-school-submit-button:hover {
+    transition: all 0.5s;
+    transform: scale(1.07);
+  }
 }
 
 @media screen and (min-width: 1285px) {
@@ -64,12 +116,11 @@
 
   .signup-left-logo-container {
     align-items: center;
-}
+  }
 
-.signup-page-container {
+  .signup-page-container {
     margin-right: 5%;
-}
-
+  }
 }
 
 @media screen and (max-width: 1285px) {
@@ -82,7 +133,7 @@
   }
   .signup-left-logo-container {
     align-items: center;
-}
+  }
 }
 
 @media (max-width: 900px) {
@@ -96,7 +147,7 @@
   }
 
   .signup-left-logo-container {
-      align-items: flex-start;
+    align-items: flex-start;
   }
 }
 
@@ -107,9 +158,8 @@
   }
 }
 
-
 @media (max-width: 400px) {
-    .inner-signup-page-container {
-      margin: 0px 0px;
-    }
+  .inner-signup-page-container {
+    margin: 0px 0px;
   }
+}

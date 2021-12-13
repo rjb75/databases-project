@@ -20,11 +20,11 @@ const DropDownField: React.FC<DropDownFieldProps> = props => {
 
   return (
     <div className="drop-down-field-container">
-      <div className="form-control">
-        <select value={props.input} onChange={handleValueChange}>
+      <div className="drop-down-form-control">
+        <select value={props.input}  onChange={handleValueChange}>
         <option value="" disabled selected>{props.placeHolder}</option>
-          {props.options.map((o: Option) => (
-            <option value={o.value}>{o.label}</option>
+          {props.options.map((o: Option, i: number) => (
+            <option key={i} value={o.value}>{o.label}</option>
           ))}
         </select>
         <div className="errors">{props.error}</div>

@@ -18,7 +18,8 @@ function App() {
     <Provider store={store}>
       <Router>
         <Routes>
-          <Route path="/" element={<FormBuilder />} />
+          <Route path="/" element={<LogIn />} />
+          <Route path="/signup" element={<RoleSelection />} />
           <Route path="/form" element={<FormGenerator formContent=''/>} />
           <Route path="/form-builder" element={<FormBuilder />} />
           <Route path="/main" element={<SampleSignout />} />

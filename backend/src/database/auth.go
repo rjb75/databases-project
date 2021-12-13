@@ -56,8 +56,8 @@ func Login(c *fiber.Ctx) error {
 	return c.Status(200).JSON(fiber.Map{"status": "success", "access": accessToken, "refresh": refreshToken})
 }
 
-func Register(c *fiber.Ctx) error {
-	signupLoad := new(models.Signup_load)
+func RegisterDelegate(c *fiber.Ctx) error {
+	signupLoad := new(models.Delegate_signup_load)
 	err := c.BodyParser(signupLoad)
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": "failed to process inputs", "data": err})

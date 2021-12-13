@@ -12,6 +12,7 @@ func PageRoutes(app *fiber.App) {
 	app.Use(cors.New())
 
 	app.Static("/", frontendBuildPath)
+	app.Static("/signup", frontendBuildPath)
 	app.Static("/main", frontendBuildPath)
 	app.Static("/form", frontendBuildPath)
 	app.Static("/form-builder", frontendBuildPath)
