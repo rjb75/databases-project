@@ -202,6 +202,23 @@ const SignUp: React.FC<SignUpProps> = props => {
       return;
     }
     if (props.role == UserRole.Organizer) {
+      axiosInstance
+        .post('api/v1/register/organizer', {
+          Email: email,
+          Password: password,
+          F_name: firstName,
+          M_name: middleName,
+          L_name: lastName,
+          Pronouns: pronouns,
+          Dietary_restriction: dietaryRestriction,
+          Preferred_language: language,
+          Role: props.role,
+        })
+        .then(res => {
+          navigate('/');
+          console.log('organizer signup response: ', res);
+        })
+        .catch(err => console.log('organizer signup error: ', err));
     } else {
       axiosInstance
         .post('api/v1/register', {
@@ -214,6 +231,8 @@ const SignUp: React.FC<SignUpProps> = props => {
           Dietary_restriction: dietaryRestriction,
           Preferred_language: language,
           Role: props.role,
+          School_id: school,
+          Job_title: props.role == UserRole.HeadDelegate ? headDelegateTitle : null,
         })
         .then(res => {
           navigate('/');
