@@ -11,6 +11,7 @@ import FormGenerator from './components/FormGenerator';
 
 import './styles/Main.scss';
 import TextAjax from './components/TestAjax';
+import SessionsPage from './pages/Sessions/SessionsPage';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path="/form-builder" element={<FormBuilder />} />
           <Route path="/main" element={<SampleSignout />} />
           <Route path="/test" element={<TextAjax />} />
+          <Route path="/sessions" element={<SessionsPage />} />
         </Routes>
       </Router>
     </Provider>

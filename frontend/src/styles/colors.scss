@@ -1,5 +1,5 @@
 $color-purple: #A562E4;
-$color-dark-purple: #922FEE;
+$color-purple-dark: #922FEE;
 $color-red: #E5616A;
 $color-black: #4F4F4F;
 $color-gray: #828282;
@@ -8,3 +8,16 @@ $color-orange: #FF9E48;
 $color-yellow: #FFC15C;
 $color-white: #FFFFFF;
 $color-dark-blue: #003d5b;
+
+$colors: (
+    "purple": $color-purple,
+    "purple-dark": $color-purple-dark,
+    "red": $color-red,
+    "black": $color-black,
+    "gray": $color-gray,
+    "gray-light": $color-gray-light,
+    "orange": $color-orange,
+    "yellow": $color-yellow,
+    "white": $color-white,
+    "dark-blue": $color-dark-blue
+);
