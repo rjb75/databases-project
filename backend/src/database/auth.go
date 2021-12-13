@@ -56,8 +56,8 @@ func Login(c *fiber.Ctx) error {
 	return c.Status(200).JSON(fiber.Map{"status": "success", "access": accessToken, "refresh": refreshToken})
 }
 
-func RegisterDelegate(c *fiber.Ctx) error {
-	signupLoad := new(models.Delegate_signup_load)
+func Register(c *fiber.Ctx) error {
+	signupLoad := new(models.User_signup_load)
 	err := c.BodyParser(signupLoad)
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": "failed to process inputs", "data": err})
@@ -70,7 +70,34 @@ func RegisterDelegate(c *fiber.Ctx) error {
 	}
 
 	insertErr := RegisterUser(signupLoad.Email, hashedPassword, signupLoad.F_name, signupLoad.M_name,
-		signupLoad.L_name, signupLoad.Pronouns, signupLoad.Dietary_restriction, signupLoad.Preferred_language, signupLoad.Role)
+		signupLoad.L_name, signupLoad.Pronouns, signupLoad.Dietary_restriction, signupLoad.Preferred_language, 
+		signupLoad.Role, signupLoad.School_id, signupLoad.Job_title)
+
+	if insertErr != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "server error", "data": insertErr})
+	}
+
+	return c.Status(200).JSON(fiber.Map{"status": "success", "data": c.Body()})
+}
+
+
+
+func RegisterOrganizer(c *fiber.Ctx) error {
+	signupLoad := new(models.Organizer_signup_load)
+	err := c.BodyParser(signupLoad)
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "failed to process inputs", "data": err})
+	}
+
+	hashedPassword, err := HashAndSaltPassword(signupLoad.Password)
+
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "server error", "data": err})
+	}
+
+	insertErr := RegisterOrg(signupLoad.Email, hashedPassword, signupLoad.F_name, signupLoad.M_name,
+		signupLoad.L_name, signupLoad.Pronouns, signupLoad.Dietary_restriction, signupLoad.Preferred_language, 
+		signupLoad.Role)
 
 	if insertErr != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "server error", "data": insertErr})

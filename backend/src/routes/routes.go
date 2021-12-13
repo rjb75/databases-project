@@ -27,7 +27,8 @@ func RegisterRoutes(app *fiber.App) {
 
 func authRoutes(v fiber.Router){
 	v.Post("/login", database.Login)
-	v.Post("/register", database.RegisterDelegate)
+	v.Post("/register", database.Register)
+	v.Post("/register/organizer", database.RegisterOrganizer)
 	v.Post("/refresh", database.Refresh)
 	v.Post("/signout", database.SignOut)
 }
