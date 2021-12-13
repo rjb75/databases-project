@@ -73,7 +73,15 @@ func eventRoutes(v fiber.Router){
 	v.Get("/session/:session_number", database.GetSession)
 	v.Post("/session", database.CreateSession)
 	v.Delete("/session/:session_number", database.DeleteSession)
-	// v.Get("/stream/session/:stream_number", database.GetSessionByStream)
+	v.Get("/stream/session/:stream_number", database.GetSessionByStream)
+
+	v.Get("/accommodation/:room_number", database.GetAccommodation)
+	v.Post("/accommodation", database.CreateAccommodation)
+	//v.Get("/accommodation/attendees/:room_number&:attendee_id&:email", database.GetAccommodation)
+
+	v.Get("/school/:id", database.GetSchool)
+	v.Post("/school", database.CreateSchool)
+	v.Delete("/school/:id", database.DeleteSchool)
 }
 
 
