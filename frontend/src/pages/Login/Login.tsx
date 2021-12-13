@@ -5,6 +5,7 @@ import TextFieldInput from '../../components/TextFieldInput';
 import './Login.scss';
 import axiosInstance from '../../axios';
 import {useNavigate} from 'react-router-dom';
+import { ROOT_V1 } from '../../utils/APIConstants';
 
 interface LogInErrors {
   email: string;
@@ -41,7 +42,7 @@ const LogIn: React.FC = () => {
   const sumbitLogin = () => {
     validateData();
     axiosInstance
-      .post('api/v1/login', {
+      .post(`${ROOT_V1}/login`, {
         Email: email,
         Password: password,
       })

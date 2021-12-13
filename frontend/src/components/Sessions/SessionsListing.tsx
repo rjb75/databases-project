@@ -3,6 +3,7 @@ import axiosInstance from '../../axios';
 import { formatSessions, Session, SessionsProps } from './SessionUtils';
 import './SessionsListing.scss';
 import SessionItem from './SessionItem';
+import { ROOT_V1 } from '../../utils/APIConstants';
 
 
 const SessionsListing: React.FC<SessionsProps> = ({stream}) => {
@@ -10,7 +11,7 @@ const SessionsListing: React.FC<SessionsProps> = ({stream}) => {
 
     useEffect(() => {
         axiosInstance
-        .get(`/api/v1/stream/session/${stream}`)
+        .get(`${ROOT_V1}stream/session/${stream}`)
         .then((res) => {
             setSessions(formatSessions(res.data.data))
         })

@@ -1,5 +1,6 @@
 import {request} from 'http';
 import React, {useEffect, useState} from 'react';
+import { ROOT_V1 } from '../utils/APIConstants';
 import Table from './Table';
 import {Header} from './TableUtils';
 
@@ -50,7 +51,7 @@ function TextAjax() {
   // }, []);
 
   useEffect(() => {
-    fetch('/api/v1/person/risat@gmail.com')
+    fetch(`${ROOT_V1}/person/risat@gmail.com`)
       .then(response => response.json())
       .then(data => {
         console.log(data);

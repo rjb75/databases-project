@@ -1,13 +1,14 @@
 import React from 'react';
 import axiosInstance from '../../axios';
 import {useNavigate} from 'react-router-dom';
+import { ROOT_V1 } from '../../utils/APIConstants';
 
 const SampleSignout: React.FC = () => {
   const navigate = useNavigate();
 
   const signOut = () => {
     axiosInstance
-      .post('api/v1/signout')
+      .post(`${ROOT_V1}/signout`)
       .then(res => {
         navigate('/');
         console.log('signout response: ', res);
@@ -17,7 +18,7 @@ const SampleSignout: React.FC = () => {
 
   const getPersons = () => {
     axiosInstance
-      .get('/api/v1/persons')
+      .get(`${ROOT_V1}/persons`)
       .then(res => {
         console.log('get persons response: ', res);
       })
