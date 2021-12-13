@@ -1,0 +1,14 @@
+@import "../../styles/colors";
+
+.stream-sessions-listing {
+    list-style: none;
+    .session-list-item {
+        &:first {
+            border-top: 1px dashed $color-gray;
+        }
+        border-bottom: 1px dashed $color-gray;
+        padding: 0 20px;
+    }
+    height: 70vh;
+    overflow-y: auto;
+}
