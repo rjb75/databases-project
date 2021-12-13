@@ -206,7 +206,7 @@ func GetOrganizer(c *fiber.Ctx) error{
 	result := DATABASE.QueryRow("SELECT * FROM Form Where email ='" + c.Params("email")  +"';")
 
 	var organizer models.Organizer
-	err := result.Scan(&organizer.email, &organizer.event_id)
+	err := result.Scan(&organizer.Email, &organizer.Event_id)
 
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
@@ -233,7 +233,7 @@ func CreateOrganizer(c *fiber.Ctx) error{
 	//Add to Database
 	row := DATABASE.QueryRow(
 		`INSERT INTO Organizer(email, event_id) VALUES ($1, $2);`,
-		organizer.email, organizer.event_id)
+		organizer.Email, organizer.Event_id)
 
 	//SQL Error Check
 	if row.Err() != nil {
@@ -359,7 +359,7 @@ func GetSession(c *fiber.Ctx) error{
 		return nil
 	}
 
-	result := DATABASE.QueryRow("SELECT * FROM Session Where session_number='" + c.Params("stream_number")  +"';")
+	result := DATABASE.QueryRow("SELECT * FROM Session Where session_number::text='" + c.Params("stream_number")  +"';")
 
 	var session models.Session
 	err := result.Scan(&session.Session_number, &session.Location, &session.Start_time, &session.Duration_minutes)
@@ -407,7 +407,7 @@ func DeleteSession(c *fiber.Ctx) error{
 		return nil
 	}
 
-	rows, err := DATABASE.Query("DELETE FROM Session Where Session_number ='" + c.Params("session_number")  +"';")
+	rows, err := DATABASE.Query("DELETE FROM Session Where Session_number::text ='" + c.Params("session_number")  +"';")
 
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed", "data": rows}) //Returning success
@@ -416,20 +416,155 @@ func DeleteSession(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success"})
 }
 
-// func GetSessionByStream(c *fiber.Ctx) error{
-// 	//Call SQL
-// 	if(CheckAuth(c) == true){ //Error Check
-// 		return nil
-// 	}
+func GetSessionByStream(c *fiber.Ctx) error{
+	//Call SQL
+	if(CheckAuth(c) == true){ //Error Check
+		return nil
+	}
+	rows, err := DATABASE.Query("SELECT * FROM COMPOSED_OF Where stream_number::text='" + c.Params("stream_number")  +"';")
 
-// 	result := DATABASE.QueryRow("SELECT * FROM Session Where session_number='" + c.Params("stream_number")  +"';")
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
+	}
 
-// 	var session models.Session
-// 	err := result.Scan(&session.Session_number, &session.Location, &session.Start_time, &session.Duration_minutes)
+	var sessionsTables []models.Session
+	for rows.Next() {
+		var composed_Of models.Composed_Of
 
-// 	if err != nil {
-// 		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
-// 	}
+		err = rows.Scan(&composed_Of.Stream_number, &composed_Of.Session_number)
+		if err != nil {
+		//	return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
+		}
 
-// 	return c.Status(200).JSON(fiber.Map{"status": "success", "data": session})
-// }
+		result := DATABASE.QueryRow("SELECT * FROM Session Where session_number::text='" + composed_Of.Session_number  +"';")
+
+		var session models.Session
+		err := result.Scan(&session.Session_number, &session.Location, &session.Start_time, &session.Duration_minutes)
+	
+		if err != nil {
+			return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
+		}
+
+		sessionsTables = append(sessionsTables, models.Session{Session_number: session.Session_number, Location: session.Location, Start_time: session.Start_time, Duration_minutes: session.Duration_minutes})
+	}
+
+
+	return c.Status(200).JSON(fiber.Map{"status": "success", "data": sessionsTables})
+}
+
+
+//-------------------------------Accomodations----------------------------------
+
+func GetAccommodation(c *fiber.Ctx) error{
+	//Call SQL
+	if(CheckAuth(c) == true){ //Error Check
+		return nil
+	}
+
+	result := DATABASE.QueryRow("SELECT * FROM Accomodation Where room_number::text='" + c.Params("room_number")  +"';")
+
+	var accommodation models.Accommodation
+	err := result.Scan(&accommodation.Room_number, &accommodation.Capacity, &accommodation.Country, &accommodation.Province, &accommodation.Street_address, &accommodation.Postal_code)
+
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
+	}
+
+	return c.Status(200).JSON(fiber.Map{"status": "success", "data": accommodation})
+}
+
+
+func CreateAccommodation(c *fiber.Ctx) error{
+	if(CheckAuth(c) == true){ //Error Check
+		return nil
+	}
+	
+	//Load Model
+	accommodation := new(models.Accommodation)
+	err := c.BodyParser(accommodation)
+
+	//Handling Errors
+	if err != nil {
+		c.Status(400).JSON(fiber.Map{"error": "failed to process inputs", "data": err})
+		return nil
+	 }
+
+	//Add to Database
+	row := DATABASE.QueryRow(
+		`INSERT INTO Accomodation(Room_number, Capacity, Country, Province, Street_address, Postal_code) VALUES ($1, $2, $3, $4, $5, $6);`,
+		accommodation.Room_number, accommodation.Capacity, accommodation.Country, accommodation.Province, accommodation.Street_address, accommodation.Postal_code)
+
+	//SQL Error Check
+	if row.Err() != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Creating Accommodations failed"}) //Returning success
+	}
+
+	//Success
+	return c.Status(200).JSON(fiber.Map{"status": "success", "type": "Creating Accommodations"}) //Returning success
+}
+
+
+//-------------------------------School----------------------------------
+
+func GetSchool(c *fiber.Ctx) error{
+	//Call SQL
+	if(CheckAuth(c) == true){ //Error Check
+		return nil
+	}
+
+	result := DATABASE.QueryRow("SELECT * FROM School Where id::text='" + c.Params("id")  +"';")
+
+	var school models.School
+	err := result.Scan(&school.Id, &school.Name, &school.Delegates, &school.Country, &school.Province, &school.Street_address, &school.Postal_code)
+
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
+	}
+
+	return c.Status(200).JSON(fiber.Map{"status": "success", "data": school})
+}
+
+
+func CreateSchool(c *fiber.Ctx) error{
+	if(CheckAuth(c) == true){ //Error Check
+		return nil
+	}
+	
+	//Load Model
+	school := new(models.School)
+	err := c.BodyParser(school)
+
+	//Handling Errors
+	if err != nil {
+		c.Status(400).JSON(fiber.Map{"error": "failed to process inputs", "data": err})
+		return nil
+	 }
+
+	//Add to Database
+	row := DATABASE.QueryRow(
+		`INSERT INTO School(Id, Name, Delegates, Country, Province, Street_address, Postal_code) VALUES ($1, $2, $3, $4, $5, $6, $7);`,
+		school.Id, school.Name, school.Delegates, school.Country, school.Province, school.Street_address, school.Postal_code)
+
+	//SQL Error Check
+	if row.Err() != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Creating School failed"}) //Returning success
+	}
+
+	//Success
+	return c.Status(200).JSON(fiber.Map{"status": "success", "type": "Creating School"}) //Returning success
+}
+
+func DeleteSchool(c *fiber.Ctx) error{
+	//Call SQL
+	if(CheckAuth(c) == true){ //Error Check
+		return nil
+	}
+
+	rows, err := DATABASE.Query("DELETE FROM School Where id::text ='" + c.Params("id")  +"';")
+
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed", "data": rows}) //Returning success
+	}
+
+	return c.Status(200).JSON(fiber.Map{"status": "success"})
+}
