@@ -5,7 +5,7 @@ import TextFieldInput from '../../components/TextFieldInput';
 import './Login.scss';
 import axiosInstance from '../../axios';
 import {useNavigate} from 'react-router-dom';
-import { ROOT_V1 } from '../../utils/APIConstants';
+import {ROOT_V1} from '../../utils/APIConstants';
 import {useTypedDispatch} from '../../hooks/reduxHooks';
 import {usersLoggedIn} from '../../actions/userActions/userActionCreator';
 
@@ -58,7 +58,9 @@ const LogIn: React.FC = () => {
   };
   return (
     <div className="login-page-container">
-      <div style={{margin: '30px 0px'}}> {/* not sure why it does not work in scss?? */}
+      <div style={{margin: '30px 0px'}}>
+        {' '}
+        {/* not sure why it does not work in scss?? */}
         <div className="inner-login-page-container">
           <div className="login-left-logo-container">
             <img className="login-logo-image" src={Logo} />
