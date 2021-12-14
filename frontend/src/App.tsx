@@ -8,6 +8,7 @@ import RoleSelection from './pages/RoleSelection/RoleSelection';
 import SignUp from './pages/SignUp/SignUp';
 import FormBuilder from './components/FormBuilder';
 import FormGenerator from './components/FormGenerator';
+import OrganizerFormTable from './pages/OrganizerFormTable/OrganizerFormTable';
 
 import './styles/Main.scss';
 import TextAjax from './components/TestAjax';
@@ -20,6 +21,7 @@ function App() {
         <Routes>
           <Route path="/" element={<LogIn />} />
           <Route path="/signup" element={<RoleSelection />} />
+          <Route path="/organizer-form" element={<OrganizerFormTable eventID='' />} />
           <Route path="/form" element={<FormGenerator formContent=''/>} />
           <Route path="/form-builder" element={<FormBuilder />} />
           <Route path="/main" element={<SampleSignout />} />

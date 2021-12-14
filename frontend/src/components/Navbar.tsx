@@ -48,19 +48,20 @@ const Navbar: React.FC<NavbarProps> = props => {
         <p className="navigation-eventtitle">{confName}</p>
         <a className="navigation-createevent">Create Event</a>
       </div>
-      {props.displayTabs == true || props.displayTabs == undefined && (
-        <div className="navigation-bottombar">
-          {links.map(l => {
-            if (l.enabled) {
-              return (
-                <NavLink className="navigation-link" key={`navitem-${l.link}`} to={l.link}>
-                  <span className="navigation-link-text">{l.text}</span>
-                </NavLink>
-              );
-            }
-          })}
-        </div>
-      )}
+      {props.displayTabs == true ||
+        (props.displayTabs == undefined && (
+          <div className="navigation-bottombar">
+            {links.map(l => {
+              if (l.enabled) {
+                return (
+                  <NavLink className="navigation-link" key={`navitem-${l.link}`} to={l.link}>
+                    <span className="navigation-link-text">{l.text}</span>
+                  </NavLink>
+                );
+              }
+            })}
+          </div>
+        ))}
     </nav>
   );
 };
