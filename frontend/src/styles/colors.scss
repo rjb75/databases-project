@@ -1,23 +1,25 @@
-$color-purple: #A562E4;
-$color-purple-dark: #922FEE;
-$color-red: #E5616A;
-$color-black: #4F4F4F;
+$color-purple: #a562e4;
+$color-purple-dark: #922fee;
+$color-red: #e5616a;
+$color-black: #4f4f4f;
 $color-gray: #828282;
-$color-gray-light: #F2F2F2;
-$color-orange: #FF9E48;
-$color-yellow: #FFC15C;
-$color-white: #FFFFFF;
+$color-gray-light: #f2f2f2;
+$color-orange: #ff9e48;
+$color-yellow: #ffc15c;
+$color-white: #ffffff;
 $color-dark-blue: #003d5b;
+$color-green: #219653;
 
 $colors: (
-    "purple": $color-purple,
-    "purple-dark": $color-purple-dark,
-    "red": $color-red,
-    "black": $color-black,
-    "gray": $color-gray,
-    "gray-light": $color-gray-light,
-    "orange": $color-orange,
-    "yellow": $color-yellow,
-    "white": $color-white,
-    "dark-blue": $color-dark-blue
+  'purple': $color-purple,
+  'purple-dark': $color-purple-dark,
+  'red': $color-red,
+  'black': $color-black,
+  'gray': $color-gray,
+  'gray-light': $color-gray-light,
+  'orange': $color-orange,
+  'yellow': $color-yellow,
+  'white': $color-white,
+  'dark-blue': $color-dark-blue,
+  'green': $color-green,
 );

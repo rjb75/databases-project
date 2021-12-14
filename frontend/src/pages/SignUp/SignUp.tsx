@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import Logo from '../../assets/logo.svg';
-import TextFieldInput from '../../components/TextFieldInput';
-import DropDownField from '../../components/DropDownField';
+import TextFieldInput from '../../components/InputFields/TextFieldInput';
+import DropDownField from '../../components/InputFields/DropDownField';
 import {Languages} from '../../models/Enums';
 import './SignUp.scss';
 import {UserRole, DietaryRestriction} from '../../models/Enums';

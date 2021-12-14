@@ -1,14 +1,14 @@
 import React from 'react';
 import './FormListing.scss';
 
-export interface FormListingProps {
+export interface OrganizerFormListingProps {
   title: string;
   questions: number;
   responses: number;
   editable: boolean;
 }
 
-const FormListing: React.FC<FormListingProps> = props => {
+const OrganizerFormListing: React.FC<OrganizerFormListingProps> = props => {
   return (
     <div className="form-listing-container">
       <div className="form-listing-inner-container">
@@ -21,4 +21,4 @@ const FormListing: React.FC<FormListingProps> = props => {
   );
 };
 
-export default FormListing;
+export default OrganizerFormListing;

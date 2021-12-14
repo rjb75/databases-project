@@ -1,0 +1,23 @@
+@import '../../styles/colors.scss';
+
+.delegate-form-cards-container {
+
+  .delegate-form-cards-inner-container {
+    margin: 0px 6%;
+  }
+
+  .delegate-form-cards-grid-container {
+    width: 100%;
+    padding: 0px 5%;
+    margin: 60px 0px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    align-items: space-between;
+    justify-content: space-between;
+    grid-gap: 20px;
+  }
+
+  .delegate-crads-card-wrapper {
+    margin: auto;
+  }
+}
