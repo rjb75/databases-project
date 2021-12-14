@@ -1,7 +1,7 @@
 @import '../../styles/colors';
 
 .form-listing-container {
-    min-width: 300px;
+  min-width: 300px;
   .form-listing-inner-container {
     display: flex;
     flex-direction: column;
@@ -30,9 +30,9 @@
     margin-top: -10px;
   }
   .view-responses {
-      margin-top: 20px;
-      color: $color-white;
-      margin-bottom: 20px;
+    margin-top: 20px;
+    color: $color-white;
+    margin-bottom: 20px;
   }
 
   .edit-form-link {
@@ -52,7 +52,7 @@
     white-space: nowrap;
   }
 
-  .form-listings-fit{
+  .form-listings-fit {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -73,4 +73,17 @@
     align-self: flex-start;
   }
 
+  .delegate-form-names-title {
+    font-weight: bolder;
+    margin-top: 20px;
+  }
+
+  .form-listing-delegate-name {
+    &-complete {
+      color: $color-green;
+    }
+    &-uncomplete {
+      color: $color-red;
+    }
+  }
 }

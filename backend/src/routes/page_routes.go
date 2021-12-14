@@ -15,6 +15,7 @@ func PageRoutes(app *fiber.App) {
 	app.Static("/signup", frontendBuildPath)
 	app.Static("/organizer-form-cards", frontendBuildPath)
 	app.Static("/delegate-form-cards", frontendBuildPath)
+	app.Static("/head-delegate-form-cards", frontendBuildPath)
 	app.Static("/main", frontendBuildPath)
 	app.Static("/form", frontendBuildPath)
 	app.Static("/form-builder", frontendBuildPath)
