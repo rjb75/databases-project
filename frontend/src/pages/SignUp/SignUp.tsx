@@ -3,7 +3,7 @@ import Logo from '../../assets/logo.svg';
 import TextFieldInput from '../../components/TextFieldInput';
 import DropDownField from '../../components/DropDownField';
 import {Languages} from '../../models/Enums';
-import './Signup.scss';
+import './SignUp.scss';
 import {UserRole, DietaryRestriction} from '../../models/Enums';
 import axiosInstance from '../../axios';
 import {useNavigate} from 'react-router-dom';
