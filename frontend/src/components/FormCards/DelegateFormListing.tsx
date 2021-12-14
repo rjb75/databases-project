@@ -1,10 +1,18 @@
 import React from 'react';
 import './FormListing.scss';
+import {UserRole} from '../../models/Enums';
+
+export interface DelegateFormCompletion {
+  name: string;
+  completed: boolean;
+}
 
 export interface DelegateFormListingProps {
   title: string;
   conference: string;
   completed: boolean;
+  userType: UserRole;
+  delegates?: Array<DelegateFormCompletion>;
 }
 
 const DelegateFormListing: React.FC<DelegateFormListingProps> = props => {
@@ -21,6 +29,20 @@ const DelegateFormListing: React.FC<DelegateFormListingProps> = props => {
           >
             {props.completed ? 'Completed' : 'Complete Form'}
           </a>
+          {props.userType == UserRole.HeadDelegate && (
+            <div className="form-listing-delegates-list-container align-flex-start">
+              <h4 className='delegate-form-names-title'>Form Status</h4>
+              {props.delegates.map(d => (
+                <p
+                  className={`form-listing-delegate-name-${
+                    d.completed ? 'complete' : 'uncomplete'
+                  }`}
+                >
+                  {d.name}
+                </p>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
