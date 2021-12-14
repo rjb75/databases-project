@@ -12,6 +12,7 @@ export interface NavbarLink {
 export interface NavbarProps {
   links?: Array<NavbarLink>;
   displayTabs?: boolean;
+  activeLink?: string;
 }
 
 const Navbar: React.FC<NavbarProps> = props => {

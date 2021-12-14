@@ -5,10 +5,10 @@ import {store} from './store';
 import LogIn from './pages/Login/Login';
 import SampleSignout from './pages/SampleSignout/SampleSignout';
 import RoleSelection from './pages/RoleSelection/RoleSelection';
-import SignUp from './pages/SignUp/SignUp';
 import FormBuilder from './components/FormBuilder';
 import FormGenerator from './components/FormGenerator';
 import OrganizerFormTable from './pages/OrganizerFormTable/OrganizerFormTable';
+import OrganizerFormCards from './pages/OrganizerFormCards/OrganizerFormCards';
 
 import './styles/Main.scss';
 import TextAjax from './components/TestAjax';
@@ -22,6 +22,7 @@ function App() {
           <Route path="/" element={<LogIn />} />
           <Route path="/signup" element={<RoleSelection />} />
           <Route path="/organizer-form" element={<OrganizerFormTable eventID='' />} />
+          <Route path="/organizer-form-cards" element={<OrganizerFormCards />} />
           <Route path="/form" element={<FormGenerator formContent=''/>} />
           <Route path="/form-builder" element={<FormBuilder />} />
           <Route path="/main" element={<SampleSignout />} />
