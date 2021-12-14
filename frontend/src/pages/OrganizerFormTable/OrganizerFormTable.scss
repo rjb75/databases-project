@@ -1,0 +1,42 @@
+@import '../../styles/colors.scss';
+
+.organizer-form-table-container {
+  .organizer-form-table-buttons-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+
+  .organizer-form-table-inner-container {
+    margin: 0px 6%;
+  }
+
+  .organizer-form-table-title {
+    color: $color-purple-dark;
+    font-weight: bolder;
+    margin-top: 40px;
+    margin-bottom: 10px;
+  }
+
+  .organizer-form-table-container {
+    margin-left: -10px;
+  }
+
+  .organizer-form-table-button {
+    font-weight: bold;
+    text-align: center;
+    color: $color-black;
+    height: 40px;
+    border-radius: 30px;
+    background-color: #e0d9d9;
+    width: 15%;
+    min-width: 110px;
+    line-height: 40px;
+    cursor: pointer;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}

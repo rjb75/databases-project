@@ -14,11 +14,11 @@ module.exports = {
   watch: process.env.ENV === 'development',
   output: {
     path: path.resolve(__dirname, 'build'),
-    filename: 'js/[name].bundle.js',
+    filename: 'js/[name].hhh.js',
   },
   devtool: 'source-map',
   resolve: {
-    extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
+    extensions: ['.ts', '.tsx', '.js', '.jsx', '.json', '.scss'],
   },
   module: {
     rules: [
