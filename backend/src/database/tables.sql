@@ -19,8 +19,6 @@ CREATE TABLE IF NOT EXISTS ATTENDEE
   PRIMARY KEY(Attendee_id)
 );
 
-alter table REGISTERED_USER alter column Attendee_id drop not null;
-
 CREATE TABLE IF NOT EXISTS REGISTERED_USER
 (
   Email VARCHAR(64) NOT NULL,

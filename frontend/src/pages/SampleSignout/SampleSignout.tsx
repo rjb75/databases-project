@@ -2,9 +2,12 @@ import React from 'react';
 import axiosInstance from '../../axios';
 import {useNavigate} from 'react-router-dom';
 import { ROOT_V1 } from '../../utils/APIConstants';
+import { useTypedSelector } from '../../hooks/reduxHooks';
+import {selectUserData} from '../../actions/userActions/userSelectors';
 
 const SampleSignout: React.FC = () => {
   const navigate = useNavigate();
+  const userData = useTypedSelector(selectUserData);
 
   const signOut = () => {
     axiosInstance
@@ -28,6 +31,9 @@ const SampleSignout: React.FC = () => {
     <div>
       <button onClick={signOut}>Sign Out</button>
       <button onClick={getPersons}>Get Persons</button>
+      <div>
+        userInfo: {JSON.stringify(userData)}
+      </div>
     </div>
   );
 };
