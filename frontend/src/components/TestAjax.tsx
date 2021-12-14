@@ -1,8 +1,8 @@
 import {request} from 'http';
 import React, {useEffect, useState} from 'react';
 import { ROOT_V1 } from '../utils/APIConstants';
-import Table from './Table';
-import {Header} from './TableUtils';
+import Table from './Table/Table';
+import {Header} from './Table/TableUtils';
 
 function TextAjax() {
   const [result, setResult] = useState([]);

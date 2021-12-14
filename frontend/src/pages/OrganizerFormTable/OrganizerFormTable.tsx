@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import Navbar from '../../components/Navbar';
 import './OrganizerFormTable.scss';
-import Table from '../../components/Table';
+import Table from '../../components/Table/Table';
 
 interface OrganizerFormTableProps {
   eventID: string;

@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import LoginBackground from '../../assets/loginFormBackground.svg';
 import Logo from '../../assets/logo.svg';
-import TextFieldInput from '../../components/TextFieldInput';
+import TextFieldInput from '../../components/InputFields/TextFieldInput';
 import './Login.scss';
 import axiosInstance from '../../axios';
 import {useNavigate} from 'react-router-dom';
