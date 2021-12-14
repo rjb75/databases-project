@@ -6,6 +6,8 @@ import './Login.scss';
 import axiosInstance from '../../axios';
 import {useNavigate} from 'react-router-dom';
 import { ROOT_V1 } from '../../utils/APIConstants';
+import {useTypedDispatch} from '../../hooks/reduxHooks';
+import {usersLoggedIn} from '../../actions/userActions/userActionCreator';
 
 interface LogInErrors {
   email: string;
@@ -14,6 +16,7 @@ interface LogInErrors {
 
 const LogIn: React.FC = () => {
   const navigate = useNavigate();
+  const dispatch = useTypedDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<LogInErrors>({
@@ -49,6 +52,7 @@ const LogIn: React.FC = () => {
       .then(res => {
         navigate('/main');
         console.log('login response: ', res);
+        dispatch(usersLoggedIn(res.data.data));
       })
       .catch(err => console.log('login error: ', err));
   };

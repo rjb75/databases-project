@@ -53,7 +53,23 @@ func Login(c *fiber.Ctx) error {
 		SameSite: "lax",
 	})
 
-	return c.Status(200).JSON(fiber.Map{"status": "success", "access": accessToken, "refresh": refreshToken})
+	result := DATABASE.QueryRow(
+		`SELECT * 
+	FROM PERSON Where Email = $1;`,  loginLoad.Email)
+
+	var response models.Login_response
+
+	result.Scan(&response.Email, &response.F_name, &response.M_name, &response.L_name, &response.Pronouns,
+	&response.Preferred_language, &response.Dietary_restriction)
+
+
+	result2 := DATABASE.QueryRow(
+		`SELECT Role, Attendee_id, Job_title 
+	FROM REGISTERED_USER Where Email = $1;`,  loginLoad.Email)
+
+	result2.Scan(&response.Role, &response.Attendee_id, &response.Job_title)
+
+	return c.Status(200).JSON(fiber.Map{"status": "success", "access": accessToken, "refresh": refreshToken, "data": response})
 }
 
 func Register(c *fiber.Ctx) error {

@@ -55,7 +55,11 @@ const Navbar: React.FC<NavbarProps> = props => {
             {links.map(l => {
               if (l.enabled) {
                 return (
-                  <NavLink className="navigation-link" key={`navitem-${l.link}`} to={l.link}>
+                  <NavLink
+                    className={`navigation-link ${props.activeLink == l.text ? ' active' : ''}`}
+                    key={`navitem-${l.link}`}
+                    to={l.link}
+                  >
                     <span className="navigation-link-text">{l.text}</span>
                   </NavLink>
                 );
