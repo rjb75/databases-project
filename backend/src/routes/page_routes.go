@@ -1,8 +1,6 @@
 package routes
 
 import (
-	//	"fmt"
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 )
@@ -13,9 +11,7 @@ func PageRoutes(app *fiber.App) {
 
 	app.Static("/", frontendBuildPath)
 	app.Static("/signup", frontendBuildPath)
-	app.Static("/organizer-form-cards", frontendBuildPath)
-	app.Static("/delegate-form-cards", frontendBuildPath)
-	app.Static("/head-delegate-form-cards", frontendBuildPath)
+	app.Static("/form-cards", frontendBuildPath)
 	app.Static("/main", frontendBuildPath)
 	app.Static("/form", frontendBuildPath)
 	app.Static("/form-builder", frontendBuildPath)

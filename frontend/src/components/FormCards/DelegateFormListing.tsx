@@ -18,7 +18,11 @@ export interface DelegateFormListingProps {
 const DelegateFormListing: React.FC<DelegateFormListingProps> = props => {
   return (
     <div className="form-listing-container">
-      <div className="form-listing-inner-container">
+      <div
+        className={`form-listing-inner-container${
+          props.userType == UserRole.HeadDelegate ? ' limit-width' : ''
+        }`}
+      >
         <div className="form-listings-fit">
           <h2 className="listing-title align-flex-start">{props.title}</h2>
           <p className="listing-conference-title">{props.conference}</p>
@@ -30,17 +34,19 @@ const DelegateFormListing: React.FC<DelegateFormListingProps> = props => {
             {props.completed ? 'Completed' : 'Complete Form'}
           </a>
           {props.userType == UserRole.HeadDelegate && (
-            <div className="form-listing-delegates-list-container align-flex-start">
-              <h4 className='delegate-form-names-title'>Form Status</h4>
-              {props.delegates.map(d => (
-                <p
-                  className={`form-listing-delegate-name-${
-                    d.completed ? 'complete' : 'uncomplete'
-                  }`}
-                >
-                  {d.name}
-                </p>
-              ))}
+            <div className="align-flex-start">
+              <h4 className="delegate-form-names-title">Form Status</h4>
+              <div className="form-listing-delegates-list-container">
+                {props.delegates.map(d => (
+                  <p
+                    className={`form-listing-delegate-name-${
+                      d.completed ? 'complete' : 'uncomplete'
+                    }`}
+                  >
+                    {d.name}
+                  </p>
+                ))}
+              </div>
             </div>
           )}
         </div>

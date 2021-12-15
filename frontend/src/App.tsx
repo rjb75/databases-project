@@ -8,9 +8,7 @@ import RoleSelection from './pages/RoleSelection/RoleSelection';
 import FormBuilder from './components/FormBuilder';
 import FormGenerator from './components/FormGenerator';
 import OrganizerFormTable from './pages/OrganizerFormTable/OrganizerFormTable';
-import OrganizerFormCards from './pages/OrganizerFormCards/OrganizerFormCards';
-import DelegateFormCards from './pages/DelegateFormCards/DelegateFormCards';
-import { UserRole } from './models/Enums';
+import FormCards from './pages/FormCards/FormCards';
 
 import './styles/Main.scss';
 import TextAjax from './components/TestAjax';
@@ -23,11 +21,9 @@ function App() {
         <Routes>
           <Route path="/" element={<LogIn />} />
           <Route path="/signup" element={<RoleSelection />} />
-          <Route path="/organizer-form" element={<OrganizerFormTable eventID='' />} />
-          <Route path="/organizer-form-cards" element={<OrganizerFormCards />} />
-          <Route path="/delegate-form-cards" element={<DelegateFormCards userType={UserRole.Delegate}/>} />
-          <Route path="/head-delegate-form-cards" element={<DelegateFormCards userType={UserRole.HeadDelegate}/>} />
-          <Route path="/form" element={<FormGenerator formContent=''/>} />
+          <Route path="/organizer-form" element={<OrganizerFormTable eventID="" />} />
+          <Route path="/form-cards" element={<FormCards />} />
+          <Route path="/form" element={<FormGenerator formContent="" />} />
           <Route path="/form-builder" element={<FormBuilder />} />
           <Route path="/main" element={<SampleSignout />} />
           <Route path="/test" element={<TextAjax />} />
