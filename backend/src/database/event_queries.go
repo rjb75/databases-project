@@ -4,6 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	_ "github.com/lib/pq"
 	"ucalgary.ca/cpsc441/eventmanagment/models"
+	"fmt"
 )
 func GetTicket(c *fiber.Ctx) error{
 	//Call SQL
@@ -78,7 +79,7 @@ func GetForm(c *fiber.Ctx) error{
 	result := DATABASE.QueryRow("SELECT * FROM Form Where Id ='" + c.Params("id")  +"';")
 
 	var form models.Form
-	err := result.Scan(&form.Id, &form.Data, &form.Created_by)
+	err := result.Scan(&form.Id, &form.Data, &form.Created_by, &form.Event_id, &form.Form_name)
 
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
@@ -86,6 +87,193 @@ func GetForm(c *fiber.Ctx) error{
 
 	return c.Status(200).JSON(fiber.Map{"status": "success", "data": form})
 }
+
+func GetFormForEvent(c *fiber.Ctx) error{
+	//Call SQL
+	if(CheckAuth(c) == true){ //Error Check
+		return nil
+	}
+
+	rows, err := DATABASE.Query("SELECT * FROM Form Where Event_id ='" + c.Params("event_id")  +"';")
+
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"})
+	}
+
+	var formsTable []models.Form
+	for rows.Next() {
+		var form models.Form
+
+		err = rows.Scan(&form.Id, &form.Data, &form.Created_by, &form.Event_id, &form.Form_name)
+		
+		formsTable = append(formsTable, form)
+	}
+
+	return c.Status(200).JSON(fiber.Map{"status": "success", "data": formsTable})
+}
+
+
+func GetOrganizerFormForEvent(c *fiber.Ctx) error {
+	//Call SQL
+	if(CheckAuth(c) == true){ //Error Check
+		return nil
+	}
+
+	rows, err := DATABASE.Query(`SELECT ID, Form_name, Data, Created_by, Event_id
+	FROM Form f 
+	Where f.Event_id =$1;`, c.Params("event_id"))
+
+	if err != nil {
+		fmt.Println(err)
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"})
+	}
+
+	var formsTable []models.OrganizerForm
+	for rows.Next() {
+		var form models.OrganizerForm
+
+		err = rows.Scan(&form.Id, &form.Form_name, &form.Data, &form.Created_by, &form.Event_id)
+
+		result, err2 := DATABASE.Query(`SELECT COUNT(Form_id) FROM COMPLETE_FORM
+		 Where Form_id =$1;`, form.Id)
+
+		 if err2 != nil {
+			continue
+		}
+
+		result.Scan(&form.Responses)
+
+		
+		formsTable = append(formsTable, form)
+	}
+
+	return c.Status(200).JSON(fiber.Map{"status": "success", "data": formsTable})
+}
+
+func GetHeadDelegateFormForEvent(c *fiber.Ctx) error {
+	//Call SQL
+	if(CheckAuth(c) == true){ //Error Check
+		return nil
+	}
+
+	rows, err := DATABASE.Query(`SELECT ID, Form_name, Data, Created_by, Event_id
+	FROM Form f 
+	Where f.Event_id =$1;`, c.Params("event_id"))
+
+	if err != nil {
+		fmt.Print("err: ")
+		fmt.Println(err)
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"})
+	}
+
+	var formsTable []models.HeadDelegateForm
+	for rows.Next() {
+		var form models.HeadDelegateForm
+
+		err = rows.Scan(&form.Id, &form.Form_name, &form.Data, &form.Created_by, &form.Event_id)
+
+		result := DATABASE.QueryRow(`SELECT COUNT(Form_id) FROM COMPLETE_FORM
+		 Where Form_id =$1 AND Attendee_id = $2;`, form.Id, c.Params("attendee_id"));
+
+		result.Scan(&form.Head_response)
+
+		var delegateResponseTable []models.DelegateResponse
+
+		result2, err3 := DATABASE.Query(`SELECT p.F_name, p.M_name, p.L_name 
+		FROM COMPLETE_FORM cf, REGISTERED_USER r, Person p 
+		Where cf.Form_id =$1 AND cf.Attendee_id = r.Attendee_id AND r.Email = p.Email AND
+		r.Role = 'DELEGATE';`, form.Id);
+
+		 if err3 != nil {
+			fmt.Print("err3: ")
+			fmt.Println(err3)
+			continue
+		}
+
+		for result2.Next() {
+			var resp models.DelegateResponse
+			var fName = ""
+			var mName = ""
+			var lName = ""
+			result2.Scan(&fName, &mName, &lName)
+			resp.Response = 1
+			resp.Name = fName + " " + mName + " " + lName
+
+			delegateResponseTable = append(delegateResponseTable, resp)
+		}
+
+		result3, err4 := DATABASE.Query(`SELECT p.F_name, p.M_name, p.L_name 
+		FROM PARTICIPATING_IN pi, Stream s, REGISTERED_USER r, Person p 
+		Where pi.Stream_number = s.Stream_number AND s.Event_id = $1 
+		AND pi.Attendee_id = r.Attendee_id AND r.Email = p.Email AND r.Role = 'DELEGATE' AND
+		p.Email NOT IN (
+		SELECT p2.Email 
+		FROM COMPLETE_FORM cf, REGISTERED_USER r2, Person p2 
+		Where cf.Form_id =$2 AND cf.Attendee_id = r2.Attendee_id AND r2.Email = p2.Email
+		);`, c.Params("event_id"), form.Id);
+
+		if err4 != nil {
+			fmt.Print("err4: ")
+			fmt.Println(err4)
+			continue
+		}
+
+		for result3.Next() {
+			var resp models.DelegateResponse
+			var fName = ""
+			var mName = ""
+			var lName = ""
+			result3.Scan(&fName, &mName, &lName)
+			resp.Response = 0
+			resp.Name = fName + " " + mName + " " + lName
+
+			delegateResponseTable = append(delegateResponseTable, resp)
+		}
+
+		
+
+		form.Delegate_responses = delegateResponseTable
+		
+		formsTable = append(formsTable, form)
+	}
+
+	return c.Status(200).JSON(fiber.Map{"status": "success", "data": formsTable})
+}
+
+
+func GetDelegateFormForEvent(c *fiber.Ctx) error {
+	//Call SQL
+	if(CheckAuth(c) == true){ //Error Check
+		return nil
+	}
+
+	rows, err := DATABASE.Query(`SELECT ID, Form_name, Data, Created_by, Event_id
+	FROM Form f 
+	Where f.Event_id =$1;`, c.Params("event_id"))
+
+	if err != nil {
+		fmt.Print("err: ")
+		fmt.Println(err)
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"})
+	}
+
+	var formsTable []models.DelegateForm
+	for rows.Next() {
+		var form models.DelegateForm
+
+		err = rows.Scan(&form.Id, &form.Form_name, &form.Data, &form.Created_by, &form.Event_id)
+
+		result := DATABASE.QueryRow(`SELECT COUNT(Form_id) FROM COMPLETE_FORM 
+		 Where Form_id =$1 AND Attendee_id = $2;`, form.Id, c.Params("attendee_id"));
+
+		result.Scan(&form.Response)
+		
+		formsTable = append(formsTable, form)
+	}
+
+	return c.Status(200).JSON(fiber.Map{"status": "success", "data": formsTable})
+}
+
 
 func CreateForm(c *fiber.Ctx) error{
 	if(CheckAuth(c) == true){ //Error Check
@@ -104,12 +292,12 @@ func CreateForm(c *fiber.Ctx) error{
 
 	//Add to Database
 	row := DATABASE.QueryRow(
-		`INSERT INTO Ticket(Id, Data, Created_by) VALUES ($1, $2, $3);`,
-		form.Id, form.Data, form.Created_by)
+		`INSERT INTO FORM(Id, Data, Created_by, Event_id, Form_name) VALUES (DEFAULT, $1, $2, $3, $4);`,
+		form.Data, form.Created_by, form.Event_id, form.Form_name)
 
 	//SQL Error Check
 	if row.Err() != nil {
-		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Creating Person failed"}) //Returning success
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Creating Form failed"}) //Returning success
 	}
 
 	//Success
@@ -130,6 +318,36 @@ func DeleteForm(c *fiber.Ctx) error{
 	}
 
 	return c.Status(200).JSON(fiber.Map{"status": "success"})
+}
+
+
+func CreateCompleteForm(c *fiber.Ctx) error{
+	if(CheckAuth(c) == true){ //Error Check
+		return nil
+	}
+	
+	//Load Model
+	completeForm := new(models.CompleteForm)
+	err := c.BodyParser(completeForm)
+
+	//Handling Errors
+	if err != nil {
+		c.Status(400).JSON(fiber.Map{"error": "failed to process inputs", "data": err})
+		return nil
+	 }
+
+	//Add to Database
+	row := DATABASE.QueryRow(
+		`INSERT INTO COMPLETE_FORM(Form_id, Attendee_id, Filled_data) VALUES ($1, $2, $3);`,
+		completeForm.Form_id, completeForm.Attendee_id, completeForm.Filled_data)
+
+	//SQL Error Check
+	if row.Err() != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Creating Form failed"}) //Returning success
+	}
+
+	//Success
+	return c.Status(200).JSON(fiber.Map{"status": "success", "type": "Creating Complete Form"}) //Returning success
 }
 
 func GetEvent(c *fiber.Ctx) error{

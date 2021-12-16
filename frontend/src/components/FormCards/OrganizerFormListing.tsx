@@ -6,6 +6,7 @@ export interface OrganizerFormListingProps {
   questions: number;
   responses: number;
   editable: boolean;
+  formId: string;
 }
 
 const OrganizerFormListing: React.FC<OrganizerFormListingProps> = props => {

@@ -1,9 +1,13 @@
 import React from 'react';
 import './FormListing.scss';
 import {UserRole} from '../../models/Enums';
+import {DelegateResponse} from '../../pages/FormCards/FormCards';
+import { useTypedDispatch } from '../../hooks/reduxHooks';
+import { fillForm } from '../../actions/formActions/formActionCreators';
+import {useNavigate} from 'react-router-dom';
 
 export interface DelegateFormCompletion {
-  name: string;
+  Name: string;
   completed: boolean;
 }
 
@@ -12,10 +16,19 @@ export interface DelegateFormListingProps {
   conference: string;
   completed: boolean;
   userType: UserRole;
-  delegates?: Array<DelegateFormCompletion>;
+  formId: string;
+  delegates?: Array<DelegateResponse>;
 }
 
 const DelegateFormListing: React.FC<DelegateFormListingProps> = props => {
+  const dispatch = useTypedDispatch();
+  const navigate = useNavigate();
+
+  const handleButtonClicked = () => {
+    dispatch(fillForm(props.formId));
+    navigate('/form');
+  }
+  
   return (
     <div className="form-listing-container">
       <div
@@ -27,6 +40,7 @@ const DelegateFormListing: React.FC<DelegateFormListingProps> = props => {
           <h2 className="listing-title align-flex-start">{props.title}</h2>
           <p className="listing-conference-title">{props.conference}</p>
           <a
+            onClick={props.completed ? () => {} : handleButtonClicked}
             className={`complete-form-button btn ${
               props.completed ? 'btn-primary--green' : 'btn-primary--red'
             }`}
@@ -35,15 +49,19 @@ const DelegateFormListing: React.FC<DelegateFormListingProps> = props => {
           </a>
           {props.userType == UserRole.HeadDelegate && (
             <div className="align-flex-start">
-              <h4 className="delegate-form-names-title">Form Status</h4>
+              {props.delegates.length > 0 && (
+                <>
+                  <h4 className="delegate-form-names-title">Form Status</h4>
+                </>
+              )}
               <div className="form-listing-delegates-list-container">
                 {props.delegates.map(d => (
                   <p
                     className={`form-listing-delegate-name-${
-                      d.completed ? 'complete' : 'uncomplete'
+                      d.Response > 0 ? 'complete' : 'uncomplete'
                     }`}
                   >
-                    {d.name}
+                    {d.Name}
                   </p>
                 ))}
               </div>

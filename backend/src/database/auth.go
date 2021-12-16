@@ -2,7 +2,6 @@ package database
 
 import (
 	"time"
-
 	"github.com/gofiber/fiber/v2"
 	"ucalgary.ca/cpsc441/eventmanagment/models"
 )
@@ -171,11 +170,4 @@ func TestAuth(c *fiber.Ctx) error {
 		return c.Status(401).JSON(fiber.Map{"data": "Unauthorized"})
 	}
 	return GetPersons(c);
-}
-
-func CheckAuth(c *fiber.Ctx) bool {
-	userAccessToken := c.Cookies("access")
-	err := CheckAccess(userAccessToken)
-	c.Status(401).JSON(fiber.Map{"data": "Unauthorized"})
-	return err == nil
 }

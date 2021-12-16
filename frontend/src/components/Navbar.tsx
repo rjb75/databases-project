@@ -23,7 +23,7 @@ const Navbar: React.FC<NavbarProps> = props => {
       enabled: true,
     },
     {
-      link: '/form',
+      link: '/form-cards',
       text: 'Forms',
       enabled: true,
     },
