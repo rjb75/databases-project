@@ -70,90 +70,79 @@ func GetAttendeesByEventId_CC(c *fiber.Ctx) error{
 		return nil
 	}
 
-	rows, err := DATABASE.Query("SELECT * From Stream Where event_id ='" + c.Params("event_id") +"';")
-	
+	rows, err := DATABASE.Query(`SELECT * FROM Person where email in (
+		SELECT email FROM Registered_user where attendee_id in (
+			SELECT attendee_id FROM Participating_in where stream_number in (
+				SELECT stream_number FROM Stream where event_id='`+ c.Params("event_id") + `')));`)
+
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
 	}
 
-	var streamsTable []models.Stream
+	var personsTable []models.Person
 	for rows.Next() {
-		var stream models.Stream
+		var person models.Person
 
-		err = rows.Scan(&stream.Stream_number, &stream.Title, &stream.Event_id)
+		err = rows.Scan(&person.Email, &person.F_name, &person.M_name, &person.L_name,  &person.Pronouns,  &person.Preferred_language, &person.Dietary_restriction)
 		if err != nil {
 		//	return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
 		}
 		
-		streamsTable = append(streamsTable, models.Stream{Stream_number: stream.Stream_number, Title: stream.Title,
-			Event_id: stream.Event_id})
-	}
-
-	//Retrieve all Attendees Id
-	var participatingInTable []models.Participating_In
-	for i, s := range streamsTable{
-		_ = i
-		rows, err := DATABASE.Query("SELECT * From PARTICIPATING_IN Where stream_number ='" + s.Stream_number +"';")
-		
-		if err != nil {
-			return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
-		}
-
-		for rows.Next() {
-			var participating_in models.Participating_In
-
-			err = rows.Scan(&participating_in.Stream_number, &participating_in.Attendee_id)
-			if err != nil {
-			//	return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
-			}
-			
-			participatingInTable = append(participatingInTable, models.Participating_In{Stream_number: participating_in.Stream_number, Attendee_id: participating_in.Attendee_id})
-		}
-	}
-
-	//Retrieve RegisteredUser
-	var registeredUserTable []models.Registered_User
-	for i, s := range participatingInTable{
-		_ = i
-		rows, err := DATABASE.Query("SELECT * From Registered_User Where attendee_id ='" + s.Attendee_id +"' and role!='Organizer';")
-		
-		if err != nil {
-			return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
-		}
-
-		for rows.Next() {
-			var registeredUser models.Registered_User
-
-			err = rows.Scan(&registeredUser.Email, &registeredUser.Hashed_password, &registeredUser.Role, &registeredUser.Attendee_id)
-			if err != nil {
-			//	return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
-			}
-			
-			registeredUserTable = append(registeredUserTable, models.Registered_User{Email: registeredUser.Email, Hashed_password: registeredUser.Hashed_password, Role: registeredUser.Role, Attendee_id: registeredUser.Attendee_id})
-		}
-	}
-
-	//Retrieve all Person Info
-	var personsTable []models.Person
-	for i, s := range registeredUserTable{
-		_ = i
-		rows, err := DATABASE.Query("SELECT * From Person Where email ='" + s.Email +"';")
-		
-		if err != nil {
-			return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
-		}
-
-		for rows.Next() {
-			var person models.Person
-
-			err = rows.Scan(&person.Email, &person.F_name, &person.M_name, &person.L_name, &person.Pronouns, &person.Preferred_language, &person.Dietary_restriction)
-			if err != nil {
-			//	return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
-			}
-			
-			personsTable = append(personsTable, models.Person{Email: person.Email, F_name: person.F_name, M_name: person.M_name, L_name: person.L_name, Pronouns: person.Pronouns, Preferred_language: person.Preferred_language, Dietary_restriction: person.Dietary_restriction})
-		}
+		personsTable = append(personsTable, models.Person{Email: person.Email, F_name: person.M_name, 
+			L_name: person.L_name, Pronouns: person.Pronouns, 
+			Preferred_language: person.Preferred_language,
+			Dietary_restriction: person.Dietary_restriction})
 	}
 
 	return c.Status(200).JSON(fiber.Map{"status": "success", "data": personsTable})
+}
+
+
+
+
+func GetStreamsAndSessions(c *fiber.Ctx) error{
+	//Call SQL
+	if(CheckAuth(c) == true){ //Error Check
+		return nil
+	}
+
+	streamRows, err := DATABASE.Query(`SELECT * FROM Stream where event_id='`+ c.Params("event_id") + `';`)
+
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed with Stream"}) //Returning success
+	}
+
+	var eventTable [] interface {}
+	for streamRows.Next() {
+		var stream models.Stream
+
+		err = streamRows.Scan(&stream.Stream_number, &stream.Title, &stream.Event_id)
+
+		sessionRows, err := DATABASE.Query(`SELECT * FROM Session where session_number in (
+			SELECT session_number FROM Composed_of where stream_number='`+ stream.Stream_number+ `');
+`)
+
+		if err != nil {
+			return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed with Session"}) //Returning success
+		}
+		var sessionsTable [] models.Session
+
+		for sessionRows.Next(){
+			var session models.Session
+
+			err = sessionRows.Scan(&session.Session_number, &session.Location, &session.Start_time, &session.Duration_minutes, &session.Title, &session.Description)
+
+			sessionsTable = append(sessionsTable, models.Session{Session_number: session.Session_number, Location: session.Location, Start_time: session.Start_time, Duration_minutes: session.Duration_minutes, Title: session.Title, Description: session.Description  })
+		}
+
+		eventTable = append(eventTable, SessionArray{Title: stream.Title, Stream_id: stream.Stream_number, Sessions: sessionsTable})
+	}
+
+	return c.Status(200).JSON(fiber.Map{"status": "success", "data": eventTable})
+}
+
+type SessionArray struct{
+	Title	string `json:"Title"`
+	Stream_id	string `json:"Stream_id"`
+	Sessions	[]models.Session `json:"Sessions"`
 }
