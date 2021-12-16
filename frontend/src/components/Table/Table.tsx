@@ -1,11 +1,15 @@
 import React from 'react';
 import {useTable} from 'react-table';
 import {Header} from './TableUtils';
-import './Table.scss'
+import './Table.scss';
+
+type OnCLickFunctionType = (data: string, answerData: string) => void;
 
 interface TableProps {
   data: Array<any>;
   columns: Array<Header>;
+  clickable?: boolean;
+  clickExecution?: OnCLickFunctionType;
 }
 
 const Table: React.FC<TableProps> = props => {
@@ -29,14 +33,18 @@ const Table: React.FC<TableProps> = props => {
           ))}
         </thead>
         <tbody {...getTableBodyProps()}>
-          {rows.map(row => {
+          {rows.map((row, index) => {
             prepareRow(row);
             return (
-              <tr {...row.getRowProps()}>
-                {row.cells.map(cell => {
-                  return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>;
-                })}
-              </tr>
+                <tr {...row.getRowProps()} className={props.clickable ? 'table-row-clickable' : ''} onClick={
+                  props.clickable && props.clickExecution
+                    ? () => props.clickExecution(data[index].Data, data[index].Answer_data)
+                    : () => {}
+                }>
+                  {row.cells.map(cell => {
+                    return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>;
+                  })}
+                </tr>
             );
           })}
         </tbody>

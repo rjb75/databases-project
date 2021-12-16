@@ -1,4 +1,4 @@
-@import '../styles/colors';
+@import '../../styles/colors';
 
 .form-generator-container {
   .form-generator-innercontainer {
@@ -58,10 +58,39 @@
     height: 40px;
     font-weight: bold;
   }
+
+  .view-form-buttons-container {
+    display: flex;
+    flex-direction: row;
+    margin: 40px 15% 0px 15%;
+  }
+
+  .view-form-return-button {
+    font-weight: bold;
+    text-align: center;
+    color: $color-black;
+    height: 40px;
+    border-radius: 30px;
+    background-color: #e0d9d9;
+    width: 15%;
+    min-width: 130px;
+    line-height: 40px;
+    cursor: pointer;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 }
 
 @media screen and (min-width: 600px) {
-    .form-container {
-        max-width: 70%;
-    }
+  .form-container {
+    max-width: 70%;
   }
+}
+
+@media screen and (max-width: 600px) {
+  .view-form-buttons-container {
+    margin: 40px 2.5% 0px 2.5% !important;
+  }
+}

@@ -2,12 +2,12 @@ import React, {useState, useEffect} from 'react';
 import {ReactFormGenerator} from 'react-form-builder3';
 import 'react-form-builder3/dist/app.css';
 import './FormGenerator.scss';
-import {useTypedSelector} from '../hooks/reduxHooks';
-import {selectFillingForm} from '../actions/formActions/formSelectors';
-import { selectUserData } from '../actions/userActions/userSelectors';
-import axiosInstance from '../axios';
-import {ROOT_V1} from '../utils/APIConstants';
-import {removeInvlaidCharacters} from '../utils/JSONUtils';
+import {useTypedSelector} from '../../hooks/reduxHooks';
+import {selectFillingForm} from '../../actions/formActions/formSelectors';
+import { selectUserData } from '../../actions/userActions/userSelectors';
+import axiosInstance from '../../axios';
+import {ROOT_V1} from '../../utils/APIConstants';
+import {removeInvlaidCharacters} from '../../utils/JSONUtils';
 import {useNavigate} from 'react-router-dom';
 
 interface FormGeneratorProps {
