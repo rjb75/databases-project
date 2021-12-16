@@ -56,7 +56,12 @@ func eventRoutes(v fiber.Router){
 	v.Delete("/ticket/:attendee_id", database.DeleteTicket)
 
 	v.Get("/form/:id", database.GetForm)
+	v.Get("/forms/:event_id", database.GetFormForEvent)
+	v.Get("/forms/organizer/:event_id", database.GetOrganizerFormForEvent)
+	v.Get("/forms/head/:event_id/:attendee_id", database.GetHeadDelegateFormForEvent)
+	v.Get("/forms/delegate/:event_id/:attendee_id", database.GetDelegateFormForEvent)
 	v.Post("/form", database.CreateForm)
+	v.Post("/form/complete", database.CreateCompleteForm)
 	v.Delete("/form/:id", database.DeleteForm)
 
     v.Get("/event/:id", database.GetEvent)

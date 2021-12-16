@@ -85,6 +85,43 @@
   }
 }
 
+.add-form-container {
+  .add-form-inner-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .add-form-inner-container > .text-field-container {
+    margin-bottom: -10px;
+  }
+
+  .form-dialog-title {
+    color: $color-black;
+    font-family: Poppins;
+    margin-bottom: 30px;
+  }
+
+  .add-form-submit-button {
+    margin: auto;
+    background-color: $color-yellow;
+    color: $color-white;
+    height: 30px;
+    border-radius: 30px;
+    width: 100px;
+    text-transform: uppercase;
+    margin: 25px 0px;
+    cursor: pointer;
+  }
+
+  .add-form-submit-button:hover {
+    transition: all 0.5s;
+    transform: scale(1.07);
+  }
+}
+
 @media screen and (min-width: 790px) {
   .form-builder-header-container {
     max-width: 75%;

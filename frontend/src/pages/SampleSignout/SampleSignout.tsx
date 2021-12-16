@@ -4,6 +4,7 @@ import {useNavigate} from 'react-router-dom';
 import {ROOT_V1} from '../../utils/APIConstants';
 import {useTypedSelector} from '../../hooks/reduxHooks';
 import {selectUserData} from '../../actions/userActions/userSelectors';
+import Navbar from '../../components/Navbar';
 
 const SampleSignout: React.FC = () => {
   const navigate = useNavigate();
@@ -29,6 +30,7 @@ const SampleSignout: React.FC = () => {
   };
   return (
     <div>
+      <Navbar />
       <button onClick={signOut}>Sign Out</button>
       <button onClick={getPersons}>Get Persons</button>
       <div>userInfo: {JSON.stringify(userData)}</div>

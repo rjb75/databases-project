@@ -1,7 +1,9 @@
 package models
 
 type Form struct {
-	Id         int    `json:"Id"`
+	Id         string    `json:"Id"`
 	Data       string `json:"Data"`
 	Created_by string `json:"Created_by"`
+	Event_id   string `json:"Event_id"`
+	Form_name  string `json:"Form_name"`
 }

@@ -3,7 +3,7 @@ package database
 import (
 	"os"
 	"time"
-
+	"github.com/gofiber/fiber/v2"
 	"github.com/dgrijalva/jwt-go"
 )
 
@@ -89,4 +89,11 @@ func CheckAccess(inputToken string) error {   // Please call this function befor
 		return []byte(ACCESS_SIGNING_KEY), nil
 	})
 	return err
+}
+
+func CheckAuth(c *fiber.Ctx) bool {
+	userAccessToken := c.Cookies("access")
+	err := CheckAccess(userAccessToken)
+	c.Status(401).JSON(fiber.Map{"data": "Unauthorized"})
+	return err != nil
 }
