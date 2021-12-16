@@ -24,6 +24,14 @@
                 border: none;
             }
         }
+
+        .table-row-clickable {
+            cursor: pointer;
+        }
+
+        .table-row-clickable:hover {
+            filter: brightness(200%);
+        }
     
         tbody {
             background-color: $color-white;

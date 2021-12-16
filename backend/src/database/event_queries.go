@@ -1,10 +1,11 @@
 package database
 
 import (
+	"fmt"
+
 	"github.com/gofiber/fiber/v2"
 	_ "github.com/lib/pq"
 	"ucalgary.ca/cpsc441/eventmanagment/models"
-	"fmt"
 )
 func GetTicket(c *fiber.Ctx) error{
 	//Call SQL
@@ -134,12 +135,8 @@ func GetOrganizerFormForEvent(c *fiber.Ctx) error {
 
 		err = rows.Scan(&form.Id, &form.Form_name, &form.Data, &form.Created_by, &form.Event_id)
 
-		result, err2 := DATABASE.Query(`SELECT COUNT(Form_id) FROM COMPLETE_FORM
+		result := DATABASE.QueryRow(`SELECT COUNT(Form_id) FROM COMPLETE_FORM
 		 Where Form_id =$1;`, form.Id)
-
-		 if err2 != nil {
-			continue
-		}
 
 		result.Scan(&form.Responses)
 
@@ -267,6 +264,60 @@ func GetDelegateFormForEvent(c *fiber.Ctx) error {
 		 Where Form_id =$1 AND Attendee_id = $2;`, form.Id, c.Params("attendee_id"));
 
 		result.Scan(&form.Response)
+		
+		formsTable = append(formsTable, form)
+	}
+
+	return c.Status(200).JSON(fiber.Map{"status": "success", "data": formsTable})
+}
+
+
+func GetFormSubmissions(c *fiber.Ctx) error {
+	//Call SQL
+	if(CheckAuth(c) == true){ //Error Check
+		return nil
+	}
+
+	rows, err := DATABASE.Query(`SELECT f.Data, cf.Filled_data, p.F_name, COALESCE (p.M_name, ''), COALESCE (p.L_name, ''), 
+	COALESCE (p.Preferred_language, 'N/A') AS Preferred_language, COALESCE (p.Dietary_restriction, 'N/A'), s.Name, 
+	st.Title, t.Is_valid::text
+	FROM FORM f, COMPLETE_FORM cf, REGISTERED_USER r, PERSON p, IS_REPRESENTING ir, SCHOOL s, TICKET t, 
+	PARTICIPATING_IN pi, Stream st
+	Where cf.Form_id = $1 AND f.ID = cf.Form_id AND r.Attendee_id = cf.Attendee_id AND 
+	r.Email = p.Email AND ir.Attendee_id = r.Attendee_id AND ir.School_id = s.ID AND 
+	t.Attendee_id = r.Attendee_id AND t.Event_id = f.Event_id AND pi.Attendee_id = r.Attendee_id 
+	AND pi.Stream_number = st.Stream_number;`, c.Params("form_id"))
+
+	if err != nil {
+		fmt.Println(err)
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"})
+	}
+
+	var formsTable []models.FormSubmission
+	for rows.Next() {
+		var form models.FormSubmission
+
+		var fName = ""
+		var mName = ""
+		var lName = ""
+
+		err = rows.Scan(&form.Data, &form.Answer_data, &fName, &mName, &lName, &form.Preferred_language, &form.Dietary_restriction, 
+		&form.School_name, &form.Stream, &form.Registration_status)
+
+		form.Name = fName + " " + mName + " " + lName
+		if form.Registration_status == "1" {
+			form.Registration_status = "Complete"
+		} else {
+			form.Registration_status = "Cancelled"
+		}
+
+		if form.Preferred_language == "" {
+			form.Preferred_language = "N/A"
+		}
+
+		if form.Dietary_restriction == "" {
+			form.Dietary_restriction = "N/A"
+		}
 		
 		formsTable = append(formsTable, form)
 	}

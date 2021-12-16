@@ -3,11 +3,11 @@ import {ReactFormBuilder} from 'react-form-builder3';
 import 'react-form-builder3/dist/app.css';
 import './FormBuilder.scss';
 import Modal from 'react-modal';
-import TextFieldInput from '../components/InputFields/TextFieldInput';
-import {ROOT_V1} from '../utils/APIConstants';
-import axiosInstance from '../axios';
-import {useTypedSelector} from '../hooks/reduxHooks';
-import {selectUserData} from '../actions/userActions/userSelectors';
+import TextFieldInput from '../InputFields/TextFieldInput';
+import {ROOT_V1} from '../../utils/APIConstants';
+import axiosInstance from '../../axios';
+import {useTypedSelector} from '../../hooks/reduxHooks';
+import {selectUserData} from '../../actions/userActions/userSelectors';
 import {useNavigate} from 'react-router-dom';
 
 interface FormBuilderProps {}
