@@ -13,13 +13,15 @@
             &::after {
                 display: block;
                 content: ' ';
-                background-image: url('../../assets/caret-down.svg');
                 background-size: 1em 0.5em;
                 height: 0.5em;
                 width: 1em;
                 margin-left: 10px;
                 color: $color-black;
                 user-select: none;
+            }
+            &.enable-dropdown::after {
+                background-image: url('../../assets/caret-down.svg');
             }
         }
     }
