@@ -16,6 +16,7 @@ import {persistor} from './store';
 import './styles/Main.scss';
 import TextAjax from './components/TestAjax';
 import SessionsPage from './pages/Sessions/SessionsPage';
+import Dashboard from './pages/Dashboard/Dashboard';
 
 function App() {
   return (
@@ -30,7 +31,7 @@ function App() {
             <Route path="/form" element={<FormGenerator formContent="" />} />
             <Route path="/form-builder" element={<FormBuilder />} />
             <Route path="/view-form-submission" element={<FormViewer />} />
-            <Route path="/main" element={<SampleSignout />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/test" element={<TextAjax />} />
             <Route path="/sessions" element={<SessionsPage />} />
           </Routes>

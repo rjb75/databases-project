@@ -50,7 +50,7 @@ const LogIn: React.FC = () => {
         Password: password,
       })
       .then(res => {
-        navigate('/main');
+        navigate('/dashboard');
         console.log('login response: ', res);
         dispatch(usersLoggedIn(res.data.data));
       })

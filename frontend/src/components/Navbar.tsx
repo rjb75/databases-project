@@ -18,7 +18,7 @@ export interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = props => {
   const defaultRoutes: Array<NavbarLink> = [
     {
-      link: '/',
+      link: '/dashboard',
       text: 'Dashboard',
       enabled: true,
     },
