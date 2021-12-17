@@ -146,3 +146,32 @@ type SessionArray struct{
 	Stream_id	string `json:"Stream_id"`
 	Sessions	[]models.Session `json:"Sessions"`
 }
+
+
+func GetAllEvents(c *fiber.Ctx) error{
+	//Call SQL
+	if(CheckAuth(c) == true){ //Error Check
+		return nil
+	}
+
+	rows, err := DATABASE.Query(`SELECT * FROM Event;`)
+
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
+	}
+
+	var eventsTable []models.Event
+	for rows.Next() {
+		var event models.Event
+
+		err = rows.Scan(&event.Id, &event.Name)
+		if err != nil {
+		//	return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
+		}
+		
+		eventsTable = append(eventsTable, models.Event{Id: event.Id, Name: event.Name })
+	}
+
+	return c.Status(200).JSON(fiber.Map{"status": "success", "data": eventsTable})
+}
+
