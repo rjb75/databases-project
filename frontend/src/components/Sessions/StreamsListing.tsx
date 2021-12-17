@@ -12,6 +12,8 @@ import {selectUserData} from '../../actions/userActions/userSelectors';
 import {UserRole} from '../../models/Enums';
 import axiosInstance from '../../axios';
 import {ROOT_V1} from '../../utils/APIConstants';
+import AddStream from './AddStream';
+import AddSession from './AddSession';
 
 const customStyles = {
   content: {
@@ -85,6 +87,7 @@ const StreamsListing: React.FC<StreamsProps> = ({streams}) => {
           return (
             <Card size={CardSize.Large} key={s.uuid}>
               <>
+              <AddSession />
                 <div className="stream-listing-title-container">
                   <h2>{s.title}</h2>
                   {userContext.Role == UserRole.Organizer && (

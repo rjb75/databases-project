@@ -3,7 +3,6 @@
 .stream-listing {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    align-items: space-between;
     justify-content: space-between;
     grid-gap: 30px;
     padding: 0px 3%;
@@ -24,4 +23,7 @@
 
 .stream-listing-invite:hover {
     text-decoration: underline;
+    .card {
+        padding: 50px 10px 0px 50px;
+    }
 }

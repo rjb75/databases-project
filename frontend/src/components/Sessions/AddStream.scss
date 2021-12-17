@@ -1,0 +1,25 @@
+@import "../../styles/colors";
+
+.stream-add-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+
+.add-stream-form-container {
+    z-index: 2;
+    background-color: rgba($color-gray, 0.5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .form-container {
+        z-index: 2;
+    }
+}
