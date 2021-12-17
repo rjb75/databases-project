@@ -238,3 +238,33 @@ func GetAllAssociatedEvents_CC(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success", "data": event})
 }
 
+
+
+func GetEventRegisteredTo_CC(c *fiber.Ctx) error{
+	//Call SQL
+	// if(CheckAuth(c) == true){ //Error Check
+	// 	return nil
+	// }
+
+	rows, err := DATABASE.Query(`SELECT e.id, e.name FROM EVENT as e
+	WHERE e.id in (
+		SELECT s.event_id FROM STREAM as s
+			WHERE s.stream_number in (
+				SELECT pi.stream_number FROM PARTICIPATING_IN as pi
+					WHERE attendee_id='` + c.Params("attendee_id") + `'));`)
+
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
+	}
+
+	var eventsTable []models.Event
+	for rows.Next() {
+		var event models.Event
+
+		err = rows.Scan(&event.Id, &event.Name)
+		
+		eventsTable = append(eventsTable, models.Event{Id: event.Id, Name: event.Name })
+	}
+
+	return c.Status(200).JSON(fiber.Map{"status": "success", "data": eventsTable})
+}
