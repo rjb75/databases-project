@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import AllAttendeesTable from '../../components/Dashboard/AllAttendeesTable';
-import EventsListing from '../../components/Dashboard/EventsListing';
+import EventsListing from '../../components/Events/EventsListing';
 import Navbar from '../../components/Navbar';
 import { useTypedSelector } from '../../hooks/reduxHooks';
+import { UserRole } from '../../models/Enums';
 import './Dashboard.scss';
 
 const Headers = [
-    // {Header: "Email", accessor: "Email"},
     {Header: "First Name", accessor: "F_name"},
     {Header: "Last Name", accessor: "L_name"},
     {Header: "Pronouns", accessor: "Pronouns"},
@@ -19,9 +19,9 @@ const Dashboard: React.FC = () => {
 
     return(
         <>
-            <Navbar />
+            <Navbar displayEventSelector={userContext.Role === UserRole.Organizer} />
             {
-                userContext.role == 'organizer' ?
+                userContext.role === UserRole.Organizer ?
                 <AllAttendeesTable /> :
                 <EventsListing />
             }

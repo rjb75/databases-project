@@ -27,14 +27,18 @@ export interface SessionProps {
 }
 
 export function formatSessions(data: DatabaseSession[]): Session[] {
-    return data.map(e => {
-        return {
-            uuid: e.Session_number,
-            location: e.Location,
-            start: e.Start_time,
-            duration: e.Duration_minutes,
-            description: e.Description,
-            title: e.Title
-        }
-    })
+    if(data !== null) {
+        return data.map(e => {
+            return {
+                uuid: e.Session_number,
+                location: e.Location,
+                start: e.Start_time,
+                duration: e.Duration_minutes,
+                description: e.Description,
+                title: e.Title
+            }
+        })
+    } else {
+        return []
+    } 
 }
