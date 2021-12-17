@@ -1,5 +1,9 @@
 .stream-listing {
-    display: flex;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    align-items: space-between;
     justify-content: space-between;
+    grid-gap: 30px;
+    padding: 0px 3%;
+    margin-bottom: 30px;
 }
