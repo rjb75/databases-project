@@ -82,6 +82,7 @@ func eventRoutes(v fiber.Router) {
 
 	v.Get("/event/:id", database.GetEvent)
 	v.Post("/event", database.CreateEvent)
+	v.Post("/event/invite", database.SendInvitation)
 	v.Delete("/event/:id", database.DeleteEvent)
 
 	v.Get("/organizer/:email", database.GetOrganizer)

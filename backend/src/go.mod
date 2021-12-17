@@ -18,8 +18,14 @@ require (
 
 require (
 	github.com/andybalholm/brotli v1.0.2 // indirect
+	github.com/gobuffalo/envy v1.10.1 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/klauspost/compress v1.13.4 // indirect
+	github.com/mailgun/mailgun-go v2.0.0+incompatible // indirect
+	github.com/pkg/errors v0.9.1 // indirect
+	github.com/rogpeppe/go-internal v1.8.0 // indirect
+	github.com/sendgrid/rest v2.6.6+incompatible // indirect
+	github.com/sendgrid/sendgrid-go v3.10.4+incompatible // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.31.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect

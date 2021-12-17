@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { setEventContext } from '../../actions/eventActions/eventActionCreator';
 import axiosInstance from '../../axios';
 import { useTypedDispatch, useTypedSelector } from '../../hooks/reduxHooks';
+import { selectEventContext } from '../../actions/eventActions/eventSelector';
 import { Event, formatEvents } from '../../models/Event';
 import { ROOT_V2 } from '../../utils/APIConstants';
 import './EventSelector.scss';
@@ -12,7 +13,7 @@ const EventSelector: React.FC = () => {
     const [dropDownOpen, setDropDownOpen] = useState<boolean>(false);
     const [eventList, setEventList] = useState<Event[]>([]);
 
-    const eventContext = useTypedSelector((state) => state.event)
+    const eventContext = useTypedSelector(selectEventContext)
     const dispatch = useTypedDispatch()
 
     useEffect(() => {

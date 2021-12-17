@@ -11,6 +11,8 @@ To configure the environment the program should be ran in create a `.env` file i
 ENV=
 PORT=
 BASE_API_URL=
+EMAIL_API_KEY=
+BASE_WEBSITE_URL=
 
 # credentials
 DB_DRIVER=

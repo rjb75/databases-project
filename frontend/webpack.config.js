@@ -14,7 +14,7 @@ module.exports = {
   watch: process.env.ENV === 'development',
   output: {
     path: path.resolve(__dirname, 'build'),
-    filename: 'js/[name].bundle.js',
+    filename: 'js/[name].hhhh.js',
   },
   devtool: 'source-map',
   resolve: {
