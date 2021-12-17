@@ -6,5 +6,7 @@ body {
     color: #020202;
     background-color: $color-white;
     background-image: url('../assets/background.svg');
+    background-repeat: no-repeat;
+    background-size: cover;
     margin: 0;
 }

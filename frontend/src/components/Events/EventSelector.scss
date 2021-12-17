@@ -1,0 +1,40 @@
+@import './../../styles/colors.scss';
+
+.event-selector {
+    .current-event-container {
+        .current-event-text {
+            font-weight: bold;
+            font-size: 1.25em;
+            display: flex;
+            align-items: center;
+            margin-bottom: 0;
+            color: $color-black;
+            user-select: none;
+            &::after {
+                display: block;
+                content: ' ';
+                background-image: url('../../assets/caret-down.svg');
+                background-size: 1em 0.5em;
+                height: 0.5em;
+                width: 1em;
+                margin-left: 10px;
+                color: $color-black;
+                user-select: none;
+            }
+        }
+    }
+    .event-dropdown-list {
+        z-index: 1;
+        position: absolute;
+        background-color: $color-white;
+        color: $color-black;
+        .event-item {
+            margin: 0;
+            padding: 10px 5px;
+            user-select: none;
+            &:hover {
+                background-color: $color-gray-light;
+            }
+        }
+    }
+}
