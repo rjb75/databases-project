@@ -242,9 +242,9 @@ func GetAllAssociatedEvents_CC(c *fiber.Ctx) error{
 
 func GetEventRegisteredTo_CC(c *fiber.Ctx) error{
 	//Call SQL
-	// if(CheckAuth(c) == true){ //Error Check
-	// 	return nil
-	// }
+	if(CheckAuth(c) == true){ //Error Check
+		return nil
+	}
 
 	rows, err := DATABASE.Query(`SELECT e.id, e.name FROM EVENT as e
 	WHERE e.id in (
