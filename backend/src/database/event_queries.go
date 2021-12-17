@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 	_ "github.com/lib/pq"
 	"ucalgary.ca/cpsc441/eventmanagment/models"
 )
@@ -557,6 +558,7 @@ func CreateStream(c *fiber.Ctx) error{
 	//Load Model
 	stream := new(models.Stream)
 	err := c.BodyParser(stream)
+	stream.Stream_number = uuid.New().String()
 
 	//Handling Errors
 	if err != nil {
@@ -575,7 +577,7 @@ func CreateStream(c *fiber.Ctx) error{
 	}
 
 	//Success
-	return c.Status(200).JSON(fiber.Map{"status": "success", "type": "Creating Event"}) //Returning success
+	return c.Status(200).JSON(fiber.Map{"status": "success", "type": "Creating Stream", "stream_number": stream.Stream_number}) //Returning success
 }
 
 func DeleteStream(c *fiber.Ctx) error{
@@ -632,7 +634,7 @@ func GetSession(c *fiber.Ctx) error{
 	result := DATABASE.QueryRow("SELECT * FROM Session Where session_number::text='" + c.Params("stream_number")  +"';")
 
 	var session models.Session
-	err := result.Scan(&session.Session_number, &session.Location, &session.Start_time, &session.Duration_minutes)
+	err := result.Scan(&session.Session_number, &session.Location, &session.Start_time, &session.Duration_minutes, &session.Title, &session.Description)
 
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
@@ -650,6 +652,7 @@ func CreateSession(c *fiber.Ctx) error{
 	//Load Model
 	session := new(models.Session)
 	err := c.BodyParser(session)
+	session.Session_number = uuid.New().String()
 
 	//Handling Errors
 	if err != nil {
@@ -659,8 +662,8 @@ func CreateSession(c *fiber.Ctx) error{
 
 	//Add to Database
 	row := DATABASE.QueryRow(
-		`INSERT INTO Session(session_number, location, start_time, duration_minutes) VALUES ($1, $2, $3, $4);`,
-		session.Session_number, session.Location, session.Start_time, session.Duration_minutes)
+		`INSERT INTO Session(session_number, location, start_time, duration_minutes, title, description) VALUES ($1, $2, $3, $4, $5, $6);`,
+		session.Session_number, session.Location, session.Start_time, session.Duration_minutes, session.Title, session.Description)
 
 	//SQL Error Check
 	if row.Err() != nil {
@@ -668,7 +671,7 @@ func CreateSession(c *fiber.Ctx) error{
 	}
 
 	//Success
-	return c.Status(200).JSON(fiber.Map{"status": "success", "type": "Creating Session"}) //Returning success
+	return c.Status(200).JSON(fiber.Map{"status": "success", "type": "Creating Session", "session_number": session.Session_number}) //Returning success
 }
 
 func DeleteSession(c *fiber.Ctx) error{

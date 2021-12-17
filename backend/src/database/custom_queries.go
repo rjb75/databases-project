@@ -100,7 +100,7 @@ func GetAttendeesByEventId_CC(c *fiber.Ctx) error{
 
 
 
-func GetStreamsAndSessions(c *fiber.Ctx) error{
+func GetStreamsAndSessions_CC(c *fiber.Ctx) error{
 	//Call SQL
 	if(CheckAuth(c) == true){ //Error Check
 		return nil
@@ -148,7 +148,7 @@ type SessionArray struct{
 }
 
 
-func GetAllEvents(c *fiber.Ctx) error{
+func GetAllEvents_CC(c *fiber.Ctx) error{
 	//Call SQL
 	if(CheckAuth(c) == true){ //Error Check
 		return nil
@@ -175,3 +175,32 @@ func GetAllEvents(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success", "data": eventsTable})
 }
 
+
+func AssignSessionToStream_CC(c *fiber.Ctx) error{
+	if(CheckAuth(c) == true){ //Error Check
+		return nil
+	}
+	
+	//Load Model
+	composed_of := new(models.Composed_Of)
+	err := c.BodyParser(composed_of)
+
+	//Handling Errors
+	if err != nil {
+		c.Status(400).JSON(fiber.Map{"error": "failed to process inputs", "data": err})
+		return nil
+	 }
+
+	//Add to Database
+	row := DATABASE.QueryRow(
+		`INSERT INTO Composed_Of(Stream_number, Session_number) VALUES ($1, $2);`,
+		composed_of.Stream_number, composed_of.Session_number)
+
+	//SQL Error Check
+	if row.Err() != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Creating Person failed"}) //Returning success
+	}
+
+	//Success
+	return c.Status(200).JSON(fiber.Map{"status": "success", "type": "Assigned Session to stream!"}) //Returning success
+}
