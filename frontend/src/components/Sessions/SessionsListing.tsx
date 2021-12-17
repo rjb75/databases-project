@@ -1,22 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import axiosInstance from '../../axios';
-import { formatSessions, Session, SessionsProps } from './SessionUtils';
+import React from 'react';
+import { SessionsProps } from './SessionUtils';
 import './SessionsListing.scss';
 import SessionItem from './SessionItem';
-import { ROOT_V1 } from '../../utils/APIConstants';
 
 
-const SessionsListing: React.FC<SessionsProps> = ({stream}) => {
-    const [sessions, setSessions] = useState<Session[]>([]);
-
-    useEffect(() => {
-        axiosInstance
-        .get(`${ROOT_V1}stream/session/${stream}`)
-        .then((res) => {
-            setSessions(formatSessions(res.data.data))
-        })
-        .catch(err => console.error(err))
-    }, [stream])
+const SessionsListing: React.FC<SessionsProps> = ({sessions}) => {
 
     return (
         <ul className='stream-sessions-listing'>

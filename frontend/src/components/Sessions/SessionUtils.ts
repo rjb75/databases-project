@@ -1,3 +1,5 @@
+import { Stream } from "./StreamUtils"
+
 export interface DatabaseSession {
     Session_number: string,
     Location: string,
@@ -17,7 +19,7 @@ export interface Session {
 }
 
 export interface SessionsProps {
-    stream: string
+    sessions: Session[]
 }
 
 export interface SessionProps {

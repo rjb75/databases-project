@@ -6,17 +6,15 @@ import './StreamsListing.scss';
 import SessionsListing from './SessionsListing';
 
 const StreamsListing: React.FC<StreamsProps> = ({streams}) => {
-
-
   return (
     <div className="stream-listing">
       {streams ? (
         streams.map(s => {
           return (
-            <Card size={CardSize.Large}>
+            <Card size={CardSize.Large} key={s.uuid}>
                 <>
                     <h2>{s.title}</h2>
-                    <SessionsListing stream={s.uuid} />
+                    <SessionsListing sessions={s.sessions} />
                 </>
             </Card>
           );
