@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	_ "github.com/lib/pq"
 	"ucalgary.ca/cpsc441/eventmanagment/models"
+	"ucalgary.ca/cpsc441/eventmanagment/email"
 )
 
 func GetTicket(c *fiber.Ctx) error{
@@ -419,6 +420,26 @@ func GetEvent(c *fiber.Ctx) error{
 	}
 
 	return c.Status(200).JSON(fiber.Map{"status": "success", "data": event})
+}
+
+func SendInvitation(c *fiber.Ctx) error{
+	//Call SQL
+	invitation := new(models.InvitationLoad)
+	err := c.BodyParser(invitation)
+
+	if err != nil {
+		c.Status(400).JSON(fiber.Map{"error": "failed to process inputs", "data": err})
+		return nil
+	 }
+
+	status, emailErr := email.SendMessage(invitation.Event_name, invitation.Stream_name, invitation.User_email,
+	invitation.Event_id, invitation.Stream_number)
+
+	if status != 202 {
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "data": emailErr})
+	}
+
+	return c.Status(200).JSON(fiber.Map{"status": "success", "type": "Email being processed"})
 }
 
 func CreateEvent(c *fiber.Ctx) error{

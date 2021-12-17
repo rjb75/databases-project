@@ -1,3 +1,5 @@
+@import "../../styles/colors.scss";
+
 .stream-listing {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -6,4 +8,20 @@
     grid-gap: 30px;
     padding: 0px 3%;
     margin-bottom: 30px;
+}
+
+.stream-listing-title-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.stream-listing-invite {
+    color: $color-dark-blue;
+    margin-top: -10px;
+    cursor: pointer;
+}
+
+.stream-listing-invite:hover {
+    text-decoration: underline;
 }
