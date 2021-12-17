@@ -4,7 +4,7 @@ import './Card.scss'
 
 const Card: React.FC<CardProps> = props => {
     return (
-        <div className={`card card-${props.size || 'small'} ${props.class || ''}`} key={props.key || ''} >
+        <div className={`card card-${props.size || 'small'} ${props.class || ''}`} >
             {props.children}
         </div>
     )
