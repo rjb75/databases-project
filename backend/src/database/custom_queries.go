@@ -204,3 +204,37 @@ func AssignSessionToStream_CC(c *fiber.Ctx) error{
 	//Success
 	return c.Status(200).JSON(fiber.Map{"status": "success", "type": "Assigned Session to stream!"}) //Returning success
 }
+
+func GetAllAssociatedEvents_CC(c *fiber.Ctx) error{
+	//Call SQL
+	if(CheckAuth(c) == true){ //Error Check
+		return nil
+	}
+
+	row := DATABASE.QueryRow(`SELECT e.id, e.name FROM EVENT as e, REGISTERED_USER as ru
+	WHERE ru.email = '` + c.Params("email") + `' 
+		and (ru.role = 'ORGANIZER'
+		and e.id in (
+		SELECT io.event_id FROM IS_ORGANIZING as io
+			WHERE io.organizer_email=ru.email)
+		or ( not (ru.role = 'null')
+		and e.id IN (
+		SELECT s.event_id FROM STREAM as s
+			WHERE s.stream_number in (
+				SELECT pi.stream_number From PARTICIPATING_IN as pi
+					WHERE pi.attendee_id = ru.attendee_id))));`)
+
+	if row.Err() != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
+	}
+
+	var event models.Event
+	err := row.Scan(&event.Id, &event.Name)
+
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
+	}
+
+	return c.Status(200).JSON(fiber.Map{"status": "success", "data": event})
+}
+

@@ -477,7 +477,7 @@ func GetOrganizer(c *fiber.Ctx) error{
 	result := DATABASE.QueryRow("SELECT * FROM Form Where email ='" + c.Params("email")  +"';")
 
 	var organizer models.Organizer
-	err := result.Scan(&organizer.Email, &organizer.Event_id)
+	err := result.Scan(&organizer.Email)
 
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
@@ -503,8 +503,8 @@ func CreateOrganizer(c *fiber.Ctx) error{
 
 	//Add to Database
 	row := DATABASE.QueryRow(
-		`INSERT INTO Organizer(email, event_id) VALUES ($1, $2);`,
-		organizer.Email, organizer.Event_id)
+		`INSERT INTO Organizer(email) VALUES ($1);`,
+		organizer.Email)
 
 	//SQL Error Check
 	if row.Err() != nil {
