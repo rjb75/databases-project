@@ -54,6 +54,7 @@ func userRoutes(v fiber.Router) {
 func customRoutes(v fiber.Router) {
 	v.Post("/event", database.CreateEvent_CC)
 	v.Get("/events", database.GetAllEvents_CC)
+	v.Get("/attendee/event/:email", database.GetAllAssociatedEvents_CC)
 
 	
 	v.Post("/attendee", database.GenerateAttendeeId_CC)
