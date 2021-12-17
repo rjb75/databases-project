@@ -737,7 +737,7 @@ func GetAccommodation(c *fiber.Ctx) error{
 	result := DATABASE.QueryRow("SELECT * FROM Accomodation Where room_number::text='" + c.Params("room_number")  +"';")
 
 	var accommodation models.Accommodation
-	err := result.Scan(&accommodation.Room_number, &accommodation.Capacity, &accommodation.Country, &accommodation.Province, &accommodation.Street_address, &accommodation.Postal_code)
+	err := result.Scan(&accommodation.Room_number, &accommodation.Capacity, &accommodation.Country, &accommodation.Province, &accommodation.Street_address, &accommodation.Postal_code, &accommodation.Event_id)
 
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
@@ -764,8 +764,8 @@ func CreateAccommodation(c *fiber.Ctx) error{
 
 	//Add to Database
 	row := DATABASE.QueryRow(
-		`INSERT INTO Accomodation(Room_number, Capacity, Country, Province, Street_address, Postal_code) VALUES ($1, $2, $3, $4, $5, $6);`,
-		accommodation.Room_number, accommodation.Capacity, accommodation.Country, accommodation.Province, accommodation.Street_address, accommodation.Postal_code)
+		`INSERT INTO Accomodation(Room_number, Capacity, Country, Province, Street_address, Postal_code, Event_id) VALUES ($1, $2, $3, $4, $5, $6, $7);`,
+		accommodation.Room_number, accommodation.Capacity, accommodation.Country, accommodation.Province, accommodation.Street_address, accommodation.Postal_code, accommodation.Event_id)
 
 	//SQL Error Check
 	if row.Err() != nil {

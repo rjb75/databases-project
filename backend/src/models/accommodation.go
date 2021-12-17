@@ -7,4 +7,5 @@ type Accommodation struct {
 	Province       string `json:"Province"`
 	Street_address string `json:"Street_address"`
 	Postal_code    string `json:"Postal_code"`
+	Event_id       string `json:"Event_id"`
 }
