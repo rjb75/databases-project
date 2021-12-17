@@ -860,3 +860,33 @@ func DeleteSchool(c *fiber.Ctx) error{
 
 	return c.Status(200).JSON(fiber.Map{"status": "success"})
 }
+
+
+//----IS_PARTICIPATING
+
+
+
+func AddIsParticipating(c *fiber.Ctx) error{	
+	//Load Model
+	participating_In := new(models.Participating_In)
+	err := c.BodyParser(participating_In)
+
+	//Handling Errors
+	if err != nil {
+		c.Status(400).JSON(fiber.Map{"error": "failed to process inputs", "data": err})
+		return nil
+	 }
+
+	//Add to Database
+	row := DATABASE.QueryRow(
+		`INSERT INTO Participating_In(Stream_number, Attendee_id) VALUES ($1, $2);`,
+		participating_In.Stream_number, participating_In.Attendee_id)
+
+	//SQL Error Check
+	if row.Err() != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Creating Participating Relationship failed"}) //Returning success
+	}
+
+	//Success
+	return c.Status(200).JSON(fiber.Map{"status": "success", "type": "Creating Participating Relationship"}) //Returning success
+}

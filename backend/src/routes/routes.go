@@ -105,7 +105,8 @@ func eventRoutes(v fiber.Router) {
 	v.Get("/schools", database.GetSchools)
 	v.Post("/school", database.CreateSchool)
 	v.Delete("/school/:id", database.DeleteSchool)
-}
+
+	v.Post("/participating", database.AddIsParticipating)}
 
 func notFoundPage(c *fiber.Ctx) error {
 	return c.SendStatus(404) // 404 "Not Found"
