@@ -88,7 +88,7 @@ func GetAttendeesByEventId_CC(c *fiber.Ctx) error{
 		//	return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
 		}
 		
-		personsTable = append(personsTable, models.Person{Email: person.Email, F_name: person.M_name, 
+		personsTable = append(personsTable, models.Person{Email: person.Email, F_name: person.F_name, M_name: person.M_name,
 			L_name: person.L_name, Pronouns: person.Pronouns, 
 			Preferred_language: person.Preferred_language,
 			Dietary_restriction: person.Dietary_restriction})
