@@ -39,7 +39,9 @@ func personRoutes(v fiber.Router) {
 	v.Get("/persons", database.GetPersons)
 
 	v.Get("/person/:email", database.GetPerson)
+	v.Get("/person/token/:token", database.GetUserFromToken)
 	v.Post("/person/", database.CreatePerson)
+	v.Post("/person/update/unregistered/", database.UpdatePerson)
 	v.Delete("/person/:email", database.DeletePerson)
 }
 
@@ -118,6 +120,7 @@ func eventRoutes(v fiber.Router) {
 
 	v.Post("/participating", database.AddIsParticipating)
 	v.Delete("/accommodation/:attendee_id", database.DeleteStayingAt)
+	v.Get("/participating/count/:stream_number/:attendee_id", database.GetCountIsParticipating)
 
 }
 

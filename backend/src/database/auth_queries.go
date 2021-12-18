@@ -21,8 +21,9 @@ func GetPassowrd(userEmail string) (string, error) {
 func RegisterUser(email, password, fName, mName, lName, pronouns, dietaryRestriction, preferredLanguage, role,
 	 schoolId, jobTitle string) error {
 	row := DATABASE.QueryRow(
-		`INSERT INTO PERSON(Email, F_name, M_name, L_name, Pronouns, Dietary_restriction) VALUES ($1, $2, $3, $4, $5, $6);`,
-		email, fName, mName, lName, pronouns, dietaryRestriction)
+		`INSERT INTO PERSON(Email, F_name, M_name, L_name, Pronouns, Preferred_language, Dietary_restriction) 
+		VALUES ($1, $2, $3, $4, $5, $6, $7);`,
+		email, fName, mName, lName, pronouns, preferredLanguage, dietaryRestriction)
 
 	if row.Err() != nil {
 		return row.Err()
@@ -57,8 +58,9 @@ func RegisterUser(email, password, fName, mName, lName, pronouns, dietaryRestric
 
 func RegisterOrg(email, password, fName, mName, lName, pronouns, dietaryRestriction, preferredLanguage, role string) error {
 	row := DATABASE.QueryRow(
-		`INSERT INTO PERSON(Email, F_name, M_name, L_name, Pronouns, Dietary_restriction) VALUES ($1, $2, $3, $4, $5, $6);`,
-		email, fName, mName, lName, pronouns, dietaryRestriction)
+		`INSERT INTO PERSON(Email, F_name, M_name, L_name, Pronouns, Preferred_language, Dietary_restriction) 
+		VALUES ($1, $2, $3, $4, $5, $6, %7);`,
+		email, fName, mName, lName, pronouns, preferredLanguage, dietaryRestriction)
 
 	if row.Err() != nil {
 		return row.Err()
@@ -74,4 +76,59 @@ func RegisterOrg(email, password, fName, mName, lName, pronouns, dietaryRestrict
 	row3 := DATABASE.QueryRow(`INSERT INTO ORGANIZER(Email) VALUES($1)`, email)
 
 	return row3.Err()
+}
+
+
+func CreateUnRegisteredUser(email string) (string, error) {
+	var countPerson = 0
+	var countUnregistered = 0
+	checkUser := DATABASE.QueryRow(`SELECT COUNT(Email) FROM PERSON WHERE Email = $1`, email)
+	checkUser.Scan(&countPerson)
+
+	if checkUser.Err() != nil {
+		return "", checkUser.Err()
+	}
+
+	checkUnregistered := DATABASE.QueryRow(`SELECT COUNT(Email) FROM UNREGISTERED_USER WHERE Email = $1`, email)
+	checkUnregistered.Scan(&countUnregistered)
+
+	if checkUnregistered.Err() != nil {
+		return "", checkUnregistered.Err()
+	}
+	
+	if countPerson > 0 && countUnregistered == 0 {
+		return "", nil
+	}
+
+	var userToken = ""
+
+	if(countUnregistered == 0) {
+		row := DATABASE.QueryRow(
+			`INSERT INTO PERSON(Email) VALUES ($1);`, email)
+	 
+		if row.Err() != nil {
+			return "", row.Err()
+		}
+	 
+		row2 := DATABASE.QueryRow(`WITH attendee AS (
+			INSERT INTO ATTENDEE(Attendee_id) VALUES (DEFAULT) RETURNING Attendee_id
+		  )
+		  INSERT INTO UNREGISTERED_USER(Email, Token, Attendee_id) 
+		  VALUES($1, DEFAULT, (SELECT attendee_id FROM attendee));`, email)
+	 
+		if row2.Err() != nil {
+			return "", row2.Err()
+		}  	
+	}
+
+   row3 :=   DATABASE.QueryRow(`SELECT Token FROM UNREGISTERED_USER WHERE Email = $1`, email)
+
+   err := row3.Scan(&userToken)
+
+   if err != nil {
+	   return "", err
+   }
+
+
+   return userToken, nil
 }

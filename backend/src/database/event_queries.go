@@ -29,9 +29,6 @@ func GetTicket(c *fiber.Ctx) error{
 }
 
 func CreateTicket(c *fiber.Ctx) error{
-	if(CheckAuth(c) == true){ //Error Check
-		return nil
-	}
 	
 	//Load Model
 	ticket := new(models.Ticket)
@@ -45,16 +42,17 @@ func CreateTicket(c *fiber.Ctx) error{
 
 	//Add to Database
 	row := DATABASE.QueryRow(
-		`INSERT INTO Ticket(Attendee_id, Ticket_number, Is_valid, Event_id) VALUES ($1, $2, $3, $4);`,
-		ticket.Attendee_id, ticket.Ticket_number, ticket.Is_valid, ticket.Event_id)
+		`INSERT INTO Ticket(Attendee_id, Ticket_number, Is_valid, Event_id) VALUES ($1, DEFAULT, $2, $3);`,
+		ticket.Attendee_id, ticket.Is_valid, ticket.Event_id)
 
 	//SQL Error Check
 	if row.Err() != nil {
-		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Creating Person failed"}) //Returning success
+		fmt.Println(row.Err())
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Creating Ticket failed"}) //Returning success
 	}
 
 	//Success
-	return c.Status(200).JSON(fiber.Map{"status": "success", "type": "Creating Person"}) //Returning success
+	return c.Status(200).JSON(fiber.Map{"status": "success", "type": "Creating Ticket"}) //Returning success
 }
 
 func DeleteTicket(c *fiber.Ctx) error{
@@ -405,12 +403,8 @@ func CreateCompleteForm(c *fiber.Ctx) error{
 }
 
 func GetEvent(c *fiber.Ctx) error{
-	//Call SQL
-	if(CheckAuth(c) == true){ //Error Check
-		return nil
-	}
 
-	result := DATABASE.QueryRow("SELECT * FROM Form Where Id ='" + c.Params("id")  +"';")
+	result := DATABASE.QueryRow("SELECT * FROM EVENT Where Id ='" + c.Params("id")  +"';")
 
 	var event models.Event
 	err := result.Scan(&event.Id, &event.Name)
@@ -429,11 +423,18 @@ func SendInvitation(c *fiber.Ctx) error{
 
 	if err != nil {
 		c.Status(400).JSON(fiber.Map{"error": "failed to process inputs", "data": err})
-		return nil
+		return err
+	 }
+
+	 userToken, userErr := CreateUnRegisteredUser(invitation.User_email)
+
+	 if userErr != nil || userToken == "" {
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "data": userErr})
+		return userErr
 	 }
 
 	status, emailErr := email.SendMessage(invitation.Event_name, invitation.Stream_name, invitation.User_email,
-	invitation.Event_id, invitation.Stream_number)
+	invitation.Event_id, invitation.Stream_number, userToken)
 
 	if status != 202 {
 		return c.Status(500).JSON(fiber.Map{"status": "fail", "data": emailErr})
@@ -565,6 +566,7 @@ func GetStream(c *fiber.Ctx) error{
 	err := result.Scan(&stream.Stream_number, &stream.Title, &stream.Event_id)
 
 	if err != nil {
+		fmt.Println(err)
 		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
 	}
 
@@ -733,13 +735,14 @@ func GetSessionByStream(c *fiber.Ctx) error{
 		result := DATABASE.QueryRow("SELECT * FROM Session Where session_number::text='" + composed_Of.Session_number  +"';")
 
 		var session models.Session
-		err := result.Scan(&session.Session_number, &session.Location, &session.Start_time, &session.Duration_minutes)
+		err := result.Scan(&session.Session_number, &session.Location, &session.Start_time, &session.Duration_minutes, 
+			&session.Title, &session.Description)
 	
 		if err != nil {
 			return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
 		}
 
-		sessionsTables = append(sessionsTables, models.Session{Session_number: session.Session_number, Location: session.Location, Start_time: session.Start_time, Duration_minutes: session.Duration_minutes})
+		sessionsTables = append(sessionsTables, session)
 	}
 
 
@@ -906,6 +909,7 @@ func AddIsParticipating(c *fiber.Ctx) error{
 
 	//SQL Error Check
 	if row.Err() != nil {
+		fmt.Println(row.Err())
 		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Creating Participating Relationship failed"}) //Returning success
 	}
 
@@ -926,4 +930,18 @@ func DeleteStayingAt(c *fiber.Ctx) error{
 	}
 
 	return c.Status(200).JSON(fiber.Map{"status": "success"})
+}
+
+func GetCountIsParticipating(c *fiber.Ctx) error{
+	result := DATABASE.QueryRow(`SELECT COUNT(Stream_number) FROM PARTICIPATING_IN 
+	WHERE Stream_number = $1 AND Attendee_id = $2;`,c.Params("stream_number"), c.Params("attendee_id"))
+
+	var count = 0
+	err := result.Scan(&count)
+
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
+	}
+
+	return c.Status(200).JSON(fiber.Map{"status": "success", "data": count})
 }

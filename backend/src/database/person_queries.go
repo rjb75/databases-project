@@ -36,6 +36,61 @@ func CreatePerson(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success", "type": "Creating Person"}) //Returning success
 }
 
+
+func GetUserFromToken(c *fiber.Ctx) error {
+	result:= DATABASE.QueryRow(`SELECT p.Email, COALESCE(p.F_name, ''), COALESCE(p.M_name, ''), 
+	COALESCE(p.L_name, ''),  COALESCE(p.Pronouns, ''), 
+	COALESCE(p.Preferred_language, ''), COALESCE(p.Dietary_restriction, ''), u.Attendee_id
+	FROM person p, UNREGISTERED_USER u
+	WHERE u.Token = $1 AND u.Email = p.Email;`,  c.Params("token"))
+
+	if result.Err() != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
+	}
+
+	var person models.UnregisteredTokenUser
+	err := result.Scan(&person.Email, &person.F_name, &person.M_name, &person.L_name, &person.Pronouns, &person.Preferred_language,
+		  &person.Dietary_restriction, &person.Attendee_id)
+
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
+	}
+
+	return c.Status(200).JSON(fiber.Map{"status": "success", "data": person})
+}
+
+
+func UpdatePerson(c *fiber.Ctx) error{	
+	//Load Model
+	person := new(models.Person)
+	err := c.BodyParser(person)
+
+	//Handling Errors
+	if err != nil {
+		c.Status(400).JSON(fiber.Map{"error": "failed to process inputs", "data": err})
+		return nil
+	 }
+
+
+	//Add to Database
+	row := DATABASE.QueryRow(`UPDATE PERSON
+	SET F_name = $1,
+		M_name = $2,
+		L_name = $3,
+		Pronouns = $4,
+		Preferred_language = $5,
+		Dietary_restriction = $6 WHERE Email = $7;`, person.F_name, person.M_name, person.L_name, person.Pronouns,
+		person.Preferred_language, person.Dietary_restriction, person.Email)
+
+	//SQL Error Check
+	if row.Err() != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Creating Person failed"}) //Returning success
+	}
+
+	//Success
+	return c.Status(200).JSON(fiber.Map{"status": "success", "type": "Updating Person"}) //Returning success
+}
+
 func GetPersons(c *fiber.Ctx) error{
 	//Call SQL
 	if(CheckAuth(c) == true){ //Error Check
@@ -44,6 +99,7 @@ func GetPersons(c *fiber.Ctx) error{
 	rows, err := DATABASE.Query("SELECT * FROM person;")
 
 	if err != nil {
+		rows.Close()
 		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
 	}
 
@@ -59,6 +115,7 @@ func GetPersons(c *fiber.Ctx) error{
 		personsTable = append(personsTable, models.Person{Email: person.Email, F_name: person.F_name,
 			M_name: person.M_name, L_name: person.L_name, Pronouns: person.Pronouns, Preferred_language: person.Preferred_language, Dietary_restriction: person.Dietary_restriction})
 	}
+	rows.Close()
 
 	return c.Status(200).JSON(fiber.Map{"status": "success", "data": personsTable})
 }

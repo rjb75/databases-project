@@ -20,4 +20,5 @@ func PageRoutes(app *fiber.App) {
 	app.Static("/sessions", frontendBuildPath)
 	app.Static("/organizer-form-table", frontendBuildPath)
 	app.Static("/dashboard", frontendBuildPath)
+	app.Static("/invite/*", frontendBuildPath)
 }

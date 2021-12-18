@@ -10,6 +10,7 @@ import FormGenerator from './components/Forms/FormGenerator';
 import FormViewer from './components/Forms/FormViewer';
 import OrganizerFormTable from './pages/OrganizerFormTable/OrganizerFormTable';
 import FormCards from './pages/FormCards/FormCards';
+import InvitePage from './pages/InvitePage/InvitePage';
 import {PersistGate} from 'redux-persist/integration/react';
 import {persistor} from './store';
 
@@ -34,6 +35,7 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/test" element={<TextAjax />} />
             <Route path="/sessions" element={<SessionsPage />} />
+            <Route path="/invite/:token/:eventId/:streamNumber" element={<InvitePage />} />
           </Routes>
         </Router>
       </PersistGate>
