@@ -4,7 +4,7 @@ import axiosInstance from '../../axios';
 import { useTypedDispatch, useTypedSelector } from '../../hooks/reduxHooks';
 import { selectEventContext } from '../../actions/eventActions/eventSelector';
 import { Event, formatEvents } from '../../models/Event';
-import { ROOT_V2 } from '../../utils/APIConstants';
+import { ROOT_V1, ROOT_V2 } from '../../utils/APIConstants';
 import './EventSelector.scss';
 
 const EventSelector: React.FC = () => {
@@ -26,6 +26,12 @@ const EventSelector: React.FC = () => {
         .catch(err => console.error(err))
     }, [])
 
+    useEffect(() => {
+        if(eventList.length === 1) {
+            dispatch(setEventContext(eventList[0]))
+        }
+    }, [eventList])
+
     function handleSelectEvent(event: Event) {
         dispatch(setEventContext(event));
         setDropDownOpen(false);
@@ -40,7 +46,7 @@ const EventSelector: React.FC = () => {
     return (
         <>
             {
-                eventList.length > 1 &&
+                true &&
                 <div className='event-selector'>
                     <div className='current-event-container' onClick={handleOpenDropdown}>
                         <p className={`current-event-text ${eventList.length > 1 && 'enable-dropdown'}`}>{eventContext.name || 'Select an Event'}</p>

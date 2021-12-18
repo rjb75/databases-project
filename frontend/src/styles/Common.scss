@@ -5,14 +5,16 @@
     padding: 15px;
     width: fit-content;
     text-decoration: none;
-
 }
 
 .btn-primary {
     @each $key, $val in $colors {
         &--#{$key} {
             background-color: $val;
-            color: $color-white;
+            color: $color-white !important;
+            &:hover {
+                color: $color-black;
+            }
         }
     }
 }
@@ -20,9 +22,13 @@
 .btn-secondary {
     @each $key, $val in $colors {
         &--#{$key} {
-            color: $val;
+            color: $val !important;
             background-color: $color-white;
-            border: 1px solid $val;
+            border: 2px solid $val;
+            &:hover {
+                background-color: $val;
+                color: $color-white;
+            }
         }
     }
 }
