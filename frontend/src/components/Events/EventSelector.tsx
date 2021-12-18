@@ -57,7 +57,7 @@ const EventSelector: React.FC = () => {
                         dropDownOpen &&
                         <div className='event-dropdown-list'>
                             {
-                                eventList.map((e) => {
+                                eventList?.map((e) => {
                                     return (
                                         <p className='event-item' key={e.id} onClick={() => handleSelectEvent(e)}>{e.name}</p>
                                     )

@@ -10,6 +10,7 @@ import {useTypedDispatch, useTypedSelector} from '../hooks/reduxHooks';
 import {userSignedOut} from '../actions/userActions/userActionCreator';
 import {selectUserData} from '../actions/userActions/userSelectors';
 import {selectEventContext} from '../actions/eventActions/eventSelector';
+import { setEventContext } from '../actions/eventActions/eventActionCreator';
 import {UserRole} from '../models/Enums';
 import './Navbar.scss';
 
@@ -39,6 +40,10 @@ const Navbar: React.FC<NavbarProps> = props => {
       .then(res => {
         navigate('/');
         dispatch(userSignedOut());
+        dispatch(setEventContext({
+          id:null,
+          name: null
+        }));
         storage.removeItem('persist:root');
         localStorage.clear();
         console.log('signout response: ', res);
