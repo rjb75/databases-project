@@ -19,7 +19,7 @@ const SessionsPage: React.FC = () => {
     const [streams, setStreams] = useState<Stream[]>([]);
 
     useEffect(() => {
-        if(eventContext.id != null) {
+        if(eventContext?.id != null) {
             axiosInstance
             .get(`${ROOT_V2}/streams/sessions/${eventContext.id}`)
             .then((res) => {

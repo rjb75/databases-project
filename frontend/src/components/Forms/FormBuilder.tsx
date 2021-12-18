@@ -28,7 +28,7 @@ const FormBuilder: React.FC<FormBuilderProps> = props => {
   Modal.setAppElement('#root');
   const navigate = useNavigate();
   const userData = useTypedSelector(selectUserData);
-  const eventId = useTypedSelector(selectEventContext).id;
+  const eventId = useTypedSelector(selectEventContext)?.id;
   const [formContent, setFormContent] = useState<any>();
   const [modalOpen, setModalOpen] = useState(false);
   const [formName, setFormName] = useState('');
