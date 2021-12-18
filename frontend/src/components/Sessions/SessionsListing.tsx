@@ -9,7 +9,7 @@ const SessionsListing: React.FC<SessionsProps> = ({sessions}) => {
     return (
         <ul className='stream-sessions-listing'>
             {
-                sessions ?
+                sessions.length > 0 ?
                 sessions.map((s) => {
                     return (
                         <li key={s.uuid} className='session-list-item'>

@@ -5,3 +5,14 @@
     align-items: center;
     font-size: 1.5em;
 }
+
+.manage-streams-container {
+    width: inherit;
+    margin: 15px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    .add-stream-button {
+        margin-left: auto;
+    }
+}
