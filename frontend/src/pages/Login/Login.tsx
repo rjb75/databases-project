@@ -78,14 +78,13 @@ const LogIn: React.FC = () => {
                 placeHolder="Enter Your Email"
                 input={email}
                 setInput={setEmail}
-                isPassword={false}
                 error={errors.email}
               />
               <TextFieldInput
                 placeHolder="Enter Your Password"
                 input={password}
                 setInput={setPassword}
-                isPassword={true}
+                type={'password'}
                 error={errors.password}
               />
 

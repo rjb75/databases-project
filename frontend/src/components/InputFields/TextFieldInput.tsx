@@ -5,8 +5,8 @@ interface TextFieldInputProps {
   placeHolder: string;
   input: string;
   setInput: React.Dispatch<React.SetStateAction<string>>;
-  isPassword: boolean;
   error?: string;
+  type?: string;
 }
 
 const TextFieldInput: React.FC<TextFieldInputProps> = props => {
@@ -18,7 +18,7 @@ const TextFieldInput: React.FC<TextFieldInputProps> = props => {
     <div className="text-field-container">
       <div className="text-field-form-control">
         <input
-          type={props.isPassword ? 'password' : 'text'}
+          type={props.type || 'text'}
           value={props.input}
           onChange={handleValueChange}
           placeholder={props.placeHolder}

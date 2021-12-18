@@ -285,41 +285,36 @@ const SignUp: React.FC<SignUpProps> = props => {
               <TextFieldInput
                 placeHolder="Enter Your Email"
                 input={email}
-                setInput={setEmail}
-                isPassword={false}
+                setInput={setEmail}              
                 error={signupErrors.email}
               />
               <TextFieldInput
                 placeHolder="Enter Your First Name"
                 input={firstName}
                 setInput={setFirstName}
-                isPassword={false}
                 error={signupErrors.firstName}
               />
               <TextFieldInput
                 placeHolder="Enter Your Middle Name"
                 input={middleName}
                 setInput={setMiddleName}
-                isPassword={false}
               />
               <TextFieldInput
                 placeHolder="Enter Your Last Name"
                 input={lastName}
                 setInput={setLastName}
-                isPassword={false}
               />
               <TextFieldInput
                 placeHolder="Enter Your Password"
                 input={password}
                 setInput={setPassword}
-                isPassword={true}
+                type={'password'}
                 error={signupErrors.password}
               />
               <TextFieldInput
                 placeHolder="Enter Your Pronouns"
                 input={pronouns}
                 setInput={setPronouns}
-                isPassword={false}
               />
               {(props.role == UserRole.Delegate || props.role == UserRole.HeadDelegate) && (
                 <DropDownField
@@ -340,7 +335,6 @@ const SignUp: React.FC<SignUpProps> = props => {
                   placeHolder="Enter Your Job Tile"
                   input={headDelegateTitle}
                   setInput={setHeadDelegateTitle}
-                  isPassword={false}
                   error={signupErrors.jobTitle}
                 />
               )}
@@ -372,41 +366,35 @@ const SignUp: React.FC<SignUpProps> = props => {
               placeHolder="Enter School Name"
               input={newSchoolName}
               setInput={setNewSchoolName}
-              isPassword={false}
               error={schoolErrors.name}
             />
             <TextFieldInput
               placeHolder="Enter School Capacity"
               input={newSchoolCapacity}
               setInput={setNewSchoolCapacity}
-              isPassword={false}
               error={schoolErrors.capacity}
             />
             <TextFieldInput
               placeHolder="Enter School Country"
               input={newSchoolCountry}
               setInput={setNewSchoolCountry}
-              isPassword={false}
               error={schoolErrors.country}
             />
             <TextFieldInput
               placeHolder="Enter School Province"
               input={newSchoolProvince}
               setInput={setNewSchoolProvince}
-              isPassword={false}
             />
             <TextFieldInput
               placeHolder="Enter School Street Address"
               input={newSchoolStreet}
               setInput={setNewSchoolStreet}
-              isPassword={false}
               error={schoolErrors.streetAddress}
             />
             <TextFieldInput
               placeHolder="Enter School Postal Code"
               input={newSchoolPostalCode}
               setInput={setNewSchoolPostalCode}
-              isPassword={false}
             />
             <button className="add-school-submit-button" onClick={submitSchool}>
               Add School

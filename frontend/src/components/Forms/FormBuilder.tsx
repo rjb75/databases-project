@@ -93,7 +93,6 @@ const FormBuilder: React.FC<FormBuilderProps> = props => {
               placeHolder="Enter Form Name"
               input={formName}
               setInput={setFormName}
-              isPassword={false}
               error={formNameErrors}
             />
             <button className="add-form-submit-button" onClick={onSubmit}>
