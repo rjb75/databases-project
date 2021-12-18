@@ -5,11 +5,12 @@ import './AddStream.scss';
 import axiosInstance from '../../axios';
 import {ROOT_V1} from '../../utils/APIConstants';
 import {useTypedSelector} from '../../hooks/reduxHooks';
+import { selectEventContext } from '../../actions/eventActions/eventSelector';
 
 const AddStream: React.FC = () => {
   const [addStreamForm, setAddStreamForm] = useState<boolean>(false);
   const [streamName, setStreamName] = useState<string>('');
-  const eventContext = useTypedSelector(state => state.event);
+  const eventContext = useTypedSelector(selectEventContext);
 
   function addStream() {
     if (streamName !== '') {

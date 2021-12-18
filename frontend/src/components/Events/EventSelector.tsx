@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { setEventContext } from '../../actions/eventActions/eventActionCreator';
+import { selectUserData } from '../../actions/userActions/userSelectors';
 import axiosInstance from '../../axios';
 import { useTypedDispatch, useTypedSelector } from '../../hooks/reduxHooks';
 import { selectEventContext } from '../../actions/eventActions/eventSelector';
@@ -14,12 +15,12 @@ const EventSelector: React.FC = () => {
     const [eventList, setEventList] = useState<Event[]>([]);
 
     const eventContext = useTypedSelector((state) => state.event)
-    const userContext = useTypedSelector((state) => state.user)
+    const userContext = useTypedSelector(selectUserData)
     const dispatch = useTypedDispatch()
 
     useEffect(() => {
         axiosInstance
-        .get(`${ROOT_V2}/attendee/events/${userContext.data.Attendee_id}`)
+        .get(`${ROOT_V2}/attendee/events/${userContext.Attendee_id}`)
         .then(res => {
             setEventList(formatEvents(res.data.data))
         })

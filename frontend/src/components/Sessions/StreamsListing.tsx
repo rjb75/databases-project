@@ -12,7 +12,6 @@ import {selectUserData} from '../../actions/userActions/userSelectors';
 import {UserRole} from '../../models/Enums';
 import axiosInstance from '../../axios';
 import {ROOT_V1} from '../../utils/APIConstants';
-import AddStream from './AddStream';
 import AddSession from './AddSession';
 
 const customStyles = {
