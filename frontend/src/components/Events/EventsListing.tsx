@@ -4,6 +4,7 @@ import { Event, formatEvents } from '../../models/Event';
 import { ROOT_V2 } from '../../utils/APIConstants';
 import Card from '../Cards/Card';
 import EventItem from './EventItem';
+import './EventListing.scss';
 
 const EventsListing: React.FC = () => {
     const [eventList, setEventList] = useState<Event[]>([]);
