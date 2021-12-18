@@ -59,7 +59,7 @@ func RegisterUser(email, password, fName, mName, lName, pronouns, dietaryRestric
 func RegisterOrg(email, password, fName, mName, lName, pronouns, dietaryRestriction, preferredLanguage, role string) error {
 	row := DATABASE.QueryRow(
 		`INSERT INTO PERSON(Email, F_name, M_name, L_name, Pronouns, Preferred_language, Dietary_restriction) 
-		VALUES ($1, $2, $3, $4, $5, $6, %7);`,
+		VALUES ($1, $2, $3, $4, $5, $6, $7);`,
 		email, fName, mName, lName, pronouns, preferredLanguage, dietaryRestriction)
 
 	if row.Err() != nil {
