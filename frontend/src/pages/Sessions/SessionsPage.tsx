@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { selectEventContext } from '../../actions/eventActions/eventSelector';
+import { selectUserData } from '../../actions/userActions/userSelectors';
 import axiosInstance from '../../axios';
 import EventSelector from '../../components/Events/EventSelector';
 import Navbar from '../../components/Navbar';
@@ -12,8 +14,8 @@ import './SessionsPage.scss';
 
 const SessionsPage: React.FC = () => {
 
-    const eventContext = useTypedSelector((state) => state.event);
-    const userContext = useTypedSelector((state) => state.user);
+    const eventContext = useTypedSelector(selectEventContext);
+    const userContext = useTypedSelector(selectUserData);
     const [streams, setStreams] = useState<Stream[]>([]);
 
     useEffect(() => {
@@ -29,9 +31,9 @@ const SessionsPage: React.FC = () => {
 
     return ( 
         <>
-            <Navbar displayEventSelector={userContext.data.role !== UserRole.Organizer}/>
+            <Navbar displayEventSelector={userContext.role !== UserRole.Organizer}/>
             {
-                userContext.data.role === UserRole.Organizer &&
+                userContext.role === UserRole.Organizer &&
                 <div className='manage-streams-container'>
                     <EventSelector />
                     <AddStream />
