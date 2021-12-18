@@ -14,13 +14,13 @@ const EventSelector: React.FC = () => {
     const [dropDownOpen, setDropDownOpen] = useState<boolean>(false);
     const [eventList, setEventList] = useState<Event[]>([]);
 
-    const eventContext = useTypedSelector((state) => state.event)
+    const eventContext = useTypedSelector(selectEventContext)
     const userContext = useTypedSelector(selectUserData)
     const dispatch = useTypedDispatch()
 
     useEffect(() => {
         axiosInstance
-        .get(`${ROOT_V2}/attendee/events/${userContext.Attendee_id}`)
+        .get(`${ROOT_V2}/attendee/event/${userContext.Email}`)
         .then(res => {
             setEventList(formatEvents(res.data.data))
         })

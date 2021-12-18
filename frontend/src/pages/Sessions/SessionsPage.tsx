@@ -31,9 +31,9 @@ const SessionsPage: React.FC = () => {
 
     return ( 
         <>
-            <Navbar displayEventSelector={userContext.role !== UserRole.Organizer}/>
+            <Navbar displayEventSelector={userContext.Role !== UserRole.Organizer}/>
             {
-                userContext.role === UserRole.Organizer &&
+                userContext.Role === UserRole.Organizer &&
                 <div className='manage-streams-container'>
                     <EventSelector />
                     <AddStream />
