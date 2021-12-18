@@ -555,10 +555,6 @@ func DeleteOrganizer(c *fiber.Ctx) error{
 //-------------------------------Stream----------------------------------
 
 func GetStream(c *fiber.Ctx) error{
-	//Call SQL
-	if(CheckAuth(c) == true){ //Error Check
-		return nil
-	}
 
 	result := DATABASE.QueryRow("SELECT * FROM Stream Where stream_number='" + c.Params("stream_number")  +"';")
 
@@ -741,10 +737,7 @@ func DeleteSession(c *fiber.Ctx) error{
 }
 
 func GetSessionByStream(c *fiber.Ctx) error{
-	//Call SQL
-	if(CheckAuth(c) == true){ //Error Check
-		return nil
-	}
+
 	rows, err := DATABASE.Query("SELECT * FROM COMPOSED_OF Where stream_number::text='" + c.Params("stream_number")  +"';")
 
 	if err != nil {

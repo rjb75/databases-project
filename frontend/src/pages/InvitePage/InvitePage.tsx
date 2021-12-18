@@ -7,13 +7,11 @@ import axiosInstance from '../../axios';
 import SessionsListing from '../../components/Sessions/SessionsListing';
 import {ROOT_V1} from '../../utils/APIConstants';
 import {formatSessions} from '../../components/Sessions/SessionUtils';
-import Card from '../../components/Cards/Card';
 import './InvitePage.scss';
 import '../SignUp/SignUp.scss';
 import '../../components/Sessions/SessionsListing.scss';
 import arrowRight from '../../assets/arrow-right.svg';
 import arrowLeft from '../../assets/arrow-left.svg';
-import { CardSize } from '../../components/Cards/CardUtils';
 
 interface InvitePageProps {}
 const InvitePage: React.FC<InvitePageProps> = props => {
