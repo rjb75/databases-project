@@ -6,17 +6,17 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	_ "github.com/lib/pq"
-	"ucalgary.ca/cpsc441/eventmanagment/models"
 	"ucalgary.ca/cpsc441/eventmanagment/email"
+	"ucalgary.ca/cpsc441/eventmanagment/models"
 )
 
-func GetTicket(c *fiber.Ctx) error{
+func GetTicket(c *fiber.Ctx) error {
 	//Call SQL
-	if(CheckAuth(c) == true){ //Error Check
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
 
-	result := DATABASE.QueryRow("SELECT * FROM Ticket Where attendee_id ='" + c.Params("attendee_id")  +"';")
+	result := DATABASE.QueryRow("SELECT * FROM Ticket Where attendee_id ='" + c.Params("attendee_id") + "';")
 
 	var ticket models.Ticket
 	err := result.Scan(&ticket.Attendee_id, &ticket.Ticket_number, &ticket.Is_valid, &ticket.Event_id)
@@ -28,8 +28,8 @@ func GetTicket(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success", "data": ticket})
 }
 
-func CreateTicket(c *fiber.Ctx) error{
-	
+func CreateTicket(c *fiber.Ctx) error {
+
 	//Load Model
 	ticket := new(models.Ticket)
 	err := c.BodyParser(ticket)
@@ -38,7 +38,7 @@ func CreateTicket(c *fiber.Ctx) error{
 	if err != nil {
 		c.Status(400).JSON(fiber.Map{"error": "failed to process inputs", "data": err})
 		return nil
-	 }
+	}
 
 	//Add to Database
 	row := DATABASE.QueryRow(
@@ -55,13 +55,13 @@ func CreateTicket(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success", "type": "Creating Ticket"}) //Returning success
 }
 
-func DeleteTicket(c *fiber.Ctx) error{
+func DeleteTicket(c *fiber.Ctx) error {
 	//Call SQL
-	if(CheckAuth(c) == true){ //Error Check
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
 
-	rows, err := DATABASE.Query("DELETE FROM Ticket Where Attendee_id ='" + c.Params("Attendee_id")  +"';")
+	rows, err := DATABASE.Query("DELETE FROM Ticket Where Attendee_id ='" + c.Params("Attendee_id") + "';")
 
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed", "data": rows}) //Returning success
@@ -70,15 +70,13 @@ func DeleteTicket(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success"})
 }
 
-
-
-func GetForm(c *fiber.Ctx) error{
+func GetForm(c *fiber.Ctx) error {
 	//Call SQL
-	if(CheckAuth(c) == true){ //Error Check
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
 
-	result := DATABASE.QueryRow("SELECT * FROM Form Where Id ='" + c.Params("id")  +"';")
+	result := DATABASE.QueryRow("SELECT * FROM Form Where Id ='" + c.Params("id") + "';")
 
 	var form models.Form
 	err := result.Scan(&form.Id, &form.Data, &form.Created_by, &form.Event_id, &form.Form_name)
@@ -90,13 +88,13 @@ func GetForm(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success", "data": form})
 }
 
-func GetFormForEvent(c *fiber.Ctx) error{
+func GetFormForEvent(c *fiber.Ctx) error {
 	//Call SQL
-	if(CheckAuth(c) == true){ //Error Check
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
 
-	rows, err := DATABASE.Query("SELECT * FROM Form Where Event_id ='" + c.Params("event_id")  +"';")
+	rows, err := DATABASE.Query("SELECT * FROM Form Where Event_id ='" + c.Params("event_id") + "';")
 
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"})
@@ -107,17 +105,16 @@ func GetFormForEvent(c *fiber.Ctx) error{
 		var form models.Form
 
 		err = rows.Scan(&form.Id, &form.Data, &form.Created_by, &form.Event_id, &form.Form_name)
-		
+
 		formsTable = append(formsTable, form)
 	}
 
 	return c.Status(200).JSON(fiber.Map{"status": "success", "data": formsTable})
 }
 
-
 func GetOrganizerFormForEvent(c *fiber.Ctx) error {
 	//Call SQL
-	if(CheckAuth(c) == true){ //Error Check
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
 
@@ -141,7 +138,6 @@ func GetOrganizerFormForEvent(c *fiber.Ctx) error {
 
 		result.Scan(&form.Responses)
 
-		
 		formsTable = append(formsTable, form)
 	}
 
@@ -150,7 +146,7 @@ func GetOrganizerFormForEvent(c *fiber.Ctx) error {
 
 func GetHeadDelegateFormForEvent(c *fiber.Ctx) error {
 	//Call SQL
-	if(CheckAuth(c) == true){ //Error Check
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
 
@@ -171,7 +167,7 @@ func GetHeadDelegateFormForEvent(c *fiber.Ctx) error {
 		err = rows.Scan(&form.Id, &form.Form_name, &form.Data, &form.Created_by, &form.Event_id)
 
 		result := DATABASE.QueryRow(`SELECT COUNT(Form_id) FROM COMPLETE_FORM
-		 Where Form_id =$1 AND Attendee_id = $2;`, form.Id, c.Params("attendee_id"));
+		 Where Form_id =$1 AND Attendee_id = $2;`, form.Id, c.Params("attendee_id"))
 
 		result.Scan(&form.Head_response)
 
@@ -180,9 +176,9 @@ func GetHeadDelegateFormForEvent(c *fiber.Ctx) error {
 		result2, err3 := DATABASE.Query(`SELECT p.F_name, p.M_name, p.L_name 
 		FROM COMPLETE_FORM cf, REGISTERED_USER r, Person p 
 		Where cf.Form_id =$1 AND cf.Attendee_id = r.Attendee_id AND r.Email = p.Email AND
-		r.Role = 'DELEGATE';`, form.Id);
+		r.Role = 'DELEGATE';`, form.Id)
 
-		 if err3 != nil {
+		if err3 != nil {
 			fmt.Print("err3: ")
 			fmt.Println(err3)
 			continue
@@ -208,7 +204,7 @@ func GetHeadDelegateFormForEvent(c *fiber.Ctx) error {
 		SELECT p2.Email 
 		FROM COMPLETE_FORM cf, REGISTERED_USER r2, Person p2 
 		Where cf.Form_id =$2 AND cf.Attendee_id = r2.Attendee_id AND r2.Email = p2.Email
-		);`, c.Params("event_id"), form.Id);
+		);`, c.Params("event_id"), form.Id)
 
 		if err4 != nil {
 			fmt.Print("err4: ")
@@ -228,20 +224,17 @@ func GetHeadDelegateFormForEvent(c *fiber.Ctx) error {
 			delegateResponseTable = append(delegateResponseTable, resp)
 		}
 
-		
-
 		form.Delegate_responses = delegateResponseTable
-		
+
 		formsTable = append(formsTable, form)
 	}
 
 	return c.Status(200).JSON(fiber.Map{"status": "success", "data": formsTable})
 }
 
-
 func GetDelegateFormForEvent(c *fiber.Ctx) error {
 	//Call SQL
-	if(CheckAuth(c) == true){ //Error Check
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
 
@@ -262,20 +255,19 @@ func GetDelegateFormForEvent(c *fiber.Ctx) error {
 		err = rows.Scan(&form.Id, &form.Form_name, &form.Data, &form.Created_by, &form.Event_id)
 
 		result := DATABASE.QueryRow(`SELECT COUNT(Form_id) FROM COMPLETE_FORM 
-		 Where Form_id =$1 AND Attendee_id = $2;`, form.Id, c.Params("attendee_id"));
+		 Where Form_id =$1 AND Attendee_id = $2;`, form.Id, c.Params("attendee_id"))
 
 		result.Scan(&form.Response)
-		
+
 		formsTable = append(formsTable, form)
 	}
 
 	return c.Status(200).JSON(fiber.Map{"status": "success", "data": formsTable})
 }
 
-
 func GetFormSubmissions(c *fiber.Ctx) error {
 	//Call SQL
-	if(CheckAuth(c) == true){ //Error Check
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
 
@@ -302,8 +294,8 @@ func GetFormSubmissions(c *fiber.Ctx) error {
 		var mName = ""
 		var lName = ""
 
-		err = rows.Scan(&form.Data, &form.Answer_data, &fName, &mName, &lName, &form.Preferred_language, &form.Dietary_restriction, 
-		&form.School_name, &form.Stream, &form.Registration_status)
+		err = rows.Scan(&form.Data, &form.Answer_data, &fName, &mName, &lName, &form.Preferred_language, &form.Dietary_restriction,
+			&form.School_name, &form.Stream, &form.Registration_status)
 
 		form.Name = fName + " " + mName + " " + lName
 		if form.Registration_status == "1" {
@@ -319,19 +311,18 @@ func GetFormSubmissions(c *fiber.Ctx) error {
 		if form.Dietary_restriction == "" {
 			form.Dietary_restriction = "N/A"
 		}
-		
+
 		formsTable = append(formsTable, form)
 	}
 
 	return c.Status(200).JSON(fiber.Map{"status": "success", "data": formsTable})
 }
 
-
-func CreateForm(c *fiber.Ctx) error{
-	if(CheckAuth(c) == true){ //Error Check
+func CreateForm(c *fiber.Ctx) error {
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
-	
+
 	//Load Model
 	form := new(models.Form)
 	err := c.BodyParser(form)
@@ -340,7 +331,7 @@ func CreateForm(c *fiber.Ctx) error{
 	if err != nil {
 		c.Status(400).JSON(fiber.Map{"error": "failed to process inputs", "data": err})
 		return nil
-	 }
+	}
 
 	//Add to Database
 	row := DATABASE.QueryRow(
@@ -356,14 +347,13 @@ func CreateForm(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success", "type": "Creating Form"}) //Returning success
 }
 
-
-func DeleteForm(c *fiber.Ctx) error{
+func DeleteForm(c *fiber.Ctx) error {
 	//Call SQL
-	if(CheckAuth(c) == true){ //Error Check
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
 
-	rows, err := DATABASE.Query("DELETE FROM Form Where Id ='" + c.Params("id")  +"';")
+	rows, err := DATABASE.Query("DELETE FROM Form Where Id ='" + c.Params("id") + "';")
 
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed", "data": rows}) //Returning success
@@ -372,12 +362,11 @@ func DeleteForm(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success"})
 }
 
-
-func CreateCompleteForm(c *fiber.Ctx) error{
-	if(CheckAuth(c) == true){ //Error Check
+func CreateCompleteForm(c *fiber.Ctx) error {
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
-	
+
 	//Load Model
 	completeForm := new(models.CompleteForm)
 	err := c.BodyParser(completeForm)
@@ -386,7 +375,7 @@ func CreateCompleteForm(c *fiber.Ctx) error{
 	if err != nil {
 		c.Status(400).JSON(fiber.Map{"error": "failed to process inputs", "data": err})
 		return nil
-	 }
+	}
 
 	//Add to Database
 	row := DATABASE.QueryRow(
@@ -402,9 +391,9 @@ func CreateCompleteForm(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success", "type": "Creating Complete Form"}) //Returning success
 }
 
-func GetEvent(c *fiber.Ctx) error{
+func GetEvent(c *fiber.Ctx) error {
 
-	result := DATABASE.QueryRow("SELECT * FROM EVENT Where Id ='" + c.Params("id")  +"';")
+	result := DATABASE.QueryRow("SELECT * FROM EVENT Where Id ='" + c.Params("id") + "';")
 
 	var event models.Event
 	err := result.Scan(&event.Id, &event.Name)
@@ -416,7 +405,7 @@ func GetEvent(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success", "data": event})
 }
 
-func SendInvitation(c *fiber.Ctx) error{
+func SendInvitation(c *fiber.Ctx) error {
 	//Call SQL
 	invitation := new(models.InvitationLoad)
 	err := c.BodyParser(invitation)
@@ -424,17 +413,17 @@ func SendInvitation(c *fiber.Ctx) error{
 	if err != nil {
 		c.Status(400).JSON(fiber.Map{"error": "failed to process inputs", "data": err})
 		return err
-	 }
+	}
 
-	 userToken, userErr := CreateUnRegisteredUser(invitation.User_email)
+	userToken, userErr := CreateUnRegisteredUser(invitation.User_email)
 
-	 if userErr != nil || userToken == "" {
+	if userErr != nil || userToken == "" {
 		return c.Status(500).JSON(fiber.Map{"status": "fail", "data": userErr})
 		return userErr
-	 }
+	}
 
 	status, emailErr := email.SendMessage(invitation.Event_name, invitation.Stream_name, invitation.User_email,
-	invitation.Event_id, invitation.Stream_number, userToken)
+		invitation.Event_id, invitation.Stream_number, userToken)
 
 	if status != 202 {
 		return c.Status(500).JSON(fiber.Map{"status": "fail", "data": emailErr})
@@ -443,11 +432,11 @@ func SendInvitation(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success", "type": "Email being processed"})
 }
 
-func CreateEvent(c *fiber.Ctx) error{
-	if(CheckAuth(c) == true){ //Error Check
+func CreateEvent(c *fiber.Ctx) error {
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
-	
+
 	//Load Model
 	event := new(models.Event)
 	err := c.BodyParser(event)
@@ -456,7 +445,7 @@ func CreateEvent(c *fiber.Ctx) error{
 	if err != nil {
 		c.Status(400).JSON(fiber.Map{"error": "failed to process inputs", "data": err})
 		return nil
-	 }
+	}
 
 	//Add to Database
 	row := DATABASE.QueryRow(
@@ -472,14 +461,13 @@ func CreateEvent(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success", "type": "Creating Organizer"}) //Returning success
 }
 
-
-func DeleteEvent(c *fiber.Ctx) error{
+func DeleteEvent(c *fiber.Ctx) error {
 	//Call SQL
-	if(CheckAuth(c) == true){ //Error Check
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
 
-	rows, err := DATABASE.Query("DELETE FROM Event Where Id ='" + c.Params("id")  +"';")
+	rows, err := DATABASE.Query("DELETE FROM Event Where Id ='" + c.Params("id") + "';")
 
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed", "data": rows}) //Returning success
@@ -490,13 +478,13 @@ func DeleteEvent(c *fiber.Ctx) error{
 
 //-------------------------------Organizer----------------------------------
 
-func GetOrganizer(c *fiber.Ctx) error{
+func GetOrganizer(c *fiber.Ctx) error {
 	//Call SQL
-	if(CheckAuth(c) == true){ //Error Check
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
 
-	result := DATABASE.QueryRow("SELECT * FROM Form Where email ='" + c.Params("email")  +"';")
+	result := DATABASE.QueryRow("SELECT * FROM Form Where email ='" + c.Params("email") + "';")
 
 	var organizer models.Organizer
 	err := result.Scan(&organizer.Email)
@@ -508,11 +496,11 @@ func GetOrganizer(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success", "data": organizer})
 }
 
-func CreateOrganizer(c *fiber.Ctx) error{
-	if(CheckAuth(c) == true){ //Error Check
+func CreateOrganizer(c *fiber.Ctx) error {
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
-	
+
 	//Load Model
 	organizer := new(models.Organizer)
 	err := c.BodyParser(organizer)
@@ -521,7 +509,7 @@ func CreateOrganizer(c *fiber.Ctx) error{
 	if err != nil {
 		c.Status(400).JSON(fiber.Map{"error": "failed to process inputs", "data": err})
 		return nil
-	 }
+	}
 
 	//Add to Database
 	row := DATABASE.QueryRow(
@@ -537,13 +525,13 @@ func CreateOrganizer(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success", "type": "Creating Event"}) //Returning success
 }
 
-func DeleteOrganizer(c *fiber.Ctx) error{
+func DeleteOrganizer(c *fiber.Ctx) error {
 	//Call SQL
-	if(CheckAuth(c) == true){ //Error Check
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
 
-	rows, err := DATABASE.Query("DELETE FROM Event Where email ='" + c.Params("email")  +"';")
+	rows, err := DATABASE.Query("DELETE FROM Event Where email ='" + c.Params("email") + "';")
 
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed", "data": rows}) //Returning success
@@ -554,9 +542,9 @@ func DeleteOrganizer(c *fiber.Ctx) error{
 
 //-------------------------------Stream----------------------------------
 
-func GetStream(c *fiber.Ctx) error{
+func GetStream(c *fiber.Ctx) error {
 
-	result := DATABASE.QueryRow("SELECT * FROM Stream Where stream_number='" + c.Params("stream_number")  +"';")
+	result := DATABASE.QueryRow("SELECT * FROM Stream Where stream_number='" + c.Params("stream_number") + "';")
 
 	var stream models.Stream
 	err := result.Scan(&stream.Stream_number, &stream.Title, &stream.Event_id)
@@ -569,11 +557,11 @@ func GetStream(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success", "data": stream})
 }
 
-func CreateStream(c *fiber.Ctx) error{
-	if(CheckAuth(c) == true){ //Error Check
+func CreateStream(c *fiber.Ctx) error {
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
-	
+
 	//Load Model
 	stream := new(models.Stream)
 	err := c.BodyParser(stream)
@@ -583,7 +571,7 @@ func CreateStream(c *fiber.Ctx) error{
 	if err != nil {
 		c.Status(400).JSON(fiber.Map{"error": "failed to process inputs", "data": err})
 		return nil
-	 }
+	}
 
 	//Add to Database
 	row := DATABASE.QueryRow(
@@ -599,13 +587,13 @@ func CreateStream(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success", "type": "Creating Stream", "stream_number": stream.Stream_number}) //Returning success
 }
 
-func DeleteStream(c *fiber.Ctx) error{
+func DeleteStream(c *fiber.Ctx) error {
 	//Call SQL
-	if(CheckAuth(c) == true){ //Error Check
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
 
-	rows, err := DATABASE.Query("DELETE FROM Stream Where Stream_number ='" + c.Params("email")  +"';")
+	rows, err := DATABASE.Query("DELETE FROM Stream Where Stream_number ='" + c.Params("email") + "';")
 
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed", "data": rows}) //Returning success
@@ -614,10 +602,9 @@ func DeleteStream(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success"})
 }
 
-
-func GetStreams(c *fiber.Ctx) error{
+func GetStreams(c *fiber.Ctx) error {
 	//Call SQL
-	if(CheckAuth(c) == true){ //Error Check
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
 	rows, err := DATABASE.Query("SELECT * FROM Stream;")
@@ -632,9 +619,9 @@ func GetStreams(c *fiber.Ctx) error{
 
 		err = rows.Scan(&stream.Stream_number, &stream.Title, &stream.Event_id)
 		if err != nil {
-		//	return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
+			//	return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
 		}
-		
+
 		streamsTable = append(streamsTable, models.Stream{Stream_number: stream.Stream_number, Title: stream.Title,
 			Event_id: stream.Event_id})
 	}
@@ -642,19 +629,18 @@ func GetStreams(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success", "data": streamsTable})
 }
 
-
 func GetStreamsFromEvent(c *fiber.Ctx) error {
-	if(CheckAuth(c) == true){ //Error Check
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
 
-	streamRows, err := DATABASE.Query(`SELECT * FROM Stream where event_id='`+ c.Params("event_id") + `';`)
+	streamRows, err := DATABASE.Query(`SELECT * FROM Stream where event_id='` + c.Params("event_id") + `';`)
 
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed with Stream"}) //Returning success
 	}
 
-	var eventTable [] interface {}
+	var eventTable []interface{}
 	for streamRows.Next() {
 		var stream models.Stream
 
@@ -672,13 +658,13 @@ func GetStreamsFromEvent(c *fiber.Ctx) error {
 
 //-------------------------------Session----------------------------------
 
-func GetSession(c *fiber.Ctx) error{
+func GetSession(c *fiber.Ctx) error {
 	//Call SQL
-	if(CheckAuth(c) == true){ //Error Check
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
 
-	result := DATABASE.QueryRow("SELECT * FROM Session Where session_number::text='" + c.Params("stream_number")  +"';")
+	result := DATABASE.QueryRow("SELECT * FROM Session Where session_number::text='" + c.Params("stream_number") + "';")
 
 	var session models.Session
 	err := result.Scan(&session.Session_number, &session.Location, &session.Start_time, &session.Duration_minutes, &session.Title, &session.Description)
@@ -690,12 +676,11 @@ func GetSession(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success", "data": session})
 }
 
-
-func CreateSession(c *fiber.Ctx) error{
-	if(CheckAuth(c) == true){ //Error Check
+func CreateSession(c *fiber.Ctx) error {
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
-	
+
 	//Load Model
 	session := new(models.Session)
 	err := c.BodyParser(session)
@@ -705,7 +690,7 @@ func CreateSession(c *fiber.Ctx) error{
 	if err != nil {
 		c.Status(400).JSON(fiber.Map{"error": "failed to process inputs", "data": err})
 		return nil
-	 }
+	}
 
 	//Add to Database
 	row := DATABASE.QueryRow(
@@ -721,13 +706,13 @@ func CreateSession(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success", "type": "Creating Session", "session_number": session.Session_number}) //Returning success
 }
 
-func DeleteSession(c *fiber.Ctx) error{
+func DeleteSession(c *fiber.Ctx) error {
 	//Call SQL
-	if(CheckAuth(c) == true){ //Error Check
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
 
-	rows, err := DATABASE.Query("DELETE FROM Session Where Session_number::text ='" + c.Params("session_number")  +"';")
+	rows, err := DATABASE.Query("DELETE FROM Session Where Session_number::text ='" + c.Params("session_number") + "';")
 
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed", "data": rows}) //Returning success
@@ -736,9 +721,9 @@ func DeleteSession(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success"})
 }
 
-func GetSessionByStream(c *fiber.Ctx) error{
+func GetSessionByStream(c *fiber.Ctx) error {
 
-	rows, err := DATABASE.Query("SELECT * FROM COMPOSED_OF Where stream_number::text='" + c.Params("stream_number")  +"';")
+	rows, err := DATABASE.Query("SELECT * FROM COMPOSED_OF Where stream_number::text='" + c.Params("stream_number") + "';")
 
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
@@ -750,15 +735,15 @@ func GetSessionByStream(c *fiber.Ctx) error{
 
 		err = rows.Scan(&composed_Of.Stream_number, &composed_Of.Session_number)
 		if err != nil {
-		//	return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
+			//	return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
 		}
 
-		result := DATABASE.QueryRow("SELECT * FROM Session Where session_number::text='" + composed_Of.Session_number  +"';")
+		result := DATABASE.QueryRow("SELECT * FROM Session Where session_number::text='" + composed_Of.Session_number + "';")
 
 		var session models.Session
-		err := result.Scan(&session.Session_number, &session.Location, &session.Start_time, &session.Duration_minutes, 
+		err := result.Scan(&session.Session_number, &session.Location, &session.Start_time, &session.Duration_minutes,
 			&session.Title, &session.Description)
-	
+
 		if err != nil {
 			return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
 		}
@@ -766,23 +751,21 @@ func GetSessionByStream(c *fiber.Ctx) error{
 		sessionsTables = append(sessionsTables, session)
 	}
 
-
 	return c.Status(200).JSON(fiber.Map{"status": "success", "data": sessionsTables})
 }
 
-
 //-------------------------------Accomodations----------------------------------
 
-func GetAccommodation(c *fiber.Ctx) error{
+func GetAccommodation(c *fiber.Ctx) error {
 	//Call SQL
-	if(CheckAuth(c) == true){ //Error Check
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
 
-	result := DATABASE.QueryRow("SELECT * FROM Accomodation Where room_number::text='" + c.Params("room_number")  +"';")
+	result := DATABASE.QueryRow("SELECT * FROM Accomodation Where room_number::text='" + c.Params("room_number") + "';")
 
 	var accommodation models.Accommodation
-	err := result.Scan(&accommodation.Room_number, &accommodation.Capacity, &accommodation.Country, &accommodation.Province, &accommodation.Street_address, &accommodation.Postal_code, &accommodation.Event_id)
+	err := result.Scan(&accommodation.Room_number, &accommodation.Capacity, &accommodation.Country, &accommodation.Province, &accommodation.Street_address, &accommodation.Postal_code, &accommodation.Event_id, &accommodation.Room_code)
 
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
@@ -791,12 +774,11 @@ func GetAccommodation(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success", "data": accommodation})
 }
 
-
-func CreateAccommodation(c *fiber.Ctx) error{
-	if(CheckAuth(c) == true){ //Error Check
+func CreateAccommodation(c *fiber.Ctx) error {
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
-	
+
 	//Load Model
 	accommodation := new(models.Accommodation)
 	err := c.BodyParser(accommodation)
@@ -806,12 +788,12 @@ func CreateAccommodation(c *fiber.Ctx) error{
 	if err != nil {
 		c.Status(400).JSON(fiber.Map{"error": "failed to process inputs", "data": err})
 		return nil
-	 }
+	}
 
 	//Add to Database
 	row := DATABASE.QueryRow(
-		`INSERT INTO Accomodation(Room_number, Capacity, Country, Province, Street_address, Postal_code, Event_id) VALUES ($1, $2, $3, $4, $5, $6, $7);`,
-		accommodation.Room_number, accommodation.Capacity, accommodation.Country, accommodation.Province, accommodation.Street_address, accommodation.Postal_code, accommodation.Event_id)
+		`INSERT INTO Accomodation(Room_number, Capacity, Country, Province, Street_address, Postal_code, Event_id, Room_code) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);`,
+		accommodation.Room_number, accommodation.Capacity, accommodation.Country, accommodation.Province, accommodation.Street_address, accommodation.Postal_code, accommodation.Event_id, accommodation.Room_code)
 
 	//SQL Error Check
 	if row.Err() != nil {
@@ -822,16 +804,15 @@ func CreateAccommodation(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success", "type": "Creating Accommodations"}) //Returning success
 }
 
-
 //-------------------------------School----------------------------------
 
-func GetSchool(c *fiber.Ctx) error{
+func GetSchool(c *fiber.Ctx) error {
 	//Call SQL
-	if(CheckAuth(c) == true){ //Error Check
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
 
-	result := DATABASE.QueryRow("SELECT * FROM School Where id::text='" + c.Params("id")  +"';")
+	result := DATABASE.QueryRow("SELECT * FROM School Where id::text='" + c.Params("id") + "';")
 
 	var school models.School
 	err := result.Scan(&school.Id, &school.Name, &school.Country, &school.Province, &school.Street_address, &school.Postal_code)
@@ -843,7 +824,7 @@ func GetSchool(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success", "data": school})
 }
 
-func GetSchools(c *fiber.Ctx) error{
+func GetSchools(c *fiber.Ctx) error {
 	rows, err := DATABASE.Query("SELECT * FROM school;")
 
 	if err != nil {
@@ -856,18 +837,17 @@ func GetSchools(c *fiber.Ctx) error{
 
 		err = rows.Scan(&school.Id, &school.Name, &school.Capacity, &school.Country, &school.Province, &school.Street_address, &school.Postal_code)
 		if err != nil {
-		//	return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
+			//	return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
 		}
-		
-		schoolsTable = append(schoolsTable, models.School{Id: school.Id, Name: school.Name, Capacity: school.Capacity, Country: school.Country, 
-		Province: school.Province, Street_address: school.Street_address, Postal_code: school.Postal_code})
+
+		schoolsTable = append(schoolsTable, models.School{Id: school.Id, Name: school.Name, Capacity: school.Capacity, Country: school.Country,
+			Province: school.Province, Street_address: school.Street_address, Postal_code: school.Postal_code})
 	}
 
 	return c.Status(200).JSON(fiber.Map{"status": "success", "data": schoolsTable})
 }
 
-
-func CreateSchool(c *fiber.Ctx) error{	
+func CreateSchool(c *fiber.Ctx) error {
 	//Load Model
 	school := new(models.School)
 	err := c.BodyParser(school)
@@ -876,7 +856,7 @@ func CreateSchool(c *fiber.Ctx) error{
 	if err != nil {
 		c.Status(400).JSON(fiber.Map{"error": "failed to process inputs", "data": err})
 		return nil
-	 }
+	}
 
 	//Add to Database
 	row := DATABASE.QueryRow(
@@ -892,13 +872,13 @@ func CreateSchool(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success", "type": "Creating School"}) //Returning success
 }
 
-func DeleteSchool(c *fiber.Ctx) error{
+func DeleteSchool(c *fiber.Ctx) error {
 	//Call SQL
-	if(CheckAuth(c) == true){ //Error Check
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
 
-	rows, err := DATABASE.Query("DELETE FROM School Where id::text ='" + c.Params("id")  +"';")
+	rows, err := DATABASE.Query("DELETE FROM School Where id::text ='" + c.Params("id") + "';")
 
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed", "data": rows}) //Returning success
@@ -907,12 +887,9 @@ func DeleteSchool(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success"})
 }
 
-
 //----IS_PARTICIPATING
 
-
-
-func AddIsParticipating(c *fiber.Ctx) error{	
+func AddIsParticipating(c *fiber.Ctx) error {
 	//Load Model
 	participating_In := new(models.Participating_In)
 	err := c.BodyParser(participating_In)
@@ -921,7 +898,7 @@ func AddIsParticipating(c *fiber.Ctx) error{
 	if err != nil {
 		c.Status(400).JSON(fiber.Map{"error": "failed to process inputs", "data": err})
 		return nil
-	 }
+	}
 
 	//Add to Database
 	row := DATABASE.QueryRow(
@@ -938,13 +915,13 @@ func AddIsParticipating(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success", "type": "Creating Participating Relationship"}) //Returning success
 }
 
-func DeleteStayingAt(c *fiber.Ctx) error{
+func DeleteStayingAt(c *fiber.Ctx) error {
 	//Call SQL
-	if(CheckAuth(c) == true){ //Error Check
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
 
-	rows, err := DATABASE.Query(`DELETE FROM Staying_at Where Attendee_id ='` + c.Params("attendee_id")  +`';`)
+	rows, err := DATABASE.Query(`DELETE FROM Staying_at Where Attendee_id ='` + c.Params("attendee_id") + `';`)
 
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed", "data": rows}) //Returning Fail
@@ -953,9 +930,9 @@ func DeleteStayingAt(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success"})
 }
 
-func GetCountIsParticipating(c *fiber.Ctx) error{
+func GetCountIsParticipating(c *fiber.Ctx) error {
 	result := DATABASE.QueryRow(`SELECT COUNT(Stream_number) FROM PARTICIPATING_IN 
-	WHERE Stream_number = $1 AND Attendee_id = $2;`,c.Params("stream_number"), c.Params("attendee_id"))
+	WHERE Stream_number = $1 AND Attendee_id = $2;`, c.Params("stream_number"), c.Params("attendee_id"))
 
 	var count = 0
 	err := result.Scan(&count)
@@ -967,13 +944,13 @@ func GetCountIsParticipating(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success", "data": count})
 }
 
-func GetCountIsParticipatingFromEvent(c *fiber.Ctx) error{
+func GetCountIsParticipatingFromEvent(c *fiber.Ctx) error {
 	result := DATABASE.QueryRow(`SELECT COUNT(pi.Stream_number) FROM PARTICIPATING_IN pi
 	WHERE pi.Attendee_id = $1 AND pi.Stream_number IN (
 		SELECT s.Stream_number
 		FROM STREAM s
 		WHERE s.Event_id = $2
-	);`,c.Params("attendee_id"), c.Params("event_id"));
+	);`, c.Params("attendee_id"), c.Params("event_id"))
 
 	var count = 0
 	err := result.Scan(&count)
