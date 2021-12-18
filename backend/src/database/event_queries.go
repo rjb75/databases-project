@@ -287,7 +287,7 @@ func GetFormSubmissions(c *fiber.Ctx) error {
 	Where cf.Form_id = $1 AND f.ID = cf.Form_id AND r.Attendee_id = cf.Attendee_id AND 
 	r.Email = p.Email AND ir.Attendee_id = r.Attendee_id AND ir.School_id = s.ID AND 
 	t.Attendee_id = r.Attendee_id AND t.Event_id = f.Event_id AND pi.Attendee_id = r.Attendee_id 
-	AND pi.Stream_number = st.Stream_number;`, c.Params("form_id"))
+	AND pi.Stream_number = st.Stream_number AND f.event_id = st.event_id;`, c.Params("form_id"))
 
 	if err != nil {
 		fmt.Println(err)

@@ -1,12 +1,14 @@
 import React, {useState, useEffect} from 'react';
 import {Event} from '../../models/Event';
-import {useTypedSelector} from '../../hooks/reduxHooks';
+import {useTypedDispatch, useTypedSelector} from '../../hooks/reduxHooks';
 import {selectUserData} from '../../actions/userActions/userSelectors';
 import axiosInstance from '../../axios';
 import {ROOT_V1} from '../../utils/APIConstants';
 import Modal from 'react-modal';
 import DropDownField from '../InputFields/DropDownField';
 import './EventItem.scss';
+import {selectEventList} from '../../actions/eventActions/eventSelector';
+import {setEventList} from '../../actions/eventActions/eventActionCreator';
 
 const customStyles = {
   content: {
@@ -32,6 +34,8 @@ interface Stream {
 const EventItem: React.FC<EventProps> = ({event}) => {
   Modal.setAppElement('#root');
   const userData = useTypedSelector(selectUserData);
+  const dispatch = useTypedDispatch();
+  const eventList = useTypedSelector(selectEventList);
   const [isRegisteredInEvent, setIsRegisteredInEvent] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [eventStreams, setEventStreams] = useState([]);
@@ -66,6 +70,11 @@ const EventItem: React.FC<EventProps> = ({event}) => {
             .then(res => {
               setIsRegisteredInEvent(true);
               handleClose();
+              if (eventList) {
+                dispatch(setEventList([...eventList, {id: event.id, name: event.name}]));
+              } else {
+                dispatch(setEventList([{id: event.id, name: event.name}]));
+              }
               console.log('add ticket: ', res);
             })
             .catch(err => console.log('add ticket: ', err));

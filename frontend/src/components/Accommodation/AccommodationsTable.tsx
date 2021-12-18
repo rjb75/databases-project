@@ -63,7 +63,7 @@ const AccommodationsTable = () => {
 
   function formatAccommodationData() {
     setTableData(
-      accommodationList.map(a => {
+      accommodationList?.map(a => {
         const roomCapacity = accommodationCapacity.find(r => r.Room_number === a.Room_number);
         return {
           Attendee_name: `${a.F_name} ${a.L_name}`,
@@ -77,7 +77,7 @@ const AccommodationsTable = () => {
 
   function formatSchoolAccommodationData(data: SchoolAccommodations[]): Accommodation[] {
     var items: Accommodation[] = [];
-    data.forEach(a => {
+    data?.forEach(a => {
       a.Persons.forEach(p => {
         items.push({
           Room_number: a.Room_number,
