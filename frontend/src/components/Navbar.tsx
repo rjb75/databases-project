@@ -1,9 +1,14 @@
-import React from 'react';
-import {NavLink} from 'react-router-dom';
+import React, {useState} from 'react';
+import {NavLink, useNavigate} from 'react-router-dom';
+import storage from 'redux-persist/lib/storage';
 import Icon from '../assets/icon.svg';
 import {useTypedSelector} from '../hooks/reduxHooks';
 import {APP_NAME} from '../utils/TextConstants';
 import EventSelector from './Events/EventSelector';
+import axiosInstance from '../axios';
+import { ROOT_V1 } from '../utils/APIConstants';
+import { useTypedDispatch } from '../hooks/reduxHooks';
+import { userSignedOut } from '../actions/userActions/userActionCreator';
 import './Navbar.scss';
 
 export interface NavbarLink {
@@ -20,6 +25,24 @@ export interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = props => {
+  const navigate = useNavigate();
+  const dispatch = useTypedDispatch();
+  const [dropdownOpen, setDropDownOpen] = useState(false);
+
+  const handleSignOut = () => {
+    axiosInstance
+    .post(`${ROOT_V1}/signout`)
+    .then(res => {
+      navigate('/');
+      dispatch(userSignedOut());
+      storage.removeItem('persist:root');
+      localStorage.clear();
+      console.log('signout response: ', res);
+    })
+    .catch(err => console.log('signout error: ', err));
+  }
+
+
   const defaultRoutes: Array<NavbarLink> = [
     {
       link: '/dashboard',
@@ -47,9 +70,14 @@ const Navbar: React.FC<NavbarProps> = props => {
   return (
     <nav className="navigation navigation-primary">
       <div className="navigation-topbar">
-        <NavLink className="navigation-homebutton" to="/">
+        <div className="navigation-homebutton" onClick={() => setDropDownOpen(!dropdownOpen)}>
           <img src={Icon} />
-        </NavLink>
+          <div hidden={!dropdownOpen} className={`navigation-drop-down`}>
+            <div className='navigation-drop-down-option' onClick={handleSignOut}>
+              Sign Out
+            </div>
+          </div>
+        </div>
         <p className="navigation-eventtitle">{eventContext.name || APP_NAME}</p>
         <a className="navigation-createevent">Create Event</a>
       </div>
