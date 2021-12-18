@@ -13,7 +13,7 @@ const Dashboard: React.FC = () => {
         <>
             <Navbar displayEventSelector={userContext.Role === UserRole.Organizer} />
             {
-                userContext.role === UserRole.Organizer ?
+                userContext.Role === UserRole.Organizer ?
                 <AllAttendeesTable /> :
                 <EventsListing />
             }
