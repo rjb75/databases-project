@@ -28,7 +28,6 @@ const OrganizerFormListing: React.FC<OrganizerFormListingProps> = props => {
         <h2 className="listing-title">{props.title}</h2>
         <p className="listing-questions">{props.questions} Questions</p>
         <a className="view-responses btn btn-primary--red" onClick={handleResponsesClick}>{props.responses} Responses</a>
-        {props.editable && <a className="edit-form-link">Edit Form</a>}
       </div>
     </div>
   );

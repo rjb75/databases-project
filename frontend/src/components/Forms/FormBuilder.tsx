@@ -9,6 +9,7 @@ import axiosInstance from '../../axios';
 import {useTypedSelector} from '../../hooks/reduxHooks';
 import {selectUserData} from '../../actions/userActions/userSelectors';
 import {useNavigate} from 'react-router-dom';
+import {selectEventContext} from '../../actions/eventActions/eventSelector';
 
 interface FormBuilderProps {}
 
@@ -24,9 +25,10 @@ const customStyles = {
 };
 
 const FormBuilder: React.FC<FormBuilderProps> = props => {
+  Modal.setAppElement('#root');
   const navigate = useNavigate();
   const userData = useTypedSelector(selectUserData);
-  const eventId = '2e9c306d-f83c-4bb0-b0d9-bc12a0d0fe91'; // should get from redux when event dashboard page is added
+  const eventId = useTypedSelector(selectEventContext).id;
   const [formContent, setFormContent] = useState<any>();
   const [modalOpen, setModalOpen] = useState(false);
   const [formName, setFormName] = useState('');

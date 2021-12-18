@@ -78,7 +78,6 @@ const OrganizerFormTable: React.FC<OrganizerFormTableProps> = props => {
 
             {'Return'}
           </div>
-          <div className="organizer-form-table-button">Edit Form</div>
         </div>
         <h1 className="organizer-form-table-title">Delegate Form Table</h1>
         <div className="organizer-form-table-container">

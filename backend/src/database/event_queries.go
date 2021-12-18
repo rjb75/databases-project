@@ -646,6 +646,34 @@ func GetStreams(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success", "data": streamsTable})
 }
 
+
+func GetStreamsFromEvent(c *fiber.Ctx) error {
+	if(CheckAuth(c) == true){ //Error Check
+		return nil
+	}
+
+	streamRows, err := DATABASE.Query(`SELECT * FROM Stream where event_id='`+ c.Params("event_id") + `';`)
+
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed with Stream"}) //Returning success
+	}
+
+	var eventTable [] interface {}
+	for streamRows.Next() {
+		var stream models.Stream
+
+		err = streamRows.Scan(&stream.Stream_number, &stream.Title, &stream.Event_id)
+
+		if err != nil {
+			return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed with Session"}) //Returning success
+		}
+
+		eventTable = append(eventTable, stream)
+	}
+
+	return c.Status(200).JSON(fiber.Map{"status": "success", "data": eventTable})
+}
+
 //-------------------------------Session----------------------------------
 
 func GetSession(c *fiber.Ctx) error{
@@ -935,6 +963,24 @@ func DeleteStayingAt(c *fiber.Ctx) error{
 func GetCountIsParticipating(c *fiber.Ctx) error{
 	result := DATABASE.QueryRow(`SELECT COUNT(Stream_number) FROM PARTICIPATING_IN 
 	WHERE Stream_number = $1 AND Attendee_id = $2;`,c.Params("stream_number"), c.Params("attendee_id"))
+
+	var count = 0
+	err := result.Scan(&count)
+
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
+	}
+
+	return c.Status(200).JSON(fiber.Map{"status": "success", "data": count})
+}
+
+func GetCountIsParticipatingFromEvent(c *fiber.Ctx) error{
+	result := DATABASE.QueryRow(`SELECT COUNT(pi.Stream_number) FROM PARTICIPATING_IN pi
+	WHERE pi.Attendee_id = $1 AND pi.Stream_number IN (
+		SELECT s.Stream_number
+		FROM STREAM s
+		WHERE s.Event_id = $2
+	);`,c.Params("attendee_id"), c.Params("event_id"));
 
 	var count = 0
 	err := result.Scan(&count)

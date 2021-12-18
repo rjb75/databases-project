@@ -22,6 +22,7 @@ const EventSelector: React.FC = () => {
         axiosInstance
         .get(`${ROOT_V2}/attendee/event/${userContext.Email}`)
         .then(res => {
+            console.log(res);
             setEventList(formatEvents(res.data.data))
         })
         .catch(err => console.error(err))

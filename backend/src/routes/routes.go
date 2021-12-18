@@ -86,7 +86,7 @@ func eventRoutes(v fiber.Router) {
 	v.Get("/forms/head/:event_id/:attendee_id", database.GetHeadDelegateFormForEvent)
 	v.Get("/forms/delegate/:event_id/:attendee_id", database.GetDelegateFormForEvent)
 	v.Get("/forms/submissions/:form_id", database.GetFormSubmissions)
-		v.Post("/form", database.CreateForm)
+	v.Post("/form", database.CreateForm)
 	v.Post("/form/complete", database.CreateCompleteForm)
 	v.Delete("/form/:id", database.DeleteForm)
 
@@ -103,6 +103,7 @@ func eventRoutes(v fiber.Router) {
 	v.Post("/stream", database.CreateStream)
 	v.Delete("/stream/:id", database.DeleteStream)
 	v.Get("/streams", database.GetStreams)
+	v.Get("/streams/:event_id", database.GetStreamsFromEvent)
 
 	v.Get("/session/:session_number", database.GetSession)
 	v.Post("/session", database.CreateSession)
@@ -121,6 +122,7 @@ func eventRoutes(v fiber.Router) {
 	v.Post("/participating", database.AddIsParticipating)
 	v.Delete("/accommodation/:attendee_id", database.DeleteStayingAt)
 	v.Get("/participating/count/:stream_number/:attendee_id", database.GetCountIsParticipating)
+	v.Get("/participating/count/event/:attendee_id/:event_id", database.GetCountIsParticipatingFromEvent)
 
 }
 
