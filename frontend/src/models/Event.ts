@@ -10,13 +10,13 @@ export interface DatabaseEvent {
 
 export function formatEvent(event: DatabaseEvent):Event {
     return {
-        id: event.Id,
-        name: event.Name
+        id: event?.Id,
+        name: event?.Name
     }
 }
 
 export function formatEvents(events: DatabaseEvent[]):Event[] {
-    return events.map((e) => {return {
+    return events?.map((e) => {return {
         id: e.Id,
         name: e.Name
     }})

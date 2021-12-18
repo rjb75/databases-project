@@ -332,7 +332,7 @@ const SignUp: React.FC<SignUpProps> = props => {
               )}
               {props.role == UserRole.HeadDelegate && (
                 <TextFieldInput
-                  placeHolder="Enter Your Job Tile"
+                  placeHolder="Enter Your Job Title"
                   input={headDelegateTitle}
                   setInput={setHeadDelegateTitle}
                   error={signupErrors.jobTitle}

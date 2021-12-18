@@ -50,36 +50,38 @@ interface DelegateForm {
 const FormCards: React.FC<FormCardsProps> = props => {
   const navigate = useNavigate();
   const userData = useTypedSelector(selectUserData);
-  const eventId = useTypedSelector(selectEventContext).id;
+  const eventId = useTypedSelector(selectEventContext)?.id;
   const [organizerEventForms, setOrganizerEventForms] = useState<Array<OrganizerForm>>([]);
   const [headEventForms, setHeadEventForms] = useState<Array<HeadForm>>([]);
   const [delegateEventForms, setDelegateEventForms] = useState<Array<DelegateForm>>([]);
 
   useEffect(() => {
-    if (userData.Role == UserRole.Organizer) {
-      axiosInstance
-        .get(`${ROOT_V1}/forms/organizer/${eventId}`)
-        .then(res => {
-          console.log('get forms response: ', res);
-          setOrganizerEventForms(res.data.data);
-        })
-        .catch(err => console.log('get forms error: ', err));
-    } else if (userData.Role == UserRole.HeadDelegate) {
-      axiosInstance
-        .get(`${ROOT_V1}/forms/head/${eventId}/${userData.Attendee_id}`)
-        .then(res => {
-          console.log('get head forms response: ', res);
-          setHeadEventForms(res.data.data);
-        })
-        .catch(err => console.log('get forms error: ', err));
-    } else {
-      axiosInstance
-        .get(`${ROOT_V1}/forms/delegate/${eventId}/${userData.Attendee_id}`)
-        .then(res => {
-          console.log('get delegate forms response: ', res);
-          setDelegateEventForms(res.data.data);
-        })
-        .catch(err => console.log('get forms error: ', err));
+    if (eventId) {
+      if (userData.Role == UserRole.Organizer) {
+        axiosInstance
+          .get(`${ROOT_V1}/forms/organizer/${eventId}`)
+          .then(res => {
+            console.log('get forms response: ', res);
+            setOrganizerEventForms(res.data.data);
+          })
+          .catch(err => console.log('get forms error: ', err));
+      } else if (userData.Role == UserRole.HeadDelegate) {
+        axiosInstance
+          .get(`${ROOT_V1}/forms/head/${eventId}/${userData.Attendee_id}`)
+          .then(res => {
+            console.log('get head forms response: ', res);
+            setHeadEventForms(res.data.data);
+          })
+          .catch(err => console.log('get forms error: ', err));
+      } else {
+        axiosInstance
+          .get(`${ROOT_V1}/forms/delegate/${eventId}/${userData.Attendee_id}`)
+          .then(res => {
+            console.log('get delegate forms response: ', res);
+            setDelegateEventForms(res.data.data);
+          })
+          .catch(err => console.log('get forms error: ', err));
+      }
     }
   }, [eventId]);
 
@@ -111,30 +113,36 @@ const FormCards: React.FC<FormCardsProps> = props => {
               </>
             ) : userData.Role == UserRole.HeadDelegate ? (
               <>
-                {headEventForms?.map((form, index) => (
-                  <DelegateFormListing
-                    key={index}
-                    formId={form.Id}
-                    title={form.Form_name}
-                    conference="Technology Conference"
-                    completed={form.Head_response > 0}
-                    userType={userData.Role}
-                    delegates={form.Delegate_responses ? form.Delegate_responses : []}
-                  />
-                ))}
+                {headEventForms?.map(
+                  (form, index) =>
+                    form && (
+                      <DelegateFormListing
+                        key={index}
+                        formId={form.Id}
+                        title={form.Form_name}
+                        conference="Technology Conference"
+                        completed={form.Head_response > 0}
+                        userType={userData.Role}
+                        delegates={form.Delegate_responses ? form.Delegate_responses : []}
+                      />
+                    )
+                )}
               </>
             ) : (
               <>
-                {delegateEventForms?.map((form, index) => (
-                  <DelegateFormListing
-                    key={index}
-                    formId={form.Id}
-                    title={form.Form_name}
-                    conference="Technology Conference"
-                    completed={form.Response > 0}
-                    userType={userData.Role}
-                  />
-                ))}
+                {delegateEventForms?.map(
+                  (form, index) =>
+                    form && (
+                      <DelegateFormListing
+                        key={index}
+                        formId={form.Id}
+                        title={form.Form_name}
+                        conference="Technology Conference"
+                        completed={form.Response > 0}
+                        userType={userData.Role}
+                      />
+                    )
+                )}
               </>
             )}
           </div>
