@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Cell } from 'react-table';
 import axiosInstance from '../../axios';
 import { ROOT_V2 } from '../../utils/APIConstants';
 import Card from '../Cards/Card';
@@ -9,7 +10,7 @@ interface AssignAccommodationProps {
     roomId: string
 }
 
-const AssignAccommodation: React.FC<AssignAccommodationProps> = ({roomId}) => {
+const AssignAccommodation: React.FC<AssignAccommodationProps> = ({ roomId}) => {
     const [formVisible, setFormVisible] = useState<boolean>(false);
     const [email, setEmail] = useState<string>('');
     const [error, setError] = useState<string>('');
@@ -20,10 +21,15 @@ const AssignAccommodation: React.FC<AssignAccommodationProps> = ({roomId}) => {
             axiosInstance
             .post(`${ROOT_V2}/accommodation/attendee`, {
                 Accommodation_id: roomId,
-                Attendee_email: email
+                Email: email
             })
             .then((res) => closeForm())
-            .catch((err) => setError(err))
+            .catch((err) => {
+                setError('Unable to add Person');
+                console.log(err);
+            })
+        } else {
+            setError('Enter a valid email')
         }
     }
 
@@ -38,7 +44,7 @@ const AssignAccommodation: React.FC<AssignAccommodationProps> = ({roomId}) => {
 
     return (
         <>
-            <a className='btn btn-primary--orange' onClick={() => setFormVisible(true)}>+</a>
+            <a className='btn btn-primary--orange assign-accommodation-button' onClick={() => setFormVisible(true)}>+</a>
             {
                 formVisible &&
                 <div className='assign-accommodation-form-container'>
@@ -47,7 +53,11 @@ const AssignAccommodation: React.FC<AssignAccommodationProps> = ({roomId}) => {
                             <p className='assign-accommodation-close-button' onClick={closeForm}>X</p>
                             <h3>Add Attendee to Room</h3>
                             <TextFieldInput input={email} setInput={setEmail} placeHolder='Attendee Email'/>
-                            <a className='btn btn-primary--red'>Assign Accommodation</a>
+                            {
+                                error != '' &&
+                                <p className='text--red'>{error}</p>
+                            }
+                            <a className='btn btn-primary--red' onClick={assignToAccommodation}>Assign Accommodation</a>
                         </div>
                     </Card>
                 </div>

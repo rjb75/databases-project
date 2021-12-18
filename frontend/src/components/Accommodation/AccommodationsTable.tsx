@@ -6,13 +6,26 @@ import {useTypedSelector} from '../../hooks/reduxHooks';
 import {UserRole} from '../../models/Enums';
 import {ROOT_V2} from '../../utils/APIConstants';
 import Table from '../Table/Table';
+import AssignAccommodation from './AssignAccommodation';
+import {Cell} from 'react-table';
 
-const Headers = [
-  {Header: 'Room Number', accessor: 'Room_code'},
-  {Header: 'Attendee', accessor: 'Attendee_name'},
-  {Header: 'School', accessor: 'School'},
-  {Header: 'Room Capacity', accessor: 'Room_capacity'},
-];
+const DelegateHeaders = [
+    {Header: "Room Number", accessor: "Room_code" },
+    {Header: "Attendee", accessor: "Attendee_name"},
+    {Header: "School", accessor: "School"},
+    {Header: "Room Capacity", accessor: "Room_capacity"},
+]
+
+const OrganizerHeaders = [
+    {Header: "Room Number", accessor: "Room_code" },
+    {Header: "Attendee", accessor: "Attendee_name"},
+    {Header: "School", accessor: "School"},
+    {Header: "Room Capacity", accessor: "Room_capacity"},
+    {Header: '', accessor: "addToRoom", Cell: ({cell}) => (
+        cell.row.original.Room_full &&
+            <AssignAccommodation roomId={cell.row.original.Room_number} />)
+    }
+]
 
 interface AccommodationsTableRow {
   Room_code: number;
@@ -53,27 +66,30 @@ interface Person {
   Email: string;
 }
 
-const AccommodationsTable = () => {
-  const [tableData, setTableData] = useState<AccommodationsTableRow[]>([]);
-  const [accommodationList, setAccommodationList] = useState<Accommodation[]>([]);
-  const [accommodationCapacity, setAccommodationCapacity] = useState<AccommodationCapacity[]>([]);
+const AccommodationsTable: React.FC = () => {
+    const [tableData, setTableData] = useState<AccommodationsTableRow []>([]);
+    const [accommodationList, setAccommodationList] = useState<Accommodation[]>([]);
+    const [accommodationCapacity, setAccommodationCapacity] = useState<AccommodationCapacity[]>([]);
 
-  const eventContext = useTypedSelector(selectEventContext);
-  const userContext = useTypedSelector(selectUserData);
+    const eventContext = useTypedSelector(selectEventContext);
+    const userContext = useTypedSelector(selectUserData);
+    const Headers = userContext.Role === UserRole.Organizer ? OrganizerHeaders : DelegateHeaders;
 
-  function formatAccommodationData() {
-    setTableData(
-      accommodationList?.map(a => {
-        const roomCapacity = accommodationCapacity.find(r => r.Room_number === a.Room_number);
-        return {
-          Attendee_name: `${a.F_name} ${a.L_name}`,
-          School: a.School,
-          Room_code: a.Room_code,
-          Room_capacity: `${roomCapacity.Room_Current}/${roomCapacity.Room_Total}`,
-        };
-      })
-    );
-  }
+    function formatAccommodationData() {
+        setTableData(accommodationList.map((a) => {
+            const roomCapacity = accommodationCapacity.find((r) => 
+                r.Room_number === a.Room_number
+            );
+            return {
+                Attendee_name: `${a.F_name} ${a.L_name}`,
+                School: a.School,
+                Room_code: a.Room_code,
+                Room_capacity: `${roomCapacity.Room_Current}/${roomCapacity.Room_Total}`,
+                Room_number: a.Room_number,
+                Room_full: roomCapacity.Room_Current < roomCapacity.Room_Total
+            }
+        }))
+    }
 
   function formatSchoolAccommodationData(data: SchoolAccommodations[]): Accommodation[] {
     var items: Accommodation[] = [];
