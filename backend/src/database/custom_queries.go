@@ -306,45 +306,25 @@ func GetAccommodationBasedOnEventId_CC(c *fiber.Ctx) error{
 		return nil
 	}
 
-	rows, err := DATABASE.Query(`SELECT DISTINCT a.room_number, a.Capacity, p.F_name, p.L_name, a.room_code FROM ACCOMODATION as a, Person as p
-	WHERE a.event_id = '` + c.Params("event_id") +`' and
-				a.room_number in (
-				SELECT accomodation_id FROM STAYING_AT
-					WHERE attendee_id in (
-					SELECT attendee_id FROM REGISTERED_USER
-						WHERE email in (
-						SELECT DISTINCT email FROM PERSON as p2
-							WHERE p.F_name = p2.F_Name and
-								p.L_name = p2.L_Name)));`)
+	rows, err := DATABASE.Query(`SELECT DISTINCT a.Room_Number, p.F_name, p.L_name, s.Name as School, a.capacity as Room_Total, a.Room_code FROM Accomodation as a, STAYING_AT as sa, IS_REPRESENTING as IR, SCHOOL as s, REGISTERED_USER as ru, PERSON as p
+	WHERE a.event_id = '` + c.Params("event_id") + `' and
+				p.email = ru.email and
+				ru.attendee_id = sa.attendee_id and
+				sa.accomodation_id = a.room_number and
+				s.id = ir.school_id and
+				ir.attendee_id = ru.attendee_id;
+`)
 
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
-	}
-
-	rowsNew, errNew := DATABASE.Query(`
-	SELECT a.room_number, s.name FROM ACCOMODATION as a, School as s
-		WHERE a.event_id = '` + c.Params("event_id") +`' and
-					a.room_number in (
-					SELECT DISTINCT accomodation_id FROM STAYING_AT
-						WHERE attendee_id in (
-						SELECT DISTINCT  attendee_id FROM IS_REPRESENTING
-							WHERE school_id in (
-							SELECT DISTINCT  id FROM School as s2
-								WHERE s.name= s2.name)));`)
-	
-	if errNew != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
 	}
 
 
 	var roomsTable [] interface{}
 	for rows.Next() {
-		rowsNew.Next()
 		var room RoomArray
 
-		err = rows.Scan(&room.Room_number, &room.Room_Total, &room.F_name, &room.L_name, &room.Room_code)
-		errNew = rowsNew.Scan(&room.Room_number, &room.School)
-
+		err = rows.Scan(&room.Room_number, &room.F_name, &room.L_name, &room.School, &room.Room_Total, &room.Room_code)
 		roomsTable = append(roomsTable, RoomArray{Room_number: room.Room_number, Room_code: room.Room_code, F_name: room.F_name, L_name: room.L_name, School: room.School, Room_Total: room.Room_Total})
 	}
 
@@ -353,11 +333,11 @@ func GetAccommodationBasedOnEventId_CC(c *fiber.Ctx) error{
 
 type RoomArray struct{
 	Room_number	string `json:"Room_number"`
-	Room_code	int64 `json: Room_code`
 	F_name 		string `json: "F_name"`
 	L_name 		string `json: "L_name"`
 	School 		string `json: "School"`
 	Room_Total int64 `json: Room_Total`
+	Room_code	int64 `json: Room_code`
 }
 
 func GetRoomCapacity_CC(c *fiber.Ctx) error{
@@ -478,3 +458,5 @@ func GetSchoolWithAttendeeId_CC(c *fiber.Ctx) error{
 
 	return c.Status(200).JSON(fiber.Map{"status": "success", "data": school})
 }
+
+
