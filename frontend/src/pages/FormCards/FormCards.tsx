@@ -3,15 +3,14 @@ import Navbar from '../../components/Navbar';
 import './FormCards.scss';
 import OrganizerFormListing from '../../components/FormCards/OrganizerFormListing';
 import {UserRole} from '../../models/Enums';
-import {DelegateFormCompletion} from '../../components/FormCards/DelegateFormListing';
 import DelegateFormListing from '../../components/FormCards/DelegateFormListing';
 import {useTypedSelector} from '../../hooks/reduxHooks';
 import {selectUserData} from '../../actions/userActions/userSelectors';
 import {ROOT_V1} from '../../utils/APIConstants';
-import Form from '../../models/Form';
 import {useNavigate} from 'react-router-dom';
 import {removeInvlaidCharacters} from '../../utils/JSONUtils';
 import axiosInstance from '../../axios';
+import {selectEventContext} from '../../actions/eventActions/eventSelector';
 
 interface FormCardsProps {}
 
@@ -51,7 +50,7 @@ interface DelegateForm {
 const FormCards: React.FC<FormCardsProps> = props => {
   const navigate = useNavigate();
   const userData = useTypedSelector(selectUserData);
-  const eventId = '2e9c306d-f83c-4bb0-b0d9-bc12a0d0fe91'; // should get from redux when event dashboard page is added
+  const eventId = useTypedSelector(selectEventContext).id;
   const [organizerEventForms, setOrganizerEventForms] = useState<Array<OrganizerForm>>([]);
   const [headEventForms, setHeadEventForms] = useState<Array<HeadForm>>([]);
   const [delegateEventForms, setDelegateEventForms] = useState<Array<DelegateForm>>([]);
@@ -99,7 +98,7 @@ const FormCards: React.FC<FormCardsProps> = props => {
           <div className="form-cards-grid-container">
             {userData.Role == UserRole.Organizer ? (
               <>
-                {organizerEventForms.map((form, index) => (
+                {organizerEventForms?.map((form, index) => (
                   <OrganizerFormListing
                     key={index}
                     formId={form.Id}
@@ -112,7 +111,7 @@ const FormCards: React.FC<FormCardsProps> = props => {
               </>
             ) : userData.Role == UserRole.HeadDelegate ? (
               <>
-                {headEventForms.map((form, index) => (
+                {headEventForms?.map((form, index) => (
                   <DelegateFormListing
                     key={index}
                     formId={form.Id}
@@ -126,7 +125,7 @@ const FormCards: React.FC<FormCardsProps> = props => {
               </>
             ) : (
               <>
-                {delegateEventForms.map((form, index) => (
+                {delegateEventForms?.map((form, index) => (
                   <DelegateFormListing
                     key={index}
                     formId={form.Id}

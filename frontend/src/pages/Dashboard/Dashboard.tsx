@@ -11,7 +11,7 @@ const Dashboard: React.FC = () => {
 
     return(
         <>
-            <Navbar displayEventSelector={userContext.Role === UserRole.Organizer} />
+            <Navbar displayEventSelector={true} />
             {
                 userContext.Role === UserRole.Organizer ?
                 <AllAttendeesTable /> :

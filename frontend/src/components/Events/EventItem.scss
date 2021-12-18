@@ -1,0 +1,13 @@
+@import '../../styles/colors.scss';
+
+.event-item-container {
+    .event-item-register {
+        color: $color-dark-blue;
+        cursor: pointer;
+    }
+
+    .event-item-register:hover {
+        text-decoration: underline;
+    }
+
+}
