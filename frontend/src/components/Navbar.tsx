@@ -47,6 +47,7 @@ const Navbar: React.FC<NavbarProps> = props => {
   const eventContext = useTypedSelector(selectEventContext);
   const userContext = useTypedSelector(selectUserData);
   const eventList = useTypedSelector(selectEventList);
+
   const [dropdownOpen, setDropDownOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [eventName, setEventName] = useState('');
