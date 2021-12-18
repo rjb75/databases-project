@@ -43,10 +43,6 @@ const AddSession: React.FC<AddSessionProps> = ({streamNumber}) => {
         .catch(err => console.error(err))
     }
 
-    useEffect(() => {
-        console.log(startTime);
-    }, [startTime])
-
     function clearFields() {
         setLocation('');
         setDuration('');

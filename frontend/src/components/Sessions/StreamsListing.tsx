@@ -87,7 +87,7 @@ const StreamsListing: React.FC<StreamsProps> = ({streams}) => {
             <Card size={CardSize.Large} key={s.uuid}>
               <>
                 { 
-                  userContext.data.role === UserRole.Organizer &&
+                  userContext.Role === UserRole.Organizer &&
                   <AddSession streamNumber={s.uuid} />
                 }
                 <div className="stream-listing-title-container">

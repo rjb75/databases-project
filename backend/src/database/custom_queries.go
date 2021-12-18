@@ -206,39 +206,39 @@ func AssignSessionToStream_CC(c *fiber.Ctx) error{
 }
 
 func GetAllAssociatedEvents_CC(c *fiber.Ctx) error{
-	//Call SQL
-	if(CheckAuth(c) == true){ //Error Check
-		return nil
-	}
+    //Call SQL
+    if(CheckAuth(c) == true){ //Error Check
+        return nil
+    }
 
-	row := DATABASE.QueryRow(`SELECT e.id, e.name FROM EVENT as e, REGISTERED_USER as ru
-	WHERE ru.email = '` + c.Params("email") + `' 
-		and (ru.role = 'ORGANIZER'
-		and e.id in (
-		SELECT io.event_id FROM IS_ORGANIZING as io
-			WHERE io.organizer_email=ru.email)
-		or ( not (ru.role = 'null')
-		and e.id IN (
-		SELECT s.event_id FROM STREAM as s
-			WHERE s.stream_number in (
-				SELECT pi.stream_number From PARTICIPATING_IN as pi
-					WHERE pi.attendee_id = ru.attendee_id))));`)
+    rows, err := DATABASE.Query(`SELECT e.id, e.name FROM EVENT as e, REGISTERED_USER as ru
+    WHERE ru.email = '` + c.Params("email") + `' 
+        and (ru.role = 'ORGANIZER'
+        and e.id in (
+        SELECT io.event_id FROM IS_ORGANIZING as io
+            WHERE io.organizer_email=ru.email)
+        or ( not (ru.role = 'null')
+        and e.id IN (
+        SELECT s.event_id FROM STREAM as s
+            WHERE s.stream_number in (
+                SELECT pi.stream_number From PARTICIPATING_IN as pi
+                    WHERE pi.attendee_id = ru.attendee_id))));`)
 
-	if row.Err() != nil {
-		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
-	}
+    if err != nil {
+        return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
+    }
 
-	var event models.Event
-	err := row.Scan(&event.Id, &event.Name)
+    var eventsTable []models.Event
+    for rows.Next() {
+        var event models.Event
 
-	if err != nil {
-		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
-	}
+        err = rows.Scan(&event.Id, &event.Name)
+        
+        eventsTable = append(eventsTable, models.Event{Id: event.Id, Name: event.Name })
+    }
 
-	return c.Status(200).JSON(fiber.Map{"status": "success", "data": event})
+    return c.Status(200).JSON(fiber.Map{"status": "success", "data": eventsTable})
 }
-
-
 
 func GetEventRegisteredTo_CC(c *fiber.Ctx) error{
 	//Call SQL
