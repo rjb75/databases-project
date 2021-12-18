@@ -460,16 +460,57 @@ func CreateEvent(c *fiber.Ctx) error{
 
 	//Add to Database
 	row := DATABASE.QueryRow(
-		`INSERT INTO Event(Id, name) VALUES ($1, $2);`,
-		event.Id, event.Name)
+		`INSERT INTO Event(Id, name) VALUES (DEFAULT, $2) RETURNING ID;`,event.Name)
+
+	var addedEventId = "";	
 
 	//SQL Error Check
 	if row.Err() != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Creating Person failed"}) //Returning success
 	}
 
+	row.Scan(&addedEventId)
+
 	//Success
-	return c.Status(200).JSON(fiber.Map{"status": "success", "type": "Creating Organizer"}) //Returning success
+	return c.Status(200).JSON(fiber.Map{"status": "success", "type": "Creating Organizer", "data": addedEventId}) //Returning success
+}
+
+func CreateOrganizerEvent(c *fiber.Ctx) error{
+	if(CheckAuth(c) == true){ //Error Check
+		return nil
+	}
+
+	//Load Model
+	event := new(models.CreateEventLoad)
+	err := c.BodyParser(event)
+
+	//Handling Errors
+	if err != nil {
+		c.Status(400).JSON(fiber.Map{"error": "failed to process inputs", "data": err})
+		return nil
+	 }
+
+	//Add to Database
+	row := DATABASE.QueryRow(
+		`INSERT INTO Event(Id, name) VALUES (DEFAULT, $1) RETURNING ID;`, event.Name)
+
+	var addedEventId = "";	
+
+	//SQL Error Check
+	if row.Err() != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Creating event failed"}) //Returning success
+	}
+
+	row.Scan(&addedEventId)
+
+	row2 := DATABASE.QueryRow(`INSERT INTO IS_ORGANIZING(Organizer_email, Event_id) VALUES ($1, $2);`, event.Email, addedEventId)
+
+	if row2.Err() != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Creating Is Organizing failed"}) //Returning success
+	}
+
+	//Success
+	return c.Status(200).JSON(fiber.Map{"status": "success", "type": "Creating Organizer", "data": addedEventId}) //Returning success
 }
 
 
