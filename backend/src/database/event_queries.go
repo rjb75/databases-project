@@ -912,3 +912,18 @@ func AddIsParticipating(c *fiber.Ctx) error{
 	//Success
 	return c.Status(200).JSON(fiber.Map{"status": "success", "type": "Creating Participating Relationship"}) //Returning success
 }
+
+func DeleteStayingAt(c *fiber.Ctx) error{
+	//Call SQL
+	if(CheckAuth(c) == true){ //Error Check
+		return nil
+	}
+
+	rows, err := DATABASE.Query(`DELETE FROM Staying_at Where Attendee_id ='` + c.Params("attendee_id")  +`';`)
+
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed", "data": rows}) //Returning Fail
+	}
+
+	return c.Status(200).JSON(fiber.Map{"status": "success"})
+}
