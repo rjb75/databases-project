@@ -268,3 +268,215 @@ func GetEventRegisteredTo_CC(c *fiber.Ctx) error{
 
 	return c.Status(200).JSON(fiber.Map{"status": "success", "data": eventsTable})
 }
+
+
+
+func AssignAttendeeToAccommodation_CC(c *fiber.Ctx) error{
+	// if(CheckAuth(c) == true){ //Error Check
+	// 	return nil
+	// }
+	
+	//Load Model
+	staying_at := new(models.Staying_At)
+	err := c.BodyParser(staying_at)
+
+	//Handling Errors
+	if err != nil {
+		c.Status(400).JSON(fiber.Map{"error": "failed to process inputs", "data": err})
+		return nil
+	 }
+
+	//Add to Database
+	row := DATABASE.QueryRow(
+		`INSERT INTO Staying_At(attendee_id, accomodation_id) VALUES ($1, $2);`,
+		staying_at.Attendee_id, staying_at.Accommodation_id)
+
+	//SQL Error Check
+	if row.Err() != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Assigning Attendee to Accommodation Failed"}) //Returning success
+	}
+
+	//Success
+	return c.Status(200).JSON(fiber.Map{"status": "success", "type": "Creating Staying at"}) //Returning success
+}
+
+
+//TODO add ROOM_CODE
+func GetAccommodationBasedOnEventId_CC(c *fiber.Ctx) error{
+	//Call SQL
+	if(CheckAuth(c) == true){ //Error Check
+		return nil
+	}
+
+	rows, err := DATABASE.Query(`SELECT DISTINCT a.room_number, a.Capacity, p.F_name, p.L_name FROM ACCOMODATION as a, Person as p
+	WHERE a.event_id = '` + c.Params("event_id") +`' and
+				a.room_number in (
+				SELECT accomodation_id FROM STAYING_AT
+					WHERE attendee_id in (
+					SELECT attendee_id FROM REGISTERED_USER
+						WHERE email in (
+						SELECT DISTINCT email FROM PERSON as p2
+							WHERE p.F_name = p2.F_Name and
+								p.L_name = p2.L_Name)));`)
+
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
+	}
+
+	rowsNew, errNew := DATABASE.Query(`
+	SELECT a.room_number, s.name FROM ACCOMODATION as a, School as s
+		WHERE a.event_id = '` + c.Params("event_id") +`' and
+					a.room_number in (
+					SELECT DISTINCT accomodation_id FROM STAYING_AT
+						WHERE attendee_id in (
+						SELECT DISTINCT  attendee_id FROM IS_REPRESENTING
+							WHERE school_id in (
+							SELECT DISTINCT  id FROM School as s2
+								WHERE s.name= s2.name)));`)
+	
+	if errNew != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
+	}
+
+
+	var roomsTable [] interface{}
+	for rows.Next() {
+		rowsNew.Next()
+		var room RoomArray
+
+		err = rows.Scan(&room.Room_number, &room.Room_Total, &room.F_name, &room.L_name)
+		errNew = rowsNew.Scan(&room.Room_number, &room.School)
+
+		roomsTable = append(roomsTable, RoomArray{Room_number: room.Room_number, F_name: room.F_name, L_name: room.L_name, School: room.School, Room_Total: room.Room_Total})
+	}
+
+	return c.Status(200).JSON(fiber.Map{"status": "success", "data": roomsTable})
+}
+
+type RoomArray struct{
+	Room_number	string `json:"Room_number"`
+	//Room_code	string `json:"Room_code"`
+	F_name 		string `json: "F_name"`
+	L_name 		string `json: "L_name"`
+	School 		string `json: "School"`
+	Room_Total int64 `json: Room_Total`
+}
+
+func GetRoomCapacity_CC(c *fiber.Ctx) error{
+	//Call SQL
+	if(CheckAuth(c) == true){ //Error Check
+		return nil
+	}
+
+	rows, err := DATABASE.Query(`SELECT a.room_number, a.Capacity, COUNT(room_number) as Current_total FROM ACCOMODATION as a, Person as p
+	WHERE a.event_id = '` + c.Params("event_id") +`' and
+				a.room_number in (
+				SELECT accomodation_id FROM STAYING_AT
+					WHERE attendee_id in (
+					SELECT attendee_id FROM REGISTERED_USER
+						WHERE email in (
+						SELECT DISTINCT email FROM PERSON as p2
+							WHERE p.F_name = p2.F_Name and
+								p.L_name = p2.L_Name)))
+	GROUP BY a.room_number;`)
+
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
+	}
+
+	var roomsTable [] interface{}
+	for rows.Next() {
+		var room RoomCapacity
+
+		err = rows.Scan(&room.Room_number, &room.Room_Total, &room.Room_Current)
+
+		roomsTable = append(roomsTable, RoomCapacity{Room_number: room.Room_number, Room_Total: room.Room_Total, Room_Current: room.Room_Current})
+	}
+
+	return c.Status(200).JSON(fiber.Map{"status": "success", "data": roomsTable})
+}
+
+type RoomCapacity struct{
+	Room_number	string `json:"Room_number"`
+	Room_Total int64 `json: Room_Total`
+	Room_Current int64 `json: Room_Current`
+}
+
+
+func GetAccomodationsWithSchool_CC(c *fiber.Ctx) error{
+		//Call SQL
+	if(CheckAuth(c) == true){ //Error Check
+		return nil
+	}
+
+	rows, err := DATABASE.Query(`SELECT a.room_number, s.name FROM ACCOMODATION as a, School as s
+	WHERE a.event_id = '`+ c.Params("event_id")+ `' and
+				a.room_number in (
+				SELECT DISTINCT accomodation_id FROM STAYING_AT
+					WHERE attendee_id in (
+					SELECT DISTINCT  attendee_id FROM IS_REPRESENTING
+						WHERE school_id = '`+ c.Params("school_id")+ `' and
+									school_id = s.id));`)
+
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed With Accomodations"}) //Returning success
+	}
+
+
+	var roomsTable [] interface{}
+	for rows.Next() {
+		var school SchoolRooms
+
+		err = rows.Scan(&school.Room_number, &school.Name)
+
+		rowsNew, err := DATABASE.Query(`
+		SELECT p.email, p.f_name, p.m_name, p.l_name, p.pronouns, p.preferred_language, p.dietary_restriction FROM STAYING_AT as sa, REGISTERED_USER as ru, Person as p
+		WHERE sa.accomodation_id = '` + school.Room_number + `' and
+					ru.attendee_id= sa.attendee_id and
+					ru.email = p.email;`)
+
+		if err != nil {
+			return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
+		}
+		var personsTable [] models.Person		
+		for rowsNew.Next(){
+			var person models.Person
+			err = rowsNew.Scan(&person.Email, &person.F_name,&person.M_name,&person.L_name,&person.Pronouns,&person.Preferred_language, &person.Dietary_restriction)
+			personsTable = append(personsTable, models.Person{Email: person.Email, F_name: person.F_name, M_name: person.M_name, L_name: person.L_name, Pronouns: person.Pronouns, Preferred_language: person.Preferred_language, Dietary_restriction: person.Dietary_restriction})
+		}
+
+		roomsTable = append(roomsTable, SchoolRooms{Room_number: school.Room_number, Name: school.Name, Persons: personsTable})
+	}
+
+	return c.Status(200).JSON(fiber.Map{"status": "success", "data": roomsTable})
+}
+
+
+type SchoolRooms struct{
+	Room_number	string `json:"Room_number"`
+	Name string `json: "Name"`
+	Persons []models.Person `json:"Persons"`
+}
+
+
+func GetSchoolWithAttendeeId_CC(c *fiber.Ctx) error{
+	//Call SQL
+	if(CheckAuth(c) == true){ //Error Check
+		return nil
+	}
+
+	row := DATABASE.QueryRow(`
+	SELECT * FROM SCHOOL
+		WHERE id in (
+		SELECT school_id FROM IS_REPRESENTING
+			WHERE attendee_id='` +  c.Params("attendee_id") +`');`)
+
+	if row.Err() != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
+	}
+
+	var school models.School
+	row.Scan(&school.Id, &school.Name, &school.Capacity, &school.Country, &school.Province, &school.Street_address,&school.Postal_code)
+
+	return c.Status(200).JSON(fiber.Map{"status": "success", "data": school})
+}

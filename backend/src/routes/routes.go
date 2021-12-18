@@ -63,6 +63,14 @@ func customRoutes(v fiber.Router) {
 
 	v.Get("/streams/sessions/:event_id", database.GetStreamsAndSessions_CC)
 	v.Post("/stream/session", database.AssignSessionToStream_CC)
+
+	v.Post("/accommodation/attendee", database.AssignAttendeeToAccommodation_CC)
+	v.Get("/accommodation/:event_id", database.GetAccommodationBasedOnEventId_CC)
+	v.Get("/accommodation/capacity/:event_id", database.GetRoomCapacity_CC)
+	v.Get("/school/accommodation/:event_id/:school_id", database.GetAccomodationsWithSchool_CC)
+	v.Get("/school/:attendee_id", database.GetSchoolWithAttendeeId_CC)
+
+
 }
 
 func eventRoutes(v fiber.Router) {
