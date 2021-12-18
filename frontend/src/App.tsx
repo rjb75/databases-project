@@ -18,6 +18,7 @@ import './styles/Main.scss';
 import TextAjax from './components/TestAjax';
 import SessionsPage from './pages/Sessions/SessionsPage';
 import Dashboard from './pages/Dashboard/Dashboard';
+import AccommodationsPage from './pages/Accommodations/AccommodationsPage';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
             <Route path="/test" element={<TextAjax />} />
             <Route path="/sessions" element={<SessionsPage />} />
             <Route path="/invite/:token/:eventId/:streamNumber" element={<InvitePage />} />
+            <Route path="accommodations" element={<AccommodationsPage />} />
           </Routes>
         </Router>
       </PersistGate>

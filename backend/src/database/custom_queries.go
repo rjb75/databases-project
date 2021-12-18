@@ -382,58 +382,59 @@ type RoomCapacity struct{
 
 
 func GetAccomodationsWithSchool_CC(c *fiber.Ctx) error{
-		//Call SQL
-	if(CheckAuth(c) == true){ //Error Check
-		return nil
-	}
+	//Call SQL
+if(CheckAuth(c) == true){ //Error Check
+	return nil
+}
 
-	rows, err := DATABASE.Query(`SELECT a.room_number, s.name FROM ACCOMODATION as a, School as s
-	WHERE a.event_id = '`+ c.Params("event_id")+ `' and
-				a.room_number in (
-				SELECT DISTINCT accomodation_id FROM STAYING_AT
-					WHERE attendee_id in (
-					SELECT DISTINCT  attendee_id FROM IS_REPRESENTING
-						WHERE school_id = '`+ c.Params("school_id")+ `' and
-									school_id = s.id));`)
+rows, err := DATABASE.Query(`SELECT  a.room_number, a.room_code, s.name FROM ACCOMODATION as a, School as s
+WHERE a.event_id = '`+ c.Params("event_id")+ `' and
+			a.room_number in (
+			SELECT DISTINCT accomodation_id FROM STAYING_AT
+				WHERE attendee_id in (
+				SELECT DISTINCT  attendee_id FROM IS_REPRESENTING
+					WHERE school_id = '`+ c.Params("school_id")+ `' and
+								school_id = s.id));`)
+
+if err != nil {
+	return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed With Accomodations"}) //Returning success
+}
+
+
+var roomsTable [] interface{}
+for rows.Next() {
+	var school SchoolRooms
+
+	err = rows.Scan(&school.Room_number, &school.Room_code, &school.Name)
+
+	rowsNew, err := DATABASE.Query(`
+	SELECT p.email, p.f_name, p.m_name, p.l_name, p.pronouns, p.preferred_language, p.dietary_restriction FROM STAYING_AT as sa, REGISTERED_USER as ru, Person as p
+	WHERE sa.accomodation_id = '` + school.Room_number + `' and
+				ru.attendee_id= sa.attendee_id and
+				ru.email = p.email;`)
 
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed With Accomodations"}) //Returning success
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
+	}
+	var personsTable [] models.Person		
+	for rowsNew.Next(){
+		var person models.Person
+		err = rowsNew.Scan(&person.Email, &person.F_name,&person.M_name,&person.L_name,&person.Pronouns,&person.Preferred_language, &person.Dietary_restriction)
+		personsTable = append(personsTable, models.Person{Email: person.Email, F_name: person.F_name, M_name: person.M_name, L_name: person.L_name, Pronouns: person.Pronouns, Preferred_language: person.Preferred_language, Dietary_restriction: person.Dietary_restriction})
 	}
 
+	roomsTable = append(roomsTable, SchoolRooms{Room_number: school.Room_number, Room_code: school.Room_code, Name: school.Name, Persons: personsTable})
+}
 
-	var roomsTable [] interface{}
-	for rows.Next() {
-		var school SchoolRooms
-
-		err = rows.Scan(&school.Room_number, &school.Name)
-
-		rowsNew, err := DATABASE.Query(`
-		SELECT p.email, p.f_name, p.m_name, p.l_name, p.pronouns, p.preferred_language, p.dietary_restriction FROM STAYING_AT as sa, REGISTERED_USER as ru, Person as p
-		WHERE sa.accomodation_id = '` + school.Room_number + `' and
-					ru.attendee_id= sa.attendee_id and
-					ru.email = p.email;`)
-
-		if err != nil {
-			return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
-		}
-		var personsTable [] models.Person		
-		for rowsNew.Next(){
-			var person models.Person
-			err = rowsNew.Scan(&person.Email, &person.F_name,&person.M_name,&person.L_name,&person.Pronouns,&person.Preferred_language, &person.Dietary_restriction)
-			personsTable = append(personsTable, models.Person{Email: person.Email, F_name: person.F_name, M_name: person.M_name, L_name: person.L_name, Pronouns: person.Pronouns, Preferred_language: person.Preferred_language, Dietary_restriction: person.Dietary_restriction})
-		}
-
-		roomsTable = append(roomsTable, SchoolRooms{Room_number: school.Room_number, Name: school.Name, Persons: personsTable})
-	}
-
-	return c.Status(200).JSON(fiber.Map{"status": "success", "data": roomsTable})
+return c.Status(200).JSON(fiber.Map{"status": "success", "data": roomsTable})
 }
 
 
 type SchoolRooms struct{
-	Room_number	string `json:"Room_number"`
-	Name string `json: "Name"`
-	Persons []models.Person `json:"Persons"`
+Room_number	string `json:"Room_number"`
+Room_code	string `json:"Room_code"`
+Name string `json: "Name"`
+Persons []models.Person `json:"Persons"`
 }
 
 
