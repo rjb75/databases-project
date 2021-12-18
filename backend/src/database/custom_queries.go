@@ -7,12 +7,11 @@ import (
 	"ucalgary.ca/cpsc441/eventmanagment/models"
 )
 
-
-func CreateEvent_CC(c *fiber.Ctx) error{
-	if(CheckAuth(c) == true){ //Error Check
+func CreateEvent_CC(c *fiber.Ctx) error {
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
-	
+
 	//Load Model
 	event := new(models.Event)
 	err := c.BodyParser(event)
@@ -23,7 +22,7 @@ func CreateEvent_CC(c *fiber.Ctx) error{
 	if err != nil {
 		c.Status(400).JSON(fiber.Map{"error": "failed to process inputs", "data": err})
 		return nil
-	 }
+	}
 
 	//Add to Database
 	row := DATABASE.QueryRow(
@@ -39,12 +38,11 @@ func CreateEvent_CC(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success", "type": "Creating Event", "id": event.Id}) //Returning success
 }
 
-
-func GenerateAttendeeId_CC(c *fiber.Ctx) error{
-	if(CheckAuth(c) == true){ //Error Check
+func GenerateAttendeeId_CC(c *fiber.Ctx) error {
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
-	
+
 	//Load Model
 	x := new(models.Attendee)
 	x.Attendee_id = uuid.New().String()
@@ -63,17 +61,16 @@ func GenerateAttendeeId_CC(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success", "type": "Creating Attendee	", "Attendee_id": x}) //Returning success
 }
 
-
-func GetAttendeesByEventId_CC(c *fiber.Ctx) error{
+func GetAttendeesByEventId_CC(c *fiber.Ctx) error {
 	//Call SQL
-	if(CheckAuth(c) == true){ //Error Check
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
 
 	rows, err := DATABASE.Query(`SELECT * FROM Person where email in (
 		SELECT email FROM Registered_user where attendee_id in (
 			SELECT attendee_id FROM Participating_in where stream_number in (
-				SELECT stream_number FROM Stream where event_id='`+ c.Params("event_id") + `')));`)
+				SELECT stream_number FROM Stream where event_id='` + c.Params("event_id") + `')));`)
 
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
@@ -83,56 +80,53 @@ func GetAttendeesByEventId_CC(c *fiber.Ctx) error{
 	for rows.Next() {
 		var person models.Person
 
-		err = rows.Scan(&person.Email, &person.F_name, &person.M_name, &person.L_name,  &person.Pronouns,  &person.Preferred_language, &person.Dietary_restriction)
+		err = rows.Scan(&person.Email, &person.F_name, &person.M_name, &person.L_name, &person.Pronouns, &person.Preferred_language, &person.Dietary_restriction)
 		if err != nil {
-		//	return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
+			//	return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
 		}
-		
+
 		personsTable = append(personsTable, models.Person{Email: person.Email, F_name: person.F_name, M_name: person.M_name,
-			L_name: person.L_name, Pronouns: person.Pronouns, 
-			Preferred_language: person.Preferred_language,
+			L_name: person.L_name, Pronouns: person.Pronouns,
+			Preferred_language:  person.Preferred_language,
 			Dietary_restriction: person.Dietary_restriction})
 	}
 
 	return c.Status(200).JSON(fiber.Map{"status": "success", "data": personsTable})
 }
 
-
-
-
-func GetStreamsAndSessions_CC(c *fiber.Ctx) error{
+func GetStreamsAndSessions_CC(c *fiber.Ctx) error {
 	//Call SQL
-	if(CheckAuth(c) == true){ //Error Check
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
 
-	streamRows, err := DATABASE.Query(`SELECT * FROM Stream where event_id='`+ c.Params("event_id") + `';`)
+	streamRows, err := DATABASE.Query(`SELECT * FROM Stream where event_id='` + c.Params("event_id") + `';`)
 
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed with Stream"}) //Returning success
 	}
 
-	var eventTable [] interface {}
+	var eventTable []interface{}
 	for streamRows.Next() {
 		var stream models.Stream
 
 		err = streamRows.Scan(&stream.Stream_number, &stream.Title, &stream.Event_id)
 
 		sessionRows, err := DATABASE.Query(`SELECT * FROM Session where session_number in (
-			SELECT session_number FROM Composed_of where stream_number='`+ stream.Stream_number+ `');
+			SELECT session_number FROM Composed_of where stream_number='` + stream.Stream_number + `');
 `)
 
 		if err != nil {
 			return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed with Session"}) //Returning success
 		}
-		var sessionsTable [] models.Session
+		var sessionsTable []models.Session
 
-		for sessionRows.Next(){
+		for sessionRows.Next() {
 			var session models.Session
 
 			err = sessionRows.Scan(&session.Session_number, &session.Location, &session.Start_time, &session.Duration_minutes, &session.Title, &session.Description)
 
-			sessionsTable = append(sessionsTable, models.Session{Session_number: session.Session_number, Location: session.Location, Start_time: session.Start_time, Duration_minutes: session.Duration_minutes, Title: session.Title, Description: session.Description  })
+			sessionsTable = append(sessionsTable, models.Session{Session_number: session.Session_number, Location: session.Location, Start_time: session.Start_time, Duration_minutes: session.Duration_minutes, Title: session.Title, Description: session.Description})
 		}
 
 		eventTable = append(eventTable, SessionArray{Title: stream.Title, Stream_id: stream.Stream_number, Sessions: sessionsTable})
@@ -141,16 +135,15 @@ func GetStreamsAndSessions_CC(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success", "data": eventTable})
 }
 
-type SessionArray struct{
-	Title	string `json:"Title"`
-	Stream_id	string `json:"Stream_id"`
-	Sessions	[]models.Session `json:"Sessions"`
+type SessionArray struct {
+	Title     string           `json:"Title"`
+	Stream_id string           `json:"Stream_id"`
+	Sessions  []models.Session `json:"Sessions"`
 }
 
-
-func GetAllEvents_CC(c *fiber.Ctx) error{
+func GetAllEvents_CC(c *fiber.Ctx) error {
 	//Call SQL
-	if(CheckAuth(c) == true){ //Error Check
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
 
@@ -166,21 +159,20 @@ func GetAllEvents_CC(c *fiber.Ctx) error{
 
 		err = rows.Scan(&event.Id, &event.Name)
 		if err != nil {
-		//	return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
+			//	return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
 		}
-		
-		eventsTable = append(eventsTable, models.Event{Id: event.Id, Name: event.Name })
+
+		eventsTable = append(eventsTable, models.Event{Id: event.Id, Name: event.Name})
 	}
 
 	return c.Status(200).JSON(fiber.Map{"status": "success", "data": eventsTable})
 }
 
-
-func AssignSessionToStream_CC(c *fiber.Ctx) error{
-	if(CheckAuth(c) == true){ //Error Check
+func AssignSessionToStream_CC(c *fiber.Ctx) error {
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
-	
+
 	//Load Model
 	composed_of := new(models.Composed_Of)
 	err := c.BodyParser(composed_of)
@@ -189,7 +181,7 @@ func AssignSessionToStream_CC(c *fiber.Ctx) error{
 	if err != nil {
 		c.Status(400).JSON(fiber.Map{"error": "failed to process inputs", "data": err})
 		return nil
-	 }
+	}
 
 	//Add to Database
 	row := DATABASE.QueryRow(
@@ -205,13 +197,13 @@ func AssignSessionToStream_CC(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success", "type": "Assigned Session to stream!"}) //Returning success
 }
 
-func GetAllAssociatedEvents_CC(c *fiber.Ctx) error{
-    //Call SQL
-    if(CheckAuth(c) == true){ //Error Check
-        return nil
-    }
+func GetAllAssociatedEvents_CC(c *fiber.Ctx) error {
+	//Call SQL
+	if CheckAuth(c) == true { //Error Check
+		return nil
+	}
 
-    rows, err := DATABASE.Query(`SELECT e.id, e.name FROM EVENT as e, REGISTERED_USER as ru
+	rows, err := DATABASE.Query(`SELECT e.id, e.name FROM EVENT as e, REGISTERED_USER as ru
     WHERE ru.email = '` + c.Params("email") + `' 
         and (ru.role = 'ORGANIZER'
         and e.id in (
@@ -224,25 +216,25 @@ func GetAllAssociatedEvents_CC(c *fiber.Ctx) error{
                 SELECT pi.stream_number From PARTICIPATING_IN as pi
                     WHERE pi.attendee_id = ru.attendee_id))));`)
 
-    if err != nil {
-        return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
-    }
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
+	}
 
-    var eventsTable []models.Event
-    for rows.Next() {
-        var event models.Event
+	var eventsTable []models.Event
+	for rows.Next() {
+		var event models.Event
 
-        err = rows.Scan(&event.Id, &event.Name)
-        
-        eventsTable = append(eventsTable, models.Event{Id: event.Id, Name: event.Name })
-    }
+		err = rows.Scan(&event.Id, &event.Name)
 
-    return c.Status(200).JSON(fiber.Map{"status": "success", "data": eventsTable})
+		eventsTable = append(eventsTable, models.Event{Id: event.Id, Name: event.Name})
+	}
+
+	return c.Status(200).JSON(fiber.Map{"status": "success", "data": eventsTable})
 }
 
-func GetEventRegisteredTo_CC(c *fiber.Ctx) error{
+func GetEventRegisteredTo_CC(c *fiber.Ctx) error {
 	//Call SQL
-	if(CheckAuth(c) == true){ //Error Check
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
 
@@ -262,29 +254,44 @@ func GetEventRegisteredTo_CC(c *fiber.Ctx) error{
 		var event models.Event
 
 		err = rows.Scan(&event.Id, &event.Name)
-		
-		eventsTable = append(eventsTable, models.Event{Id: event.Id, Name: event.Name })
+
+		eventsTable = append(eventsTable, models.Event{Id: event.Id, Name: event.Name})
 	}
 
 	return c.Status(200).JSON(fiber.Map{"status": "success", "data": eventsTable})
 }
 
+type Staying_at_email struct {
+	Attendee_id      string `json:"Attendee_id"`
+	Email            string `json:"Email"`
+	Accommodation_id string `json:"Accommodation_id"`
+}
 
+func AssignAttendeeToAccommodation_CC(c *fiber.Ctx) error {
+	if CheckAuth(c) == true { //Error Check
+		return nil
+	}
 
-func AssignAttendeeToAccommodation_CC(c *fiber.Ctx) error{
-	// if(CheckAuth(c) == true){ //Error Check
-	// 	return nil
-	// }
-	
 	//Load Model
-	staying_at := new(models.Staying_At)
+	staying_at := new(Staying_at_email)
 	err := c.BodyParser(staying_at)
 
 	//Handling Errors
 	if err != nil {
 		c.Status(400).JSON(fiber.Map{"error": "failed to process inputs", "data": err})
 		return nil
-	 }
+	}
+
+	emailRow := DATABASE.QueryRow(
+		`SELECT attendee_id From REGISTERED_USER
+		WHERE email = '` + staying_at.Email + `';`)
+
+	//SQL Error Check
+	if emailRow.Err() != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Retrieving Email Failed"}) //Returning success
+	}
+
+	err = emailRow.Scan(&staying_at.Attendee_id)
 
 	//Add to Database
 	row := DATABASE.QueryRow(
@@ -300,9 +307,9 @@ func AssignAttendeeToAccommodation_CC(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success", "type": "Creating Staying at"}) //Returning success
 }
 
-func GetAccommodationBasedOnEventId_CC(c *fiber.Ctx) error{
+func GetAccommodationBasedOnEventId_CC(c *fiber.Ctx) error {
 	//Call SQL
-	if(CheckAuth(c) == true){ //Error Check
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
 
@@ -319,8 +326,7 @@ func GetAccommodationBasedOnEventId_CC(c *fiber.Ctx) error{
 		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
 	}
 
-
-	var roomsTable [] interface{}
+	var roomsTable []interface{}
 	for rows.Next() {
 		var room RoomArray
 
@@ -331,23 +337,23 @@ func GetAccommodationBasedOnEventId_CC(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success", "data": roomsTable})
 }
 
-type RoomArray struct{
-	Room_number	string `json:"Room_number"`
-	F_name 		string `json: "F_name"`
-	L_name 		string `json: "L_name"`
-	School 		string `json: "School"`
-	Room_Total int64 `json: Room_Total`
-	Room_code	int64 `json: Room_code`
+type RoomArray struct {
+	Room_number string `json:"Room_number"`
+	F_name      string `json: "F_name"`
+	L_name      string `json: "L_name"`
+	School      string `json: "School"`
+	Room_Total  int64  `json: Room_Total`
+	Room_code   int64  `json: Room_code`
 }
 
-func GetRoomCapacity_CC(c *fiber.Ctx) error{
+func GetRoomCapacity_CC(c *fiber.Ctx) error {
 	//Call SQL
-	if(CheckAuth(c) == true){ //Error Check
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
 
 	rows, err := DATABASE.Query(`SELECT a.room_number, a.Capacity, COUNT(room_number) as Current_total FROM ACCOMODATION as a, Person as p
-	WHERE a.event_id = '` + c.Params("event_id") +`' and
+	WHERE a.event_id = '` + c.Params("event_id") + `' and
 				a.room_number in (
 				SELECT accomodation_id FROM STAYING_AT
 					WHERE attendee_id in (
@@ -362,7 +368,7 @@ func GetRoomCapacity_CC(c *fiber.Ctx) error{
 		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
 	}
 
-	var roomsTable [] interface{}
+	var roomsTable []interface{}
 	for rows.Next() {
 		var room RoomCapacity
 
@@ -374,73 +380,69 @@ func GetRoomCapacity_CC(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success", "data": roomsTable})
 }
 
-type RoomCapacity struct{
-	Room_number	string `json:"Room_number"`
-	Room_Total int64 `json: Room_Total`
-	Room_Current int64 `json: Room_Current`
+type RoomCapacity struct {
+	Room_number  string `json:"Room_number"`
+	Room_Total   int64  `json: Room_Total`
+	Room_Current int64  `json: Room_Current`
 }
 
-
-func GetAccomodationsWithSchool_CC(c *fiber.Ctx) error{
+func GetAccomodationsWithSchool_CC(c *fiber.Ctx) error {
 	//Call SQL
-if(CheckAuth(c) == true){ //Error Check
-	return nil
-}
+	if CheckAuth(c) == true { //Error Check
+		return nil
+	}
 
-rows, err := DATABASE.Query(`SELECT  a.room_number, a.room_code, s.name FROM ACCOMODATION as a, School as s
-WHERE a.event_id = '`+ c.Params("event_id")+ `' and
+	rows, err := DATABASE.Query(`SELECT  a.room_number, a.room_code, s.name FROM ACCOMODATION as a, School as s
+WHERE a.event_id = '` + c.Params("event_id") + `' and
 			a.room_number in (
 			SELECT DISTINCT accomodation_id FROM STAYING_AT
 				WHERE attendee_id in (
 				SELECT DISTINCT  attendee_id FROM IS_REPRESENTING
-					WHERE school_id = '`+ c.Params("school_id")+ `' and
+					WHERE school_id = '` + c.Params("school_id") + `' and
 								school_id = s.id));`)
 
-if err != nil {
-	return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed With Accomodations"}) //Returning success
-}
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed With Accomodations"}) //Returning success
+	}
 
+	var roomsTable []interface{}
+	for rows.Next() {
+		var school SchoolRooms
 
-var roomsTable [] interface{}
-for rows.Next() {
-	var school SchoolRooms
+		err = rows.Scan(&school.Room_number, &school.Room_code, &school.Name)
 
-	err = rows.Scan(&school.Room_number, &school.Room_code, &school.Name)
-
-	rowsNew, err := DATABASE.Query(`
+		rowsNew, err := DATABASE.Query(`
 	SELECT p.email, p.f_name, p.m_name, p.l_name, p.pronouns, p.preferred_language, p.dietary_restriction FROM STAYING_AT as sa, REGISTERED_USER as ru, Person as p
 	WHERE sa.accomodation_id = '` + school.Room_number + `' and
 				ru.attendee_id= sa.attendee_id and
 				ru.email = p.email;`)
 
-	if err != nil {
-		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
+		if err != nil {
+			return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
+		}
+		var personsTable []models.Person
+		for rowsNew.Next() {
+			var person models.Person
+			err = rowsNew.Scan(&person.Email, &person.F_name, &person.M_name, &person.L_name, &person.Pronouns, &person.Preferred_language, &person.Dietary_restriction)
+			personsTable = append(personsTable, models.Person{Email: person.Email, F_name: person.F_name, M_name: person.M_name, L_name: person.L_name, Pronouns: person.Pronouns, Preferred_language: person.Preferred_language, Dietary_restriction: person.Dietary_restriction})
+		}
+
+		roomsTable = append(roomsTable, SchoolRooms{Room_number: school.Room_number, Room_code: school.Room_code, Name: school.Name, Persons: personsTable})
 	}
-	var personsTable [] models.Person		
-	for rowsNew.Next(){
-		var person models.Person
-		err = rowsNew.Scan(&person.Email, &person.F_name,&person.M_name,&person.L_name,&person.Pronouns,&person.Preferred_language, &person.Dietary_restriction)
-		personsTable = append(personsTable, models.Person{Email: person.Email, F_name: person.F_name, M_name: person.M_name, L_name: person.L_name, Pronouns: person.Pronouns, Preferred_language: person.Preferred_language, Dietary_restriction: person.Dietary_restriction})
-	}
 
-	roomsTable = append(roomsTable, SchoolRooms{Room_number: school.Room_number, Room_code: school.Room_code, Name: school.Name, Persons: personsTable})
+	return c.Status(200).JSON(fiber.Map{"status": "success", "data": roomsTable})
 }
 
-return c.Status(200).JSON(fiber.Map{"status": "success", "data": roomsTable})
+type SchoolRooms struct {
+	Room_number string          `json:"Room_number"`
+	Room_code   string          `json:"Room_code"`
+	Name        string          `json: "Name"`
+	Persons     []models.Person `json:"Persons"`
 }
 
-
-type SchoolRooms struct{
-Room_number	string `json:"Room_number"`
-Room_code	string `json:"Room_code"`
-Name string `json: "Name"`
-Persons []models.Person `json:"Persons"`
-}
-
-
-func GetSchoolWithAttendeeId_CC(c *fiber.Ctx) error{
+func GetSchoolWithAttendeeId_CC(c *fiber.Ctx) error {
 	//Call SQL
-	if(CheckAuth(c) == true){ //Error Check
+	if CheckAuth(c) == true { //Error Check
 		return nil
 	}
 
@@ -448,16 +450,14 @@ func GetSchoolWithAttendeeId_CC(c *fiber.Ctx) error{
 	SELECT * FROM SCHOOL
 		WHERE id in (
 		SELECT school_id FROM IS_REPRESENTING
-			WHERE attendee_id='` +  c.Params("attendee_id") +`');`)
+			WHERE attendee_id='` + c.Params("attendee_id") + `');`)
 
 	if row.Err() != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "fail", "type": "SQL: Querying Failed"}) //Returning success
 	}
 
 	var school models.School
-	row.Scan(&school.Id, &school.Name, &school.Capacity, &school.Country, &school.Province, &school.Street_address,&school.Postal_code)
+	row.Scan(&school.Id, &school.Name, &school.Capacity, &school.Country, &school.Province, &school.Street_address, &school.Postal_code)
 
 	return c.Status(200).JSON(fiber.Map{"status": "success", "data": school})
 }
-
-

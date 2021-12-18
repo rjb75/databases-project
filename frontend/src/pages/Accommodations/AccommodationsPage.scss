@@ -4,10 +4,21 @@
     align-items: center;
     .primary-table {
         width: 90%;
-        height: 75vh;
+        height: 70vh;
         thead {
             position: sticky;
             top: 0;
         }
+    }
+}
+
+.manage-accommodations-container {
+    width: inherit;
+    margin: 15px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    .add-accommodation-button {
+        margin-left: auto;
     }
 }
