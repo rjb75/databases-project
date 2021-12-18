@@ -21,7 +21,7 @@ const EventSelector: React.FC = () => {
       .get(`${ROOT_V2}/attendee/event/${userContext.Email}`)
       .then(res => {
         console.log(res);
-        setEventList(formatEvents(res.data.data));
+        dispatch(setEventList(formatEvents(res.data.data)));
       })
       .catch(err => console.error(err));
   }, []);
