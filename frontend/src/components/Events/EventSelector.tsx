@@ -27,11 +27,12 @@ const EventSelector: React.FC = () => {
       .catch(err => console.error(err));
   }, []);
 
-  useEffect(() => {
-    if (eventList?.length === 1) {
-      dispatch(setEventContext(eventList[0]));
-    }
-  }, [eventList]);
+    useEffect(() => {
+        if(eventList?.length === 1) {
+            dispatch(setEventContext(eventList[0]))
+        }
+    }, [eventList])
+
 
   function handleSelectEvent(event: Event) {
     dispatch(setEventContext(event));
