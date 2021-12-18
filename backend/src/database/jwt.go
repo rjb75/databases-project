@@ -3,8 +3,9 @@ package database
 import (
 	"os"
 	"time"
-	"github.com/gofiber/fiber/v2"
+
 	"github.com/dgrijalva/jwt-go"
+	"github.com/gofiber/fiber/v2"
 )
 
 var

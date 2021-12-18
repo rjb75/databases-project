@@ -755,6 +755,7 @@ func CreateAccommodation(c *fiber.Ctx) error{
 	//Load Model
 	accommodation := new(models.Accommodation)
 	err := c.BodyParser(accommodation)
+	accommodation.Room_number = uuid.New().String()
 
 	//Handling Errors
 	if err != nil {
