@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '../../axios';
+import EventSelector from '../../components/Events/EventSelector';
 import Navbar from '../../components/Navbar';
 import AddStream from '../../components/Sessions/AddStream';
 import StreamsListing from '../../components/Sessions/StreamsListing';
@@ -16,7 +17,6 @@ const SessionsPage: React.FC = () => {
     const [streams, setStreams] = useState<Stream[]>([]);
 
     useEffect(() => {
-        console.log(streams)
         if(eventContext.id != null) {
             axiosInstance
             .get(`${ROOT_V2}/streams/sessions/${eventContext.id}`)
@@ -34,6 +34,7 @@ const SessionsPage: React.FC = () => {
                 true &&
                 <AddStream />
             }
+
             {
                 streams.length === 0 ?
                 <p className='event-select-error'>Please select an event</p> :
