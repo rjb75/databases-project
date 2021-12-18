@@ -300,15 +300,13 @@ func AssignAttendeeToAccommodation_CC(c *fiber.Ctx) error{
 	return c.Status(200).JSON(fiber.Map{"status": "success", "type": "Creating Staying at"}) //Returning success
 }
 
-
-//TODO add ROOM_CODE
 func GetAccommodationBasedOnEventId_CC(c *fiber.Ctx) error{
 	//Call SQL
 	if(CheckAuth(c) == true){ //Error Check
 		return nil
 	}
 
-	rows, err := DATABASE.Query(`SELECT DISTINCT a.room_number, a.Capacity, p.F_name, p.L_name FROM ACCOMODATION as a, Person as p
+	rows, err := DATABASE.Query(`SELECT DISTINCT a.room_number, a.Capacity, p.F_name, p.L_name, a.room_code FROM ACCOMODATION as a, Person as p
 	WHERE a.event_id = '` + c.Params("event_id") +`' and
 				a.room_number in (
 				SELECT accomodation_id FROM STAYING_AT
@@ -344,10 +342,10 @@ func GetAccommodationBasedOnEventId_CC(c *fiber.Ctx) error{
 		rowsNew.Next()
 		var room RoomArray
 
-		err = rows.Scan(&room.Room_number, &room.Room_Total, &room.F_name, &room.L_name)
+		err = rows.Scan(&room.Room_number, &room.Room_Total, &room.F_name, &room.L_name, &room.Room_code)
 		errNew = rowsNew.Scan(&room.Room_number, &room.School)
 
-		roomsTable = append(roomsTable, RoomArray{Room_number: room.Room_number, F_name: room.F_name, L_name: room.L_name, School: room.School, Room_Total: room.Room_Total})
+		roomsTable = append(roomsTable, RoomArray{Room_number: room.Room_number, Room_code: room.Room_code, F_name: room.F_name, L_name: room.L_name, School: room.School, Room_Total: room.Room_Total})
 	}
 
 	return c.Status(200).JSON(fiber.Map{"status": "success", "data": roomsTable})
@@ -355,7 +353,7 @@ func GetAccommodationBasedOnEventId_CC(c *fiber.Ctx) error{
 
 type RoomArray struct{
 	Room_number	string `json:"Room_number"`
-	//Room_code	string `json:"Room_code"`
+	Room_code	int64 `json: Room_code`
 	F_name 		string `json: "F_name"`
 	L_name 		string `json: "L_name"`
 	School 		string `json: "School"`
