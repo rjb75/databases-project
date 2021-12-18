@@ -2,13 +2,15 @@ import React, {useState} from 'react';
 import {NavLink, useNavigate} from 'react-router-dom';
 import storage from 'redux-persist/lib/storage';
 import Icon from '../assets/icon.svg';
-import {useTypedSelector} from '../hooks/reduxHooks';
 import {APP_NAME} from '../utils/TextConstants';
 import EventSelector from './Events/EventSelector';
 import axiosInstance from '../axios';
-import { ROOT_V1 } from '../utils/APIConstants';
-import { useTypedDispatch } from '../hooks/reduxHooks';
-import { userSignedOut } from '../actions/userActions/userActionCreator';
+import {ROOT_V1} from '../utils/APIConstants';
+import {useTypedDispatch, useTypedSelector} from '../hooks/reduxHooks';
+import {userSignedOut} from '../actions/userActions/userActionCreator';
+import {selectUserData} from '../actions/userActions/userSelectors';
+import {selectEventContext} from '../actions/eventActions/eventSelector';
+import {UserRole} from '../models/Enums';
 import './Navbar.scss';
 
 export interface NavbarLink {
@@ -27,21 +29,22 @@ export interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = props => {
   const navigate = useNavigate();
   const dispatch = useTypedDispatch();
+  const eventContext = useTypedSelector(selectEventContext);
+  const userContext = useTypedSelector(selectUserData);
   const [dropdownOpen, setDropDownOpen] = useState(false);
 
   const handleSignOut = () => {
     axiosInstance
-    .post(`${ROOT_V1}/signout`)
-    .then(res => {
-      navigate('/');
-      dispatch(userSignedOut());
-      storage.removeItem('persist:root');
-      localStorage.clear();
-      console.log('signout response: ', res);
-    })
-    .catch(err => console.log('signout error: ', err));
-  }
-
+      .post(`${ROOT_V1}/signout`)
+      .then(res => {
+        navigate('/');
+        dispatch(userSignedOut());
+        storage.removeItem('persist:root');
+        localStorage.clear();
+        console.log('signout response: ', res);
+      })
+      .catch(err => console.log('signout error: ', err));
+  };
 
   const defaultRoutes: Array<NavbarLink> = [
     {
@@ -66,20 +69,24 @@ const Navbar: React.FC<NavbarProps> = props => {
     },
   ];
   const {links = defaultRoutes} = props;
-  const eventContext = useTypedSelector(state => state.event);
+
   return (
     <nav className="navigation navigation-primary">
       <div className="navigation-topbar">
         <div className="navigation-homebutton" onClick={() => setDropDownOpen(!dropdownOpen)}>
           <img src={Icon} />
           <div hidden={!dropdownOpen} className={`navigation-drop-down`}>
-            <div className='navigation-drop-down-option' onClick={handleSignOut}>
+            <div className="navigation-drop-down-option" onClick={handleSignOut}>
               Sign Out
             </div>
           </div>
         </div>
         <p className="navigation-eventtitle">{eventContext.name || APP_NAME}</p>
-        <a className="navigation-createevent">Create Event</a>
+        {userContext.Role == UserRole.Organizer && (
+          <>
+            <a className="navigation-createevent">Create Event</a>
+          </>
+        )}
       </div>
       {props.displayTabs == true ||
         (props.displayTabs == undefined && (

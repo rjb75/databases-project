@@ -82,7 +82,7 @@ const OrganizerFormTable: React.FC<OrganizerFormTableProps> = props => {
         </div>
         <h1 className="organizer-form-table-title">Delegate Form Table</h1>
         <div className="organizer-form-table-container">
-          <Table columns={headers} data={tableData} clickable={true} clickExecution={handleTableRowClicked}/>
+          <Table columns={headers} data={tableData ? tableData : []} clickable={true} clickExecution={handleTableRowClicked}/>
         </div>
       </div>
     </div>
