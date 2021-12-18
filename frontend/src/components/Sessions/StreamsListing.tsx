@@ -87,7 +87,10 @@ const StreamsListing: React.FC<StreamsProps> = ({streams}) => {
           return (
             <Card size={CardSize.Large} key={s.uuid}>
               <>
-              <AddSession />
+                { 
+                  userContext.data.role === UserRole.Organizer &&
+                  <AddSession streamNumber={s.uuid} />
+                }
                 <div className="stream-listing-title-container">
                   <h2>{s.title}</h2>
                   {userContext.Role == UserRole.Organizer && (
@@ -112,7 +115,6 @@ const StreamsListing: React.FC<StreamsProps> = ({streams}) => {
               placeHolder="Enter Invitee Email"
               input={inviteEmail}
               setInput={setInviteEmail}
-              isPassword={false}
               error={inviteEmailErrors}
             />
             <button className="add-form-submit-button" onClick={onSubmit}>
